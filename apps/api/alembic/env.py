@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from sqlmodel import SQLModel
 
 from app.core.config import get_settings
+from app.groups import models as groups_models  # noqa: F401
 
 # Import domain models so they register on SQLModel.metadata for autogenerate.
 # Add your module's import here when you add a domain package.
