@@ -87,9 +87,17 @@ async def clerk_webhook(
             event = wh.verify(body, dict(request.headers))
         except WebhookVerificationError as exc:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, "Invalid webhook signature") from exc
-    else:
-        # No secret configured yet (local dev before Clerk is set up) --
-        # accept unverified so the sync logic can still be exercised.
+    elif settings.environment == "development":
+        # No secret configured yet (local dev before Clerk/tunnel is set
+        # up) -- accept unverified so the sync logic can still be exercised.
         event = await request.json()
+    else:
+        # Fail closed outside dev: an unverified body could create, edit,
+        # or delete any user via sync_user_from_clerk_event. Refuse instead
+        # of trusting it.
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "CLERK_WEBHOOK_SECRET is not configured",
+        )
 
     await service.sync_user_from_clerk_event(session, event)

@@ -1,0 +1,16 @@
+# Per-developer overrides -- copy this file to `docker-compose.override.yml`
+# (gitignored, never committed) and edit as needed. Docker Compose loads
+# `docker-compose.override.yml` automatically alongside `docker-compose.yml`.
+#
+# Example: your machine already has another project's Postgres/Adminer
+# bound to the default ports, so remap only the host side here (the
+# container-internal port, and the `api` service's DATABASE_URL on the
+# Docker network, stay untouched).
+services:
+  db:
+    ports:
+      - "5433:5432"
+
+  adminer:
+    ports:
+      - "8081:8080"
