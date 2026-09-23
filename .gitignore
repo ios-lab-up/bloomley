@@ -23,6 +23,9 @@ venv/
 .env.*
 !.env.example
 
+# Docker Compose local overrides (e.g. port remaps per developer machine)
+docker-compose.override.yml
+
 # Build and tool output
 *.log
 coverage.xml

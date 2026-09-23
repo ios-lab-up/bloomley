@@ -19,9 +19,17 @@ services:
       POSTGRES_USER: bloomley
       POSTGRES_PASSWORD: bloomley
     ports:
-      - "5432:5432"
+      # Host port 5433 (not 5432): this dev machine already has another
+      # project's Postgres bound to 5432. Container-internal port stays
+      # 5432, so the `api` service's DATABASE_URL (db:5432, docker network)
+      # is unaffected -- only host-side / non-docker connections use 5433.
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      # postgres:18+ manages its own version-specific subdirectory and no
+      # longer supports mounting a volume straight at .../postgresql/data
+      # (see https://github.com/docker-library/postgres/pull/1259) --
+      # mount the parent dir instead and let the image lay it out.
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bloomley -d bloomley"]
       interval: 5s
@@ -31,7 +39,8 @@ services:
   adminer:
     image: adminer:5
     ports:
-      - "8080:8080"
+      # Host port 8081 (not 8080): 8080 is already in use on this dev machine.
+      - "8081:8080"
     depends_on:
       db:
         condition: service_healthy
