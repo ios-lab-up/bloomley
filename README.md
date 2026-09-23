@@ -39,15 +39,13 @@ The development defaults are safe for local use. Do not commit `.env` files.
 docker compose up -d db adminer
 ```
 
-- PostgreSQL: `localhost:5433` (mapped off the default 5432 to avoid clashing with other local projects; inside the Docker network `api` still reaches it at `db:5432`)
-- Adminer: <http://localhost:8081> (mapped off the default 8080 for the same reason)
+- PostgreSQL: `localhost:5432`
+- Adminer: <http://localhost:8080>
   - System: PostgreSQL
   - Server: `db`
   - Username: `bloomley`
   - Password: `bloomley`
   - Database: `bloomley`
-
-If 5433/8081 are also taken on your machine, override them per-developer with a `docker-compose.override.yml` (gitignored) instead of editing `docker-compose.yml`.
 
 ## Run the API
 
