@@ -47,6 +47,8 @@ docker compose up -d db adminer
   - Password: `bloomley`
   - Database: `bloomley`
 
+If 5432/8080 are already taken by another project on your machine, don't edit `docker-compose.yml` -- copy `docker-compose.override.yml.example` to `docker-compose.override.yml` (gitignored) and remap the host ports there. Docker Compose loads it automatically. Remember to also point your local `apps/api/.env`'s `DATABASE_URL` at whatever host port you chose.
+
 ## Run the API
 
 ```bash

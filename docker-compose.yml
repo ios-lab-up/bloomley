@@ -21,7 +21,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      # postgres:18+ manages its own version-specific subdirectory and no
+      # longer supports mounting a volume straight at .../postgresql/data
+      # (see https://github.com/docker-library/postgres/pull/1259) --
+      # mount the parent dir instead and let the image lay it out.
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bloomley -d bloomley"]
       interval: 5s
