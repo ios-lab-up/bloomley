@@ -5932,7 +5932,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "BloomWave.png",
+                        "url": "apps/mobile/assets/bloom/BloomWave.png",
                         "mode": "fill"
                       },
                       "width": 327,
@@ -6418,7 +6418,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "bloom-sleep.png",
+                                    "url": "apps/mobile/assets/bloom/bloom-sleep.png",
                                     "mode": "fit"
                                   },
                                   "width": 82,
@@ -6539,7 +6539,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "bloom-tea.png",
+                                "url": "apps/mobile/assets/bloom/bloom-tea.png",
                                 "mode": "fit"
                               },
                               "width": 78,
@@ -6589,7 +6589,7 @@
                               "fill": {
                                 "type": "image",
                                 "enabled": true,
-                                "url": "bloom-cheer.png",
+                                "url": "apps/mobile/assets/bloom/bloom-cheer.png",
                                 "mode": "fit"
                               },
                               "width": 76,
@@ -7257,7 +7257,7 @@
                           "fill": {
                             "type": "image",
                             "enabled": true,
-                            "url": "BloomHappy.png",
+                            "url": "apps/mobile/assets/bloom/BloomHappy.png",
                             "mode": "fill"
                           },
                           "width": 240,
@@ -7431,7 +7431,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "BloomTrophy.png",
+                        "url": "apps/mobile/assets/bloom/BloomTrophy.png",
                         "mode": "fill"
                       },
                       "width": 271,
