@@ -1,0 +1,24 @@
+---
+import { Image } from 'astro:assets';
+import trophy from '../../assets/bloom/bloom-trophy.png';
+---
+
+<div class="scr scr--spread">
+  <div class="scr__group" style="align-items:center">
+    <div class="scr__progress" style="align-self:flex-start">
+      <i></i><i></i><i></i><i></i><i data-on></i>
+    </div>
+    <p class="scr__bubble">That's everything for today. Really.</p>
+    <Image src={trophy} alt="" width={280} densities={[1, 2]} class="scr__bloom" />
+    <div class="scr__group" style="gap:7px;text-align:center;align-items:center">
+      <p class="scr__eyebrow">YOUR FIRST MISSION</p>
+      <p class="scr__title scr__title--hero">Walk for 10 minutes</p>
+      <p class="scr__sub">Head outside or pace around at home. No pace, no step goal. Just move.</p>
+      <p class="scr__meta">Physical &middot; 10 min &middot; +10 XP</p>
+    </div>
+  </div>
+  <div class="scr__stack">
+    <div class="scr__btn scr__btn--primary">I'll do it now</div>
+    <div class="scr__btn scr__btn--ghost">Later</div>
+  </div>
+</div>

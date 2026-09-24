@@ -1,0 +1,165 @@
+/*
+ * In-page product shots.
+ *
+ * These recreate the onboarding screens from bloomley.pen in HTML so the copy
+ * can be English while the app ships in Spanish. Authored for a 300px-wide
+ * screen area (the app designs at 393px, so every value here is that value
+ * times ~0.76). They are decorative: nothing is interactive.
+ */
+
+.phone {
+  --screen-w: 300px;
+  flex: 0 0 auto;
+  width: var(--screen-w);
+  padding: 9px;
+  border-radius: 46px;
+  background: linear-gradient(170deg, #322b45, #1b1727);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 28px 56px -22px rgba(30, 26, 43, 0.45);
+}
+
+.phone__screen {
+  position: relative;
+  aspect-ratio: 393 / 852;
+  border-radius: 38px;
+  overflow: hidden;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.phone__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 0;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ink);
+  flex: 0 0 auto;
+}
+.phone__status svg { opacity: 0.85; }
+
+/* ---------- Shared screen scaffolding ---------- */
+
+.scr {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 14px 18px 18px;
+  min-height: 0;
+}
+.scr--spread { justify-content: space-between; }
+.scr--center { align-items: center; text-align: center; }
+
+.scr__title {
+  font-size: 23px;
+  font-weight: 900;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.scr__title--hero { font-size: 27px; }
+.scr__sub { font-size: 13px; line-height: 1.45; color: var(--secondary); }
+.scr__meta { font-size: 11px; font-weight: 800; color: var(--secondary); }
+.scr__eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--purple-deep);
+}
+.scr__stack { display: flex; flex-direction: column; gap: 11px; }
+.scr__group { display: flex; flex-direction: column; gap: 14px; }
+
+/* Progress dots */
+.scr__progress { display: flex; gap: 5px; align-items: center; }
+.scr__progress i { width: 6px; height: 6px; border-radius: 3px; background: var(--line); }
+.scr__progress i[data-on] { width: 18px; background: var(--purple); }
+
+/* Buttons — app uses --purple at 17px, which fails AA. At mockup scale these
+   are decoration, but keep the accessible fill so the shot matches the web. */
+.scr__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 43px;
+  border-radius: var(--r-pill);
+  font-size: 13px;
+  font-weight: 800;
+}
+.scr__btn--primary { background: var(--purple-deep); color: #fff; }
+.scr__btn--ghost { background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1.2px var(--line); }
+.scr__link { font-size: 12px; font-weight: 800; color: var(--purple-deep); text-align: center; }
+
+/* Select row — the app's own list pattern */
+.scr__row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 3px;
+  border-bottom: 1px solid var(--line);
+}
+.scr__row:last-child { border-bottom: 0; }
+.scr__row b { display: block; font-size: 13px; font-weight: 800; color: var(--ink); }
+.scr__row[data-on] b { color: var(--purple-deep); }
+.scr__row span { display: block; font-size: 11px; line-height: 1.35; color: var(--secondary); }
+.scr__row > div { flex: 1 1 auto; min-width: 0; }
+
+.scr__dot { flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%; }
+.scr__badge { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; }
+
+.scr__check {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.2px var(--line);
+  display: grid;
+  place-items: center;
+}
+.scr__check[data-on] { background: var(--purple); box-shadow: none; }
+.scr__check svg { width: 11px; height: 11px; }
+
+/* Speech bubble with a tail, like the app's component */
+.scr__bubble {
+  position: relative;
+  align-self: center;
+  max-width: 220px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1.2px var(--line);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink);
+  text-align: center;
+}
+.scr__bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  translate: -50% 0;
+  width: 12px;
+  height: 7px;
+  background: var(--surface);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.scr__bloom { align-self: center; width: 130px; }
+.scr__bloom--lg { width: 165px; }
+
+/* Chips */
+.scr__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.scr__chip {
+  padding: 8px 13px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1.2px var(--line);
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.scr__chip[data-on] { background: var(--purple-deep); color: #fff; box-shadow: none; }

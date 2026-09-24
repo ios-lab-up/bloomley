@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+import trophy from '../assets/bloom/bloom-trophy.png';
+---
+
+<section class="section together" id="together">
+  <div class="wrap together__inner">
+    <div class="together__copy">
+      <p class="eyebrow" data-reveal>Better with people</p>
+      <h2 data-reveal style="--index:1">Bring a friend, or don't.</h2>
+      <p class="prose" data-reveal style="--index:2">
+        Missions can be shared. You see when a friend finishes theirs, they see
+        when you finish yours, and that is the whole of it — no leaderboard, no
+        public streak to be embarrassed about. Solo works exactly as well.
+      </p>
+    </div>
+    <div class="together__art" data-reveal style="--index:1">
+      <Image
+        src={trophy}
+        alt="Bloom holding up a small gold trophy, surrounded by stars."
+        widths={[280, 420, 560]}
+        sizes="(max-width: 880px) 45vw, 300px"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .together { background: var(--purple-veil); }
+
+  .together__inner {
+    display: grid;
+    gap: clamp(2rem, 1rem + 4vw, 4rem);
+    align-items: center;
+  }
+  .together__copy h2 { margin-block: var(--s-3) var(--s-4); }
+  .together__copy p { max-width: 48ch; }
+
+  .together__art { position: relative; justify-self: center; max-width: 18.75rem; }
+  .together__art img { width: 100%; }
+  .together__art::before {
+    content: '';
+    position: absolute;
+    inset: 14% -4% 2% -4%;
+    border-radius: 50%;
+    background: var(--mint-soft);
+    z-index: -1;
+  }
+
+  @media (min-width: 881px) {
+    .together__inner { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
+  }
+  @media (max-width: 880px) {
+    .together__art { max-width: 13rem; order: -1; }
+  }
+</style>

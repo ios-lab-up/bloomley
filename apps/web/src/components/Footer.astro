@@ -1,0 +1,329 @@
+---
+import { Image } from 'astro:assets';
+import WaitlistForm from './WaitlistForm.astro';
+import hills from '../assets/hero/hills-far.png';
+import garden from '../assets/hero/garden-mid.png';
+import leaves from '../assets/hero/leaves-front.png';
+import bud from '../assets/hero/flower-bud.png';
+import flower from '../assets/hero/flower-bloom.png';
+import wave from '../assets/bloom/bloom-wave.png';
+
+const year = new Date().getFullYear();
+
+// The closing shot: the hero's garden, mirrored, at dusk. Same plates, graded in CSS.
+const plate = { widths: [960, 1672, 2560, 3344], sizes: '100vw', quality: 90, alt: '' } as const;
+const actor = { widths: [400, 800, 1200], sizes: '(max-width: 880px) 40vw, 360px', quality: 90, alt: '' } as const;
+
+// The garden grew: the hero's single flower, repeated at depth. Far ones are smaller, dimmer, softer.
+// left / bottom / width are % of the actors box; composition checked against a Python mock-up.
+const flowers = [
+  { left: 90, bottom: 32, width: 15, dim: 0.7, blur: 2.2, mirror: false, z: 0 },
+  { left: -14, bottom: 26, width: 20, dim: 0.75, blur: 1.6, mirror: true, z: 0 },
+  { left: 47, bottom: 20, width: 22, dim: 0.82, blur: 1, mirror: true, z: 0 },
+  { left: 62, bottom: 2, width: 34, dim: 0.92, blur: 0, mirror: false, z: 2 },
+];
+
+// [left %, top %, delay s, duration s]
+const fireflies = [
+  [8, 62, 0, 7], [18, 74, 1.2, 9], [31, 58, 2.1, 8], [44, 82, 0.6, 10], [57, 66, 3, 7.5],
+  [69, 77, 1.7, 9.5], [81, 60, 2.6, 8.5], [92, 72, 0.9, 11], [25, 88, 3.4, 9],
+];
+// [left %, top %, delay s] — corners only, never behind the headline.
+const stars = [[6, 8, 0], [11, 17, 1.4], [17, 6, 2.2], [76, 5, 0.8], [83, 11, 1.9], [89, 19, 0.3], [94, 7, 2.7]];
+---
+
+<!-- Scene + band share one screen, so the headline clears the sticky nav at the end of the page. -->
+<div class="closing">
+<section class="finale" id="waitlist">
+  <div class="finale__layer finale__layer--hills" data-reveal style="--from:1.1">
+    <Image {...plate} src={hills} loading="lazy" />
+  </div>
+  <div class="finale__dusk" aria-hidden="true"></div>
+  <div class="finale__stars" aria-hidden="true">
+    {stars.map(([x, y, d]) => <span style={`left:${x}%;top:${y}%;--delay:${d}s`} />)}
+  </div>
+  <div class="finale__layer finale__layer--garden" data-reveal style="--from:1.14">
+    <Image {...plate} src={garden} loading="lazy" />
+  </div>
+
+  <div class="wrap finale__copy">
+    <h2 data-reveal>Start with ten minutes.</h2>
+    <p class="finale__lead" data-reveal style="--index:1">
+      Join the waitlist and Bloom will wave when your wave opens.
+    </p>
+    <div class="finale__form" data-reveal style="--index:2">
+      <WaitlistForm id="waitlist-footer" hint="One email when it's your turn. No newsletter, no sharing." />
+    </div>
+  </div>
+
+  <div class="finale__stage">
+  <div
+    class="finale__actors"
+    data-reveal
+    style="--index:1"
+    role="img"
+    aria-label="Bloom sits on a stone at dusk and waves, in a garden full of coral, blue and yellow flowers."
+  >
+    {flowers.map((f) => (
+      <div
+        class:list={['finale__flower', { 'is-mirrored': f.mirror }]}
+        style={`left:${f.left}%;bottom:${f.bottom}%;width:${f.width}%;z-index:${f.z};--dim:${f.dim};--blur:${f.blur}px`}
+      >
+        <Image {...actor} src={flower} loading="lazy" />
+      </div>
+    ))}
+    <div class="finale__bloom">
+      <Image {...actor} src={wave} loading="lazy" />
+    </div>
+    <!-- Delight: when the form succeeds, your flower grows next to Bloom. Pure CSS via :has(). -->
+    <div class="finale__flower finale__new" style="left:44%;bottom:0%;width:16%;z-index:3;--dim:0.95;--blur:0px">
+      <Image {...actor} src={bud} loading="lazy" class="finale__bud" />
+      <Image {...actor} src={flower} loading="lazy" class="finale__open" />
+    </div>
+  </div>
+  </div>
+
+  <div class="finale__flies" aria-hidden="true">
+    {fireflies.map(([x, y, d, t]) => <span style={`left:${x}%;top:${y}%;--delay:${d}s;--dur:${t}s`} />)}
+  </div>
+
+  <div class="finale__layer finale__layer--leaves" data-reveal style="--from:1.3">
+    <Image {...plate} src={leaves} loading="lazy" />
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap foot__inner">
+    <p class="foot__brand">Bloomley</p>
+    <nav class="foot__links" aria-label="Footer">
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="mailto:hola@bloomley.app">Contact</a>
+    </nav>
+    <p class="foot__copy">&copy; {year} Bloomley</p>
+  </div>
+</footer>
+</div>
+
+<style>
+  .finale, .foot { --band: #1C242B; }
+
+  /* Grid, not flex: a grid row gives .finale a definite height, so the stage's cqh resolves. */
+  .closing { display: grid; grid-template-rows: 1fr auto; min-height: 100svh; }
+
+  .finale {
+    /* Multiplied over hills-far.png. White on the 45% stop over the brightest cloud is 5.8:1
+       (test/landing.test.mjs checks it). Keep --dusk-45 at least this dark. */
+    --dusk-0: #2E2A66;
+    --dusk-45: #7A5AA6;
+    --dusk-66: #D99AAE;
+    --dusk-80: #F6C69C;
+
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--dusk-0);
+    color: #fff;
+  }
+
+  /* ---------- Plates: the hero's, mirrored and graded ---------- */
+
+  .finale__layer { position: absolute; inset: 0; pointer-events: none; }
+  /* The layers ride the page's shared reveal observer only to get .is-in; they never fade. */
+  .finale__layer[data-reveal] { opacity: 1; transform: none; transition: none; }
+  .finale__layer :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 100%;
+    scale: -1 1;
+  }
+  .finale__layer--hills { z-index: -5; }
+  .finale__layer--hills :global(img) { filter: saturate(0.9); }
+  .finale__layer--garden { z-index: -2; }
+  .finale__layer--garden :global(img) { filter: brightness(0.78) saturate(0.9) sepia(0.18); }
+  .finale__layer--leaves { z-index: 3; }
+  .finale__layer--leaves :global(img) { filter: brightness(0.55) saturate(0.9) sepia(0.1); }
+
+  .finale__dusk {
+    position: absolute;
+    inset: 0;
+    z-index: -4;
+    mix-blend-mode: multiply;
+    background: linear-gradient(
+      to bottom,
+      var(--dusk-0) 0%,
+      var(--dusk-45) 45%,
+      var(--dusk-66) 66%,
+      var(--dusk-80) 80%,
+      #fff 95%
+    );
+    pointer-events: none;
+  }
+
+  /* Last 14% melts into the footer band. */
+  .finale::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 14%;
+    z-index: 4;
+    background: linear-gradient(to bottom, transparent, var(--band));
+    pointer-events: none;
+  }
+
+  /* ---------- Stars + fireflies ---------- */
+
+  .finale__stars, .finale__flies { position: absolute; inset: 0; pointer-events: none; }
+  .finale__stars { z-index: -3; }
+  .finale__flies { z-index: 2; }
+  .finale__stars span, .finale__flies span { position: absolute; border-radius: 50%; }
+  .finale__stars span { width: 3px; height: 3px; background: #FFF7E6; opacity: 0.8; }
+  .finale__flies span {
+    width: 5px;
+    height: 5px;
+    background: #FFE8A3;
+    box-shadow: 0 0 10px 3px rgb(255 214 120 / 0.55);
+    opacity: 0.2; /* = finale-drift 0%/100%, so no jump when a loop starts or ends */
+  }
+
+  /* ---------- Copy ---------- */
+
+  .finale__copy {
+    position: relative;
+    z-index: 5;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    padding-block: calc((4.5rem + clamp(1.5rem, 4svh, 3.5rem)) * 1.2) var(--s-6); /* nav + air, 20% lower */
+  }
+
+  /* White clay letters, lit for dusk: lavender underside, deep indigo contact shadow. */
+  .finale h2 {
+    font-size: clamp(2.5rem, min(7vw, 9svh), 5.5rem);
+    line-height: 1;
+    color: #fff;
+    text-shadow:
+      0 0.018em 0 #E6E1F7,
+      0 0.036em 0 #C7BDEB,
+      0 0.055em 0 #9A8BD3,
+      0 0.09em 0.1em rgb(20 16 60 / 0.35),
+      0 0.22em 0.45em rgb(20 16 60 / 0.25);
+  }
+
+  .finale__lead {
+    margin-block: var(--s-4) var(--s-6);
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+
+  .finale__form { width: min(100%, 30rem); }
+  .finale__form :global(.wl__hint),
+  .finale__form :global(.wl__status) { color: #fff; }
+  .finale__form :global(.wl__row) { justify-content: center; }
+
+  /* ---------- Actors ---------- */
+
+  /* Whatever height the copy and the band leave over; the actors scale to fit it. */
+  .finale__stage {
+    flex: 1;
+    min-height: 10rem; /* short screens: keep Bloom readable and let the frame scroll */
+    container-type: size;
+    display: grid;
+    place-items: end center;
+    padding-bottom: 3svh;
+  }
+
+  .finale__actors {
+    position: relative;
+    z-index: 1;
+    width: min(96vw, 100cqh * 40 / 27);
+    aspect-ratio: 40 / 27;
+  }
+  .finale__actors :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+
+  .finale__flower { position: absolute; aspect-ratio: 1086 / 1448; }
+  .finale__flower :global(img) { filter: brightness(var(--dim)) sepia(0.08) blur(var(--blur)); }
+  .finale__flower.is-mirrored :global(img) { scale: -1 1; }
+
+  .finale__bloom { position: absolute; left: 2%; bottom: 3%; width: 56%; aspect-ratio: 1233 / 1162; z-index: 1; }
+  .finale__bloom :global(img) { filter: brightness(0.97) sepia(0.08); }
+
+  /* Your flower: hidden until the waitlist form reports success. */
+  .finale__new { opacity: 0; }
+  .finale__bud, .finale__open { opacity: 0; }
+  .finale:has(.wl[data-state='success']) .finale__new { opacity: 1; }
+  .finale:has(.wl[data-state='success']) .finale__open { opacity: 1; }
+
+  /* ---------- Motion (entrances use fill backwards: the resting state is the final frame) ---------- */
+
+  .finale__layer.is-in :global(img) { animation: finale-dolly 1800ms var(--ease) backwards; }
+
+  /* Finite on purpose: any infinite animation redraws the whole full-screen scene every frame
+     while the footer is visible (~10x idle GPU). ~25-30s of life, then the frame rests. */
+  .finale__stars span { animation: finale-twinkle 3.2s ease-in-out var(--delay) 8; }
+  .finale__flies span { animation: finale-drift var(--dur) ease-in-out var(--delay) 3; }
+
+  .finale:has(.wl[data-state='success']) .finale__bud {
+    transform-origin: 50% 100%;
+    animation: finale-bud 1400ms var(--ease) backwards;
+  }
+  .finale:has(.wl[data-state='success']) .finale__open {
+    transform-origin: 50% 60%;
+    animation: finale-open 900ms cubic-bezier(0.34, 1.56, 0.64, 1) 900ms backwards;
+  }
+
+  @keyframes finale-dolly {
+    from { transform: scale(var(--from)); }
+  }
+  @keyframes finale-twinkle {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0.25; }
+  }
+  @keyframes finale-drift {
+    0%, 100% { transform: translate(0, 0); opacity: 0.2; }
+    25% { transform: translate(12px, -18px); opacity: 1; }
+    50% { transform: translate(-6px, -30px); opacity: 0.5; }
+    75% { transform: translate(10px, -14px); opacity: 1; }
+  }
+  @keyframes finale-bud {
+    0% { opacity: 0; transform: scaleY(0.4) translateY(10%); }
+    35% { opacity: 1; transform: none; }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes finale-open {
+    0%, 20% { opacity: 0; transform: scale(0.82); }
+    100% { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .finale *, .finale :global(*) { animation: none !important; }
+  }
+
+  @media (max-width: 880px) {
+    .finale__form :global(.wl__row) { justify-content: stretch; }
+  }
+
+  /* ---------- Footer band ---------- */
+
+  .foot { background: var(--band); padding-block: var(--s-8); }
+  .foot__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    font-size: var(--fs-sm);
+    color: rgb(255 255 255 / 0.72);
+  }
+  .foot__brand { font-weight: 900; font-size: 1.125rem; letter-spacing: -0.03em; color: #fff; }
+  .foot__links { display: flex; flex-wrap: wrap; gap: var(--s-6); }
+  .foot__links a { color: rgb(255 255 255 / 0.72); text-decoration: none; }
+  .foot__links a:hover { color: #fff; text-decoration: underline; }
+  .foot__links a:focus-visible { outline-color: #fff; }
+</style>

@@ -1,0 +1,81 @@
+---
+import { Image } from 'astro:assets';
+import low from '../assets/bloom/energy-low.png';
+import normal from '../assets/bloom/energy-normal.png';
+import high from '../assets/bloom/energy-high.png';
+
+const levels = [
+  { img: low, alt: 'Bloom dozing off with a yawn.', label: 'Running on empty', size: '5 min' },
+  { img: normal, alt: 'Bloom sitting with a warm mug.', label: 'About normal', size: '10 min' },
+  { img: high, alt: 'Bloom cheering with both arms up.', label: 'Full of it', size: '20 min' },
+];
+---
+
+<section class="section energy" id="energy">
+  <div class="wrap energy__inner">
+    <div class="energy__copy">
+      <p class="eyebrow" data-reveal>The whole trick</p>
+      <h2 data-reveal style="--index:1">Low on energy?<br />The mission gets smaller.</h2>
+      <p class="prose energy__lede" data-reveal style="--index:2">
+        Bloomley asks how you are before it asks anything of you. A flat day gets
+        you a five-minute mission, not a guilt trip and a broken streak. The bar
+        moves to meet you, which is the only reason anyone keeps showing up.
+      </p>
+    </div>
+
+    <ul class="energy__levels">
+      {levels.map((l, i) => (
+        <li class="energy__level" data-reveal style={`--index:${i}`}>
+          <Image src={l.img} alt={l.alt} width={140} densities={[1, 2]} loading="lazy" />
+          <p class="energy__label">{l.label}</p>
+          <p class="energy__size">{l.size}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .energy__inner { display: grid; gap: clamp(2.5rem, 1rem + 5vw, 5rem); align-items: center; }
+
+  .energy__copy h2 { margin-block: var(--s-3) var(--s-4); }
+  .energy__lede { max-width: 46ch; }
+
+  .energy__levels {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-4);
+    text-align: center;
+  }
+
+  .energy__level img { width: 100%; max-width: 8.75rem; margin-inline: auto; }
+
+  .energy__label {
+    margin-top: var(--s-2);
+    font-size: var(--fs-sm);
+    font-weight: 800;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .energy__size {
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--purple-deep);
+  }
+
+  /* A gentle step down the row: bigger effort, higher lift. */
+  .energy__level:nth-child(2) { translate: 0 -0.75rem; }
+  .energy__level:nth-child(3) { translate: 0 -1.5rem; }
+
+  @media (min-width: 881px) {
+    .energy__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
+  }
+  @media (max-width: 560px) {
+    .energy__level:nth-child(2),
+    .energy__level:nth-child(3) { translate: none; }
+  }
+</style>

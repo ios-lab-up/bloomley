@@ -1,0 +1,128 @@
+---
+interface Props {
+  id: string;
+  hint?: string;
+}
+const { id, hint = 'One email when we open the doors. Nothing else, ever.' } = Astro.props;
+const hintId = `${id}-hint`;
+const statusId = `${id}-status`;
+---
+
+<form class="wl" data-waitlist data-state="idle">
+  <label class="vh" for={id}>Email address</label>
+  <div class="wl__row">
+    <input
+      id={id}
+      name="email"
+      type="email"
+      required
+      autocomplete="email"
+      spellcheck="false"
+      placeholder="you@email.com"
+      aria-describedby={`${hintId} ${statusId}`}
+    />
+    <button class="btn btn--primary" type="submit" data-submit>
+      <span data-label-idle>Join the waitlist</span>
+      <span data-label-busy hidden>Signing you up…</span>
+    </button>
+  </div>
+  <p class="wl__hint" id={hintId}>{hint}</p>
+  <p class="wl__status" id={statusId} role="status" aria-live="polite"></p>
+</form>
+
+<style>
+  .wl { width: 100%; max-width: 30rem; }
+
+  .wl__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+
+  .wl input {
+    flex: 1 1 14rem;
+    min-width: 0;
+    min-height: 3.25rem;
+    padding: 0 1.25rem;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    transition: box-shadow 220ms var(--ease);
+  }
+  .wl input::placeholder { color: var(--secondary); opacity: 1; }
+  .wl input:hover { box-shadow: inset 0 0 0 1.5px var(--purple); }
+  .wl input:user-invalid { box-shadow: inset 0 0 0 1.5px #C2410C; }
+
+  .wl__hint {
+    margin-top: var(--s-3);
+    font-size: var(--fs-sm);
+    color: var(--secondary);
+  }
+
+  .wl__status {
+    margin-top: var(--s-2);
+    font-size: var(--fs-sm);
+    font-weight: 800;
+    min-height: 1lh;
+  }
+  .wl[data-state='error'] .wl__status { color: #C2410C; }
+  .wl[data-state='success'] .wl__status { color: var(--purple-deep); }
+
+  /* Success: the form has done its job, so retire it. */
+  .wl[data-state='success'] .wl__row,
+  .wl[data-state='success'] .wl__hint { display: none; }
+
+  .wl[data-state='loading'] input { pointer-events: none; opacity: 0.6; }
+</style>
+
+<script>
+  // One handler for every waitlist form on the page. Astro bundles this once.
+  const forms = document.querySelectorAll<HTMLFormElement>('form[data-waitlist]');
+
+  for (const form of forms) {
+    const input = form.querySelector<HTMLInputElement>('input[name="email"]')!;
+    const button = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const idle = button.querySelector<HTMLElement>('[data-label-idle]')!;
+    const busy = button.querySelector<HTMLElement>('[data-label-busy]')!;
+    const status = form.querySelector<HTMLElement>('.wl__status')!;
+
+    const setState = (state: 'idle' | 'loading' | 'success' | 'error', message = '') => {
+      form.dataset.state = state;
+      status.textContent = message;
+      const pending = state === 'loading';
+      button.disabled = pending;
+      idle.hidden = pending;
+      busy.hidden = !pending;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      // Native constraint validation handles empty and malformed addresses,
+      // which keeps the browser's own localised messages.
+      if (!form.reportValidity()) return;
+
+      setState('loading');
+      try {
+        await submitEmail(input.value.trim());
+        setState('success', "You're on the list. Bloom will wave when it's time.");
+      } catch {
+        setState('error', "That didn't go through. Try again in a moment?");
+      }
+    });
+
+    input.addEventListener('input', () => {
+      if (form.dataset.state === 'error') setState('idle');
+    });
+  }
+
+  /**
+   * TODO(waitlist): no destination chosen yet. Swap the body for a real POST
+   * once we decide between `POST /waitlist` on apps/api and a hosted service.
+   * Until then this resolves so the success state is reachable and reviewable.
+   */
+  async function submitEmail(email: string): Promise<void> {
+    console.info('[waitlist] stub — would submit:', email);
+    await new Promise((resolve) => setTimeout(resolve, 700));
+  }
+</script>

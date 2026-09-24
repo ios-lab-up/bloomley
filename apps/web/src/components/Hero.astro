@@ -1,0 +1,287 @@
+---
+import { Image } from 'astro:assets';
+import WaitlistForm from './WaitlistForm.astro';
+import hills from '../assets/hero/hills-far.png';
+import garden from '../assets/hero/garden-mid.png';
+import leaves from '../assets/hero/leaves-front.png';
+import bloom from '../assets/hero/bloom-gardening.png';
+import blink from '../assets/hero/bloom-gardening-blink.png';
+import bud from '../assets/hero/flower-bud.png';
+import flower from '../assets/hero/flower-bloom.png';
+
+// Sources are 2x (scripts/upscale-hero.py). Plates render at 104vw because of the parallax headroom.
+const plate = { widths: [960, 1672, 2560, 3344], sizes: '104vw', quality: 90, alt: '' } as const;
+const actor = { widths: [400, 800, 1200, 1600], sizes: '(max-width: 880px) 50vw, 420px', quality: 90, alt: '' } as const;
+---
+
+<!--
+  One cinematic frame. Base CSS is the FINISHED shot; every entrance is an
+  animation with fill-mode backwards, so Reduce Motion (animation: none)
+  lands straight on the final frame. JS only adds pointer parallax + blink.
+-->
+<section class="hero" data-hero>
+  <div class="hero__layer hero__layer--hills" data-depth>
+    <Image {...plate} src={hills} loading="eager" fetchpriority="high" />
+  </div>
+  <div class="hero__layer hero__layer--garden" data-depth>
+    <Image {...plate} src={garden} loading="eager" />
+  </div>
+
+  <div class="wrap hero__copy">
+    <h1>
+      <span class="hero__small"><span class="w" style="--d:200ms">Small</span> <span class="w" style="--d:280ms">actions.</span></span>
+      <span class="hero__big"><span class="w" style="--d:1300ms">Big</span> <span class="w" style="--d:1400ms">change.</span></span>
+    </h1>
+    <p class="hero__lead">Bloomley turns your wellbeing goals into one thing you can do today.</p>
+    <div class="hero__form">
+      <WaitlistForm id="waitlist-hero" />
+    </div>
+  </div>
+
+  <div
+    class="hero__actors"
+    data-depth
+    role="img"
+    aria-label="Bloom, a round mint-green character, kneels in a garden watering a tiny sprout, next to a tall flower in coral, blue and yellow."
+  >
+    <div class="hero__bloom" data-bloom>
+      <Image {...actor} src={bloom} loading="eager" />
+      <Image {...actor} src={blink} loading="lazy" class="hero__blink" />
+    </div>
+    <div class="hero__flower">
+      <Image {...actor} src={bud} loading="eager" class="hero__bud" />
+      <Image {...actor} src={flower} loading="eager" class="hero__open" />
+    </div>
+  </div>
+
+  <div class="hero__layer hero__layer--leaves" data-depth>
+    <Image {...plate} src={leaves} loading="eager" />
+  </div>
+</section>
+
+<style>
+  .hero {
+    /* Sampled from hills-far.png. --ink is 11.6:1 on its darkest point; --secondary is not AA here. */
+    --hero-sky: #AFDBFA;
+    --px: 0;
+    --py: 0;
+
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    margin-top: -4.5rem; /* slide under the sticky nav so the sky reaches the top */
+    padding-top: 4.5rem;
+    overflow: hidden;
+    background: var(--hero-sky);
+  }
+
+  /* ---------- Plates: same canvas, same cover crop, so they register ---------- */
+
+  .hero__layer { position: absolute; inset: 0; pointer-events: none; }
+  .hero__layer :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 100%;
+    scale: 1.04; /* headroom so parallax never shows an edge */
+  }
+  .hero__layer--hills { z-index: -3; }
+  .hero__layer--garden { z-index: -2; }
+  .hero__layer--leaves { z-index: 2; }
+
+  /* Last 14% melts into the page colour so the next section starts clean. */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 14%;
+    z-index: 3;
+    background: linear-gradient(to bottom, transparent, var(--bg));
+    pointer-events: none;
+  }
+
+  /* ---------- Copy ---------- */
+
+  .hero__copy {
+    position: relative;
+    z-index: 4;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    padding-block: clamp(1.5rem, 4svh, 3.5rem) var(--s-6);
+  }
+
+  /* ponytail: white is a deliberate call. The fill is ~1.35:1 on this sky (fails WCAG 3:1);
+     the clay edge + shadow below give the letters a defined silhouette, but do not count toward
+     the ratio. Upgrade path if legibility complaints show up: a deeper sky (#5E9FD8 or darker). */
+  .hero h1 {
+    --clay-edge: #A9C6E6;
+    --clay-shade: rgb(46 84 138 / 0.28);
+    font-size: clamp(3rem, min(8.5vw, 11svh), 7rem);
+    line-height: 0.98;
+    color: #fff;
+  }
+  .hero__small {
+    display: block;
+    font-size: 0.46em;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.1em;
+  }
+  .hero__big { display: block; }
+
+  /* White clay letters lit like the scene: a thin extruded underside, then a soft contact shadow.
+     Set per line (not on h1) so the em values scale with each line's own size. */
+  .hero__small, .hero__big {
+    text-shadow:
+      0 0.018em 0 #E4EFF9,
+      0 0.036em 0 #C9DCF0,
+      0 0.055em 0 var(--clay-edge),
+      0 0.09em 0.1em var(--clay-shade),
+      0 0.22em 0.45em rgb(46 84 138 / 0.16);
+  }
+
+  .hero__lead {
+    margin-block: var(--s-4) var(--s-6);
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+
+  .hero__form { width: min(100%, 30rem); }
+  /* --secondary fails AA on the sky; the form's own copy goes to --ink here. */
+  .hero__form :global(.wl__hint),
+  .hero__form :global(.wl__status) { color: var(--ink); }
+  .hero__form :global(.wl__row) { justify-content: center; }
+
+  /* ---------- Actors: sized by viewport height, planted on the path ---------- */
+
+  .hero__actors {
+    position: relative;
+    z-index: 1;
+    width: min(96vw, 56svh * 40 / 27);
+    aspect-ratio: 40 / 27;
+    margin: auto auto 3svh;
+  }
+  .hero__bloom, .hero__flower { position: absolute; }
+  .hero__bloom { left: 0; bottom: 9%; width: 52.5%; aspect-ratio: 1; }
+  .hero__flower { left: 51%; bottom: 7.4%; width: 45.5%; aspect-ratio: 1086 / 1448; }
+  .hero__actors :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+
+  .hero__bud { opacity: 0; }
+
+  /* Blink: only the face of the blink frame shows, feathered, so the water and sprout never jump. */
+  .hero__blink {
+    opacity: 0;
+    -webkit-mask-image: radial-gradient(12.5% 11% at 56.6% 42.3%, #000 65%, transparent 100%);
+    mask-image: radial-gradient(12.5% 11% at 56.6% 42.3%, #000 65%, transparent 100%);
+  }
+  .hero__bloom[data-blinking] .hero__blink { opacity: 1; }
+
+  /* ---------- Parallax (vars set by JS on fine pointers only) ---------- */
+
+  [data-depth] {
+    translate: calc(var(--px) * var(--depth) * -14px) calc(var(--py) * var(--depth) * -8px);
+    transition: translate 900ms var(--ease);
+  }
+  .hero__layer--hills { --depth: 0.3; }
+  .hero__layer--garden { --depth: 0.6; }
+  .hero__actors { --depth: 1; }
+  .hero__layer--leaves { --depth: 1.6; }
+
+  /* ---------- Opening shot, ~1.7s ---------- */
+
+  /* Camera push-in: far layers settle slower than near ones. */
+  .hero__layer--hills :global(img) { animation: hero-dolly 1800ms var(--ease) backwards; --from: 1.1; }
+  .hero__layer--garden :global(img) { animation: hero-dolly 1600ms var(--ease) 60ms backwards; --from: 1.14; }
+  .hero__layer--leaves :global(img) { animation: hero-dolly 1400ms var(--ease) 120ms backwards; --from: 1.3; }
+
+  .hero .w {
+    display: inline-block;
+    animation: hero-word 900ms var(--ease) var(--d) backwards;
+  }
+  .hero h1 > span { perspective: 600px; }
+
+  .hero__lead { animation: hero-rise 800ms var(--ease) 420ms backwards; }
+  .hero__form { animation: hero-rise 800ms var(--ease) 520ms backwards; }
+
+  .hero__bloom { animation: hero-rise-big 1100ms var(--ease) 380ms backwards; }
+
+  /* Bud grows in, holds, then the flower opens right as "Big change." lands. */
+  .hero__bud {
+    transform-origin: 50% 100%;
+    animation: hero-bud 1500ms var(--ease) 450ms backwards;
+  }
+  .hero__open {
+    transform-origin: 50% 60%;
+    animation: hero-open 900ms cubic-bezier(0.34, 1.56, 0.64, 1) 1250ms backwards;
+  }
+
+  @keyframes hero-dolly {
+    from { transform: scale(var(--from)); }
+  }
+  @keyframes hero-word {
+    from { opacity: 0; transform: translateY(100%) rotateX(-45deg); }
+  }
+  @keyframes hero-rise {
+    from { opacity: 0; transform: translateY(14px); }
+  }
+  @keyframes hero-rise-big {
+    from { opacity: 0; transform: translateY(12%); }
+  }
+  @keyframes hero-bud {
+    0% { opacity: 0; transform: scaleY(0.4) translateY(10%); }
+    35% { opacity: 1; transform: none; }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes hero-open {
+    0%, 20% { opacity: 0; transform: scale(0.82); }
+    100% { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero *, .hero :global(*) { animation: none !important; }
+    [data-depth] { translate: none; }
+  }
+
+  @media (max-width: 880px) {
+    .hero__form :global(.wl__row) { justify-content: stretch; }
+  }
+</style>
+
+<script>
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (hero && !calm) {
+    // Parallax: mouse/trackpad only. Touch has no hover, so it gets the still frame.
+    if (matchMedia('(pointer: fine)').matches) {
+      let frame = 0;
+      hero.addEventListener('pointermove', (e) => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          const r = hero.getBoundingClientRect();
+          hero.style.setProperty('--px', (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
+          hero.style.setProperty('--py', (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
+        });
+      });
+      hero.addEventListener('pointerleave', () => {
+        hero.style.setProperty('--px', '0');
+        hero.style.setProperty('--py', '0');
+      });
+    }
+
+    // Blink every 4-7s. ponytail: setTimeout keeps running off-screen, it is 1 attribute toggle.
+    const bloom = hero.querySelector<HTMLElement>('[data-bloom]');
+    const blinkOnce = () => {
+      bloom?.toggleAttribute('data-blinking', true);
+      setTimeout(() => bloom?.removeAttribute('data-blinking'), 140);
+      setTimeout(blinkOnce, 4000 + Math.random() * 3000);
+    };
+    setTimeout(blinkOnce, 2600);
+  }
+</script>
