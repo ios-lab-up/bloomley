@@ -12,6 +12,7 @@ from datetime import date, datetime, timedelta
 from uuid import UUID
 
 from fastapi import HTTPException, status
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -71,6 +72,7 @@ async def list_user_groups(session: AsyncSession, user_id: UUID) -> list[Group]:
         select(Group)
         .join(GroupMembership, GroupMembership.group_id == Group.id)
         .where(GroupMembership.user_id == user_id)
+        .order_by(GroupMembership.joined_at)
     )
     return list(result.all())
 
@@ -91,7 +93,13 @@ async def join_group(session: AsyncSession, *, user_id: UUID, invite_code: str) 
         raise HTTPException(status.HTTP_409_CONFLICT, "Already a member of this group")
 
     session.add(GroupMembership(group_id=group.id, user_id=user_id))
-    await session.commit()
+    try:
+        await session.commit()
+    except IntegrityError as exc:
+        # Concurrent joins (e.g. a double tap) can both pass the check above;
+        # the unique (group_id, user_id) constraint decides the loser.
+        await session.rollback()
+        raise HTTPException(status.HTTP_409_CONFLICT, "Already a member of this group") from exc
     return group
 
 
@@ -124,6 +132,7 @@ async def list_group_members(
         select(GroupMembership, User)
         .join(User, User.id == GroupMembership.user_id)
         .where(GroupMembership.group_id == group_id)
+        .order_by(GroupMembership.joined_at)
     )
     return list(result.all())
 

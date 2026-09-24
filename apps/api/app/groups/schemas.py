@@ -1,17 +1,21 @@
 """Pydantic request/response schemas for the Groups domain."""
 
 from datetime import date, datetime
+from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, StringConstraints
 
 
 class GroupCreate(BaseModel):
-    name: str = Field(min_length=1, max_length=100)
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
 
 
 class GroupJoinRequest(BaseModel):
-    invite_code: str = Field(min_length=1, max_length=32)
+    # Codes are generated uppercase; normalise so typed-in codes still match.
+    invite_code: Annotated[
+        str, StringConstraints(strip_whitespace=True, to_upper=True, min_length=1, max_length=32)
+    ]
 
 
 class GroupRead(BaseModel):
