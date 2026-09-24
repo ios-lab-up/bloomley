@@ -1,30 +1,32 @@
-// Mirrors apps/api/app/groups/schemas.py — kept in sync by hand (no codegen yet).
-
+/**
+ * Mirrors `app/groups/schemas.py` field-for-field (snake_case, no codegen
+ * yet), matching the convention in `entities/user/model/types.ts`.
+ */
 export type Group = {
   id: string;
   name: string;
-  inviteCode: string;
-  createdBy: string;
-  createdAt: string;
+  invite_code: string;
+  created_by: string;
+  created_at: string;
 };
 
 export type GroupStreak = {
   id: string;
-  groupId: string;
-  currentStreak: number;
-  longestStreak: number;
-  lastActiveDate: string | null;
+  group_id: string;
+  current_streak: number;
+  longest_streak: number;
+  last_active_date: string | null;
 };
 
 export type GroupDetail = Group & {
-  memberCount: number;
+  member_count: number;
   streak: GroupStreak;
 };
 
 export type GroupMember = {
-  membershipId: string;
-  userId: string;
-  displayName: string;
+  membership_id: string;
+  user_id: string;
+  display_name: string;
   email: string;
-  joinedAt: string;
+  joined_at: string;
 };
