@@ -55,7 +55,7 @@ async def get_group(
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ) -> GroupDetailRead:
-    group = await service.get_group_or_404(session, group_id)
+    group = await service.get_member_group_or_404(session, group_id, user.id)
     member_count = await service.get_member_count(session, group_id)
     streak = await service.get_group_streak(session, group_id)
     return GroupDetailRead(
@@ -80,7 +80,7 @@ async def list_group_members(
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ) -> list[GroupMemberRead]:
-    await service.get_group_or_404(session, group_id)
+    await service.get_member_group_or_404(session, group_id, user.id)
     rows = await service.list_group_members(session, group_id)
     return [
         GroupMemberRead(
@@ -100,5 +100,5 @@ async def get_group_streak(
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ) -> GroupStreak:
-    await service.get_group_or_404(session, group_id)
+    await service.get_member_group_or_404(session, group_id, user.id)
     return await service.get_group_streak(session, group_id)

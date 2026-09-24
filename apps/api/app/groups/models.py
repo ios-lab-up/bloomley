@@ -1,8 +1,12 @@
 """SQLModel tables for the Groups domain (GROUPS, GROUP_MEMBERSHIPS, GROUP_STREAKS).
 
 FKs to `users.id` are declared as string table references (not a `User` import)
-so this module has no import-time dependency on `app.users` and can be
-migrated/tested independently of it.
+so this module has no import-time dependency on `app.users`.
+
+`ondelete` rules matter: the Clerk `user.deleted` webhook hard-deletes the
+`users` row, so every FK to it must cascade or null out, or that delete fails.
+`created_by` is SET NULL rather than CASCADE so a group survives its creator
+deleting their account.
 """
 
 from datetime import date, datetime
@@ -18,7 +22,9 @@ class Group(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     name: str
     invite_code: str = Field(unique=True, index=True)
-    created_by: UUID = Field(foreign_key="users.id", index=True)
+    created_by: UUID | None = Field(
+        default=None, foreign_key="users.id", ondelete="SET NULL", index=True
+    )
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -29,8 +35,8 @@ class GroupMembership(SQLModel, table=True):
     )
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
-    group_id: UUID = Field(foreign_key="groups.id", index=True)
-    user_id: UUID = Field(foreign_key="users.id", index=True)
+    group_id: UUID = Field(foreign_key="groups.id", ondelete="CASCADE", index=True)
+    user_id: UUID = Field(foreign_key="users.id", ondelete="CASCADE", index=True)
     joined_at: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -38,7 +44,7 @@ class GroupStreak(SQLModel, table=True):
     __tablename__ = "group_streaks"
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
-    group_id: UUID = Field(foreign_key="groups.id", unique=True, index=True)
+    group_id: UUID = Field(foreign_key="groups.id", ondelete="CASCADE", unique=True, index=True)
     current_streak: int = Field(default=0)
     longest_streak: int = Field(default=0)
     last_active_date: date | None = Field(default=None)

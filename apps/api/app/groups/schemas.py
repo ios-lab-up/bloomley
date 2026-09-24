@@ -20,7 +20,7 @@ class GroupRead(BaseModel):
     id: UUID
     name: str
     invite_code: str
-    created_by: UUID
+    created_by: UUID | None
     created_at: datetime
 
 

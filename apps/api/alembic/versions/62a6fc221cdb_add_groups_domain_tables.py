@@ -22,62 +22,58 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         "groups",
-        sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("id", sa.Uuid(), primary_key=True),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("invite_code", sa.String(), nullable=False),
-        sa.Column("created_by", sa.Uuid(), nullable=False),
+        sa.Column(
+            "created_by",
+            sa.Uuid(),
+            sa.ForeignKey("users.id", ondelete="SET NULL"),
+            nullable=True,
+        ),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.ForeignKeyConstraint(["created_by"], ["users.id"]),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("invite_code"),
     )
-    op.create_index(op.f("ix_groups_created_by"), "groups", ["created_by"])
-    op.create_index(op.f("ix_groups_invite_code"), "groups", ["invite_code"])
+    op.create_index("ix_groups_invite_code", "groups", ["invite_code"], unique=True)
+    op.create_index("ix_groups_created_by", "groups", ["created_by"])
 
     op.create_table(
         "group_memberships",
-        sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column("group_id", sa.Uuid(), nullable=False),
-        sa.Column("user_id", sa.Uuid(), nullable=False),
-        sa.Column("joined_at", sa.DateTime(), nullable=False),
-        sa.ForeignKeyConstraint(["group_id"], ["groups.id"]),
-        sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint(
-            "group_id", "user_id", name="uq_group_memberships_group_user"
+        sa.Column("id", sa.Uuid(), primary_key=True),
+        sa.Column(
+            "group_id",
+            sa.Uuid(),
+            sa.ForeignKey("groups.id", ondelete="CASCADE"),
+            nullable=False,
         ),
+        sa.Column(
+            "user_id",
+            sa.Uuid(),
+            sa.ForeignKey("users.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
+        sa.Column("joined_at", sa.DateTime(), nullable=False),
+        sa.UniqueConstraint("group_id", "user_id", name="uq_group_memberships_group_user"),
     )
-    op.create_index(
-        op.f("ix_group_memberships_group_id"), "group_memberships", ["group_id"]
-    )
-    op.create_index(
-        op.f("ix_group_memberships_user_id"), "group_memberships", ["user_id"]
-    )
+    op.create_index("ix_group_memberships_group_id", "group_memberships", ["group_id"])
+    op.create_index("ix_group_memberships_user_id", "group_memberships", ["user_id"])
 
     op.create_table(
         "group_streaks",
-        sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column("group_id", sa.Uuid(), nullable=False),
+        sa.Column("id", sa.Uuid(), primary_key=True),
+        sa.Column(
+            "group_id",
+            sa.Uuid(),
+            sa.ForeignKey("groups.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("current_streak", sa.Integer(), nullable=False),
         sa.Column("longest_streak", sa.Integer(), nullable=False),
         sa.Column("last_active_date", sa.Date(), nullable=True),
-        sa.ForeignKeyConstraint(["group_id"], ["groups.id"]),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("group_id"),
     )
-    op.create_index(
-        op.f("ix_group_streaks_group_id"), "group_streaks", ["group_id"]
-    )
+    op.create_index("ix_group_streaks_group_id", "group_streaks", ["group_id"], unique=True)
 
 
 def downgrade() -> None:
-    op.drop_index(op.f("ix_group_streaks_group_id"), table_name="group_streaks")
     op.drop_table("group_streaks")
-
-    op.drop_index(op.f("ix_group_memberships_user_id"), table_name="group_memberships")
-    op.drop_index(op.f("ix_group_memberships_group_id"), table_name="group_memberships")
     op.drop_table("group_memberships")
-
-    op.drop_index(op.f("ix_groups_invite_code"), table_name="groups")
-    op.drop_index(op.f("ix_groups_created_by"), table_name="groups")
     op.drop_table("groups")

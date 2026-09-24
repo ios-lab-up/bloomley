@@ -12,7 +12,7 @@ from datetime import date, datetime, timedelta
 from uuid import UUID
 
 from fastapi import HTTPException, status
-from sqlmodel import select
+from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.groups.models import Group, GroupMembership, GroupStreak
@@ -48,6 +48,20 @@ async def create_group(session: AsyncSession, *, owner_id: UUID, name: str) -> G
 async def get_group_or_404(session: AsyncSession, group_id: UUID) -> Group:
     group = await session.get(Group, group_id)
     if group is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Group not found")
+    return group
+
+
+async def get_member_group_or_404(session: AsyncSession, group_id: UUID, user_id: UUID) -> Group:
+    """404s for non-members too, so group ids can't be probed for existence."""
+    group = await get_group_or_404(session, group_id)
+    result = await session.exec(
+        select(GroupMembership.id).where(
+            GroupMembership.group_id == group_id,
+            GroupMembership.user_id == user_id,
+        )
+    )
+    if result.first() is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Group not found")
     return group
 
@@ -98,9 +112,9 @@ async def leave_group(session: AsyncSession, *, user_id: UUID, group_id: UUID) -
 
 async def get_member_count(session: AsyncSession, group_id: UUID) -> int:
     result = await session.exec(
-        select(GroupMembership).where(GroupMembership.group_id == group_id)
+        select(func.count()).select_from(GroupMembership).where(GroupMembership.group_id == group_id)
     )
-    return len(result.all())
+    return result.one()
 
 
 async def list_group_members(
