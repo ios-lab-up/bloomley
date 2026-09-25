@@ -1,0 +1,79 @@
+---
+import { Image } from 'astro:assets';
+import icon from '../assets/bloomley-icon.png';
+---
+<header class="nav" data-nav>
+  <div class="wrap nav__inner">
+    <a class="nav__brand" href="/" aria-label="Bloomley, home">
+      <Image class="nav__icon" src={icon} alt="" width={32} height={32} densities={[1, 2, 3]} loading="eager" />
+      Bloomley
+    </a>
+    <nav aria-label="Primary">
+      <a class="nav__cta" href="#waitlist">Join the waitlist</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    transition: background-color 260ms var(--ease), box-shadow 260ms var(--ease);
+  }
+  /* Backdrop only once you've scrolled, so the hero stays clean. */
+  .nav[data-stuck] {
+    background: var(--bg);
+    box-shadow: 0 1px 0 var(--line);
+  }
+
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    min-height: 4.5rem;
+  }
+
+  .nav__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-weight: 900;
+    font-size: 1.25rem;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav__brand :global(.nav__icon) { width: 2rem; height: 2rem; }
+
+  .nav__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0 var(--s-4);
+    border-radius: var(--r-pill);
+    font-weight: 800;
+    font-size: var(--fs-sm);
+    color: var(--ink);
+    text-decoration: none;
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    background: var(--surface);
+    transition: box-shadow 220ms var(--ease);
+  }
+  .nav__cta:hover { box-shadow: inset 0 0 0 1.5px var(--purple); }
+</style>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+  if (nav) {
+    // A zero-height sentinel is cheaper than listening to scroll.
+    const sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    nav.before(sentinel);
+    new IntersectionObserver(
+      ([entry]) => nav.toggleAttribute('data-stuck', !entry.isIntersecting),
+      { threshold: 1 },
+    ).observe(sentinel);
+  }
+</script>

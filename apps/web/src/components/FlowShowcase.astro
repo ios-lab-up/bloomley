@@ -1,0 +1,113 @@
+---
+import PhoneFrame from './PhoneFrame.astro';
+import ScreenWelcome from './screens/ScreenWelcome.astro';
+import ScreenPillars from './screens/ScreenPillars.astro';
+import ScreenEnergy from './screens/ScreenEnergy.astro';
+import ScreenMission from './screens/ScreenMission.astro';
+import '../styles/screens.css';
+
+const captions = [
+  'Open the app. No account, no form.',
+  'Say what you want to look after.',
+  'Tell Bloom how much you have in the tank.',
+  'Get one mission. Sized to today.',
+];
+---
+
+<section class="section flow" id="flow">
+  <div class="wrap">
+    <div class="flow__head">
+      <p class="eyebrow" data-reveal>The flow</p>
+      <h2 data-reveal style="--index:1">You reach the good part<br />before you reach a password.</h2>
+      <p class="prose flow__lede" data-reveal style="--index:2">
+        Most wellbeing apps ask who you are before they show you anything. Bloomley
+        waits. You get your first mission first, and only then does it offer to save it.
+      </p>
+    </div>
+  </div>
+
+  <div class="flow__rail" role="group" aria-label="Four screens from the Bloomley onboarding flow">
+    <ol class="flow__track">
+      <li class="flow__item">
+        <PhoneFrame label="Welcome screen: Small actions, big change, with a Get started button.">
+          <ScreenWelcome />
+        </PhoneFrame>
+        <p class="flow__caption"><b>01</b>{captions[0]}</p>
+      </li>
+      <li class="flow__item">
+        <PhoneFrame label="Pillar picker: Physical, Mental and emotional, and Social, with two selected.">
+          <ScreenPillars />
+        </PhoneFrame>
+        <p class="flow__caption"><b>02</b>{captions[1]}</p>
+      </li>
+      <li class="flow__item">
+        <PhoneFrame label="Energy check-in offering a five, ten or twenty minute mission.">
+          <ScreenEnergy />
+        </PhoneFrame>
+        <p class="flow__caption"><b>03</b>{captions[2]}</p>
+      </li>
+      <li class="flow__item">
+        <PhoneFrame label="First mission: Walk for 10 minutes, worth ten XP.">
+          <ScreenMission />
+        </PhoneFrame>
+        <p class="flow__caption"><b>04</b>{captions[3]}</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<style>
+  .flow { background: var(--purple-veil); }
+
+  .flow__head { max-width: 46rem; }
+  .flow__head h2 { margin-block: var(--s-3) var(--s-4); }
+  .flow__lede { max-width: 48ch; }
+
+  /* Full-bleed rail so the overflow reads as deliberate, not cramped. */
+  .flow__rail {
+    margin-top: var(--s-12);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-block: var(--s-2) var(--s-4);
+  }
+  .flow__rail::-webkit-scrollbar { display: none; }
+
+  .flow__track {
+    display: flex;
+    gap: clamp(1.25rem, 0.5rem + 2.5vw, 2.75rem);
+    list-style: none;
+    margin: 0;
+    padding: 0 max(var(--gutter), (100vw - var(--maxw)) / 2 + var(--gutter));
+    width: max-content;
+  }
+
+  .flow__item {
+    scroll-snap-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+  }
+
+  /* Alternating lift gives the row rhythm instead of a flat filmstrip. Desktop only. */
+  @media (min-width: 721px) {
+    .flow__item:nth-child(even) { translate: 0 -1.5rem; }
+  }
+
+  .flow__caption {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-2);
+    max-width: 300px;
+    font-size: var(--fs-sm);
+    color: var(--secondary);
+    text-wrap: pretty;
+  }
+  .flow__caption b {
+    font-weight: 900;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    color: var(--purple-deep);
+  }
+</style>

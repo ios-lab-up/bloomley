@@ -1,0 +1,101 @@
+---
+import { Image } from 'astro:assets';
+import walk from '../assets/bloom/bloom-walk.png';
+
+const steps = [
+  {
+    title: 'Name one intention',
+    body: 'Not twelve goals and a spreadsheet. One thing you want to be true this week — move more, sleep better, text a friend back.',
+  },
+  {
+    title: 'Bloom shrinks it to today',
+    body: 'A week-sized intention becomes a today-sized mission. Ten minutes, usually. Small enough that the excuse runs out.',
+  },
+  {
+    title: 'Do it, and that is the day',
+    body: "No streak to protect, no rings to close, no second mission waiting behind the first. Bloom says it out loud: that's everything for today.",
+  },
+];
+---
+
+<section class="section how" id="how">
+  <div class="wrap how__inner">
+    <div class="how__art" data-reveal>
+      <Image
+        src={walk}
+        alt="Bloom striding forward with a small backpack on."
+        widths={[320, 480, 640]}
+        sizes="(max-width: 880px) 50vw, 340px"
+        loading="lazy"
+      />
+    </div>
+
+    <div class="how__body">
+      <p class="eyebrow" data-reveal>How it works</p>
+      <h2 class="how__title" data-reveal style="--index:1">Three decisions.<br />Then you are done deciding.</h2>
+
+      <ol class="how__steps">
+        {steps.map((step, i) => (
+          <li class="how__step" data-reveal style={`--index:${i + 2}`}>
+            <span class="how__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{step.title}</h3>
+              <p class="prose">{step.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Leaving the hero is a chapter break, not a section break: ~1.5x the standard .section top. */
+  .how { padding-top: clamp(6rem, 3rem + 13vw, 12rem); }
+
+  .how__inner { display: grid; gap: clamp(2rem, 1rem + 4vw, 4.5rem); align-items: start; }
+
+  .how__title { margin-block: var(--s-3) var(--s-12); }
+
+  .how__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-8); }
+
+  .how__step {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--s-6);
+    align-items: start;
+    padding-top: var(--s-6);
+    border-top: 1px solid var(--line);
+  }
+  .how__step h3 { margin-bottom: var(--s-2); }
+  .how__step p { max-width: 46ch; }
+
+  .how__num {
+    font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--purple);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .how__art { position: relative; }
+  .how__art img { width: 100%; }
+  .how__art::before {
+    content: '';
+    position: absolute;
+    inset: 12% 0 6% 4%;
+    border-radius: 50%;
+    background: var(--purple-soft);
+    z-index: -1;
+  }
+
+  @media (min-width: 881px) {
+    .how__inner { grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr); }
+    /* Bloom tracks alongside the steps rather than sitting in a box. */
+    .how__art { position: sticky; top: 7rem; }
+  }
+  @media (max-width: 880px) {
+    .how__art { max-width: 15rem; }
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+const faqs = [
+  {
+    q: 'Is it free?',
+    a: 'The daily mission, the three pillars and the energy check-in are free and stay free. If we add a paid tier later it will be for extras, never for the thing the app is actually for.',
+  },
+  {
+    q: 'When does it launch?',
+    a: 'We are building it now and opening access in waves. Join the waitlist and you will get one email when your wave opens — not a newsletter.',
+  },
+  {
+    q: 'Do I have to log everything?',
+    a: 'No. One mission a day, one tap to mark it done. There is no food diary, no step target and no weekly report card.',
+  },
+  {
+    q: 'What happens if I miss a day?',
+    a: 'Nothing. Bloom does not punish gaps or reset a counter to zero. You pick up the next day with a mission sized to how you feel that morning.',
+  },
+  {
+    q: 'Which platforms?',
+    a: 'iPhone and Android at launch, built from one codebase. A web version is not planned yet.',
+  },
+];
+---
+
+<section class="section faq" id="faq">
+  <div class="wrap faq__inner">
+    <div class="faq__head">
+      <p class="eyebrow" data-reveal>Questions</p>
+      <h2 data-reveal style="--index:1">The things people ask.</h2>
+    </div>
+
+    <div class="faq__list">
+      {faqs.map((item, i) => (
+        <details class="faq__item" data-reveal style={`--index:${i}`}>
+          <summary>
+            {item.q}
+            <span class="faq__mark" aria-hidden="true"></span>
+          </summary>
+          <p class="prose">{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__inner { display: grid; gap: clamp(2rem, 1rem + 3vw, 4rem); align-items: start; }
+  .faq__head h2 { margin-top: var(--s-3); }
+
+  .faq__item { border-top: 1px solid var(--line); }
+  .faq__item:last-child { border-bottom: 1px solid var(--line); }
+
+  .faq__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding-block: var(--s-6);
+    font-size: var(--fs-h3);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+    text-wrap: balance;
+  }
+  .faq__item summary::-webkit-details-marker { display: none; }
+  .faq__item summary:hover { color: var(--purple-deep); }
+
+  /* A plus that becomes a minus. Two bars, one rotation, no icon library. */
+  .faq__mark {
+    position: relative;
+    flex: 0 0 auto;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .faq__mark::before,
+  .faq__mark::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--purple-deep);
+    translate: 0 -50%;
+    transition: rotate 260ms var(--ease);
+  }
+  .faq__mark::after { rotate: 90deg; }
+  .faq__item[open] .faq__mark::after { rotate: 0deg; }
+
+  .faq__item > p { padding-bottom: var(--s-6); max-width: 58ch; }
+
+  @media (min-width: 881px) {
+    .faq__inner { grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); }
+    .faq__head { position: sticky; top: 7rem; }
+  }
+</style>

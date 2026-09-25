@@ -1,0 +1,72 @@
+/*
+ * Design tokens — mirrored from the `v3-*` variable set in bloomley.pen.
+ * That file is the source of truth; change it there first, then here.
+ *
+ * Contrast note: white on --purple is 4.13:1, which FAILS WCAG AA for
+ * normal-size text. Never fill a text-bearing control with --purple.
+ * Use --purple-deep (6.54:1 on white) for buttons and links instead.
+ * test/landing.test.mjs enforces this.
+ */
+:root {
+  /* Surfaces */
+  --bg: #FBFAF7;
+  --surface: #FFFFFF;
+  --line: #E8E4EE;
+
+  /* Text */
+  --ink: #1E1A2B;
+  --secondary: #6E6A7C;
+
+  /* Brand */
+  --purple: #9161E8;
+  --purple-deep: #6E42C1;
+  --purple-soft: rgba(145, 97, 232, 0.10);
+  --purple-veil: rgba(145, 97, 232, 0.04);
+
+  /* Pillars */
+  --coral: #E8836B;
+  --sky: #6FA3D9;
+  --sun: #E3B54A;
+
+  /* Bloom's own body colour, for balance */
+  --mint: #9ECFBC;
+  --mint-soft: rgba(158, 207, 188, 0.22);
+
+  /* Type */
+  --font: var(--font-nunito), ui-rounded, system-ui, sans-serif;
+  --fs-display: clamp(2.75rem, 1.3rem + 6.4vw, 4.75rem);
+  --fs-h2: clamp(2rem, 1.25rem + 3.4vw, 3.25rem);
+  --fs-h3: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);
+  --fs-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  --fs-body: 1.0625rem;
+  --fs-sm: 0.9375rem;
+  --fs-xs: 0.8125rem;
+
+  /* Space */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-12: 3rem;
+  --s-16: 4rem;
+  --s-24: 6rem;
+  --s-32: 8rem;
+
+  /* Radii — pill buttons match the app */
+  --r-sm: 0.75rem;
+  --r-md: 1.125rem;
+  --r-lg: 1.5rem;
+  --r-xl: 2rem;
+  --r-pill: 999px;
+
+  /* Motion — one curve for the whole page */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur: 640ms;
+
+  /* Layout */
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --measure: 62ch;
+  --maxw: 1180px;
+}

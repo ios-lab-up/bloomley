@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+import low from '../../assets/bloom/energy-low.png';
+import normal from '../../assets/bloom/energy-normal.png';
+import high from '../../assets/bloom/energy-high.png';
+
+const levels = [
+  { img: low, name: 'Low energy', desc: "A 5-minute mission. That's enough.", on: false },
+  { img: normal, name: 'Steady', desc: 'A 10-minute mission. Your usual pace.', on: true },
+  { img: high, name: 'Full of it', desc: 'A 20-minute mission. Bloom will keep up.', on: false },
+];
+---
+
+<div class="scr scr--spread">
+  <div class="scr__group">
+    <div class="scr__progress">
+      <i></i><i></i><i></i><i data-on></i><i></i>
+    </div>
+    <div class="scr__group" style="gap:7px">
+      <p class="scr__title">How are you today?</p>
+      <p class="scr__sub">No wrong answer. It just sets the size of your mission.</p>
+    </div>
+    <div>
+      {levels.map((l) => (
+        <div class="scr__row" data-on={l.on || undefined}>
+          <Image src={l.img} alt="" width={80} densities={[1, 2]} class="scr__badge" />
+          <div><b>{l.name}</b><span>{l.desc}</span></div>
+          <i class="scr__check" data-on={l.on || undefined}>
+            {l.on && (
+              <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 8.5 6.5 12 13 4.5" />
+              </svg>
+            )}
+          </i>
+        </div>
+      ))}
+    </div>
+  </div>
+  <div class="scr__btn scr__btn--primary">See my first mission</div>
+</div>

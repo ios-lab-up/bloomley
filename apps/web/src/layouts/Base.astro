@@ -1,0 +1,70 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#FBFAF7" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <Font cssVariable="--font-nunito" preload />
+    <script is:inline>
+      document.documentElement.classList.remove('no-js');
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <slot />
+
+    <script>
+      import Lenis from 'lenis';
+      import 'lenis/dist/lenis.css';
+
+      // Reduce Motion is honoured by Lenis itself (respectReducedMotion defaults to true).
+      new Lenis({ autoRaf: true, anchors: true });
+    </script>
+
+    <script>
+      // One observer for the whole page. Opt-out users never see it run.
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+
+      if (reduced) {
+        targets.forEach((el) => el.classList.add('is-in'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -12% 0px', threshold: 0.1 },
+        );
+        targets.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

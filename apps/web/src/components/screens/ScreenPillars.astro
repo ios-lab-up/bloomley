@@ -1,0 +1,38 @@
+---
+const pillars = [
+  { name: 'Physical', desc: 'Movement, water and rest.', colour: 'var(--coral)', on: true },
+  { name: 'Mental & emotional', desc: 'Breathe, pause, unplug.', colour: 'var(--sky)', on: true },
+  { name: 'Social', desc: 'Connect, thank, share.', colour: 'var(--sun)', on: false },
+];
+---
+
+<div class="scr scr--spread">
+  <div class="scr__group">
+    <div class="scr__progress">
+      <i></i><i data-on></i><i></i><i></i><i></i>
+    </div>
+    <div class="scr__group" style="gap:7px">
+      <p class="scr__title">What do you want to look after?</p>
+      <p class="scr__sub">Pick one or more. You can change it anytime.</p>
+    </div>
+    <div>
+      {pillars.map((p) => (
+        <div class="scr__row" data-on={p.on || undefined}>
+          <i class="scr__dot" style={`background:${p.colour}`}></i>
+          <div><b>{p.name}</b><span>{p.desc}</span></div>
+          <i class="scr__check" data-on={p.on || undefined}>
+            {p.on && (
+              <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 8.5 6.5 12 13 4.5" />
+              </svg>
+            )}
+          </i>
+        </div>
+      ))}
+    </div>
+  </div>
+  <div class="scr__stack">
+    <p class="scr__meta" style="text-align:center">2 pillars selected</p>
+    <div class="scr__btn scr__btn--primary">Continue</div>
+  </div>
+</div>
