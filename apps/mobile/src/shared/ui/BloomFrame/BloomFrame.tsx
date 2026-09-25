@@ -7,12 +7,20 @@ type BloomFrameProps = {
 };
 
 export function BloomFrame({ source, size = 200 }: BloomFrameProps) {
+  const blobSize = size * 0.82;
+
   return (
-    <View
-      className="items-center justify-center overflow-hidden rounded-card bg-bloom-purple-soft"
-      style={{ width: size, height: size }}
-    >
-      <Image source={source} style={{ width: size, height: size }} resizeMode="cover" />
+    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        className="bg-bloom-purple-soft"
+        style={{
+          position: 'absolute',
+          width: blobSize,
+          height: blobSize,
+          borderRadius: blobSize / 2,
+        }}
+      />
+      <Image source={source} style={{ width: size, height: size }} resizeMode="contain" />
     </View>
   );
 }

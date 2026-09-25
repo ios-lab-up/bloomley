@@ -29,7 +29,7 @@ export function SaveProgressScreen() {
         <>
           <Pressable
             onPress={completeSignUp}
-            className="h-14 w-full flex-row items-center justify-center gap-2 rounded-btn bg-bloom-ink"
+            className="h-14 w-full flex-row items-center justify-center gap-2 rounded-full bg-bloom-ink"
           >
             <Ionicons name="logo-apple" size={18} color={colors.surface} />
             <Text className="font-nunito-bold text-[17px] text-bloom-surface">
@@ -38,7 +38,7 @@ export function SaveProgressScreen() {
           </Pressable>
           <Pressable
             onPress={completeSignUp}
-            className="h-14 w-full flex-row items-center justify-center gap-2 rounded-btn border border-bloom-line bg-bloom-surface"
+            className="h-14 w-full flex-row items-center justify-center gap-2 rounded-full border border-bloom-line bg-bloom-surface"
           >
             <Ionicons name="logo-google" size={18} color={colors.ink} />
             <Text className="font-nunito-bold text-[17px] text-bloom-ink">

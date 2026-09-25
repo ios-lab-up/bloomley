@@ -12,9 +12,9 @@ type ButtonProps = {
 };
 
 const containerByVariant: Record<ButtonVariant, string> = {
-  primary: 'h-14 w-full items-center justify-center rounded-btn bg-bloom-purple',
+  primary: 'h-14 w-full items-center justify-center rounded-full bg-bloom-purple',
   secondary:
-    'h-14 w-full items-center justify-center rounded-btn border border-bloom-line bg-bloom-surface',
+    'h-14 w-full items-center justify-center rounded-full border border-bloom-line bg-bloom-surface',
   social:
     'h-[52px] w-full flex-row items-center justify-center gap-2 rounded-btn border border-bloom-line bg-bloom-surface',
 };

@@ -7,7 +7,7 @@ type ProgressDotsProps = {
 
 export function ProgressDots({ current, total }: ProgressDotsProps) {
   return (
-    <View className="flex-row gap-1.5">
+    <View className="w-full flex-row items-center justify-center gap-1.5">
       {Array.from({ length: total }, (_, index) => {
         const isActive = index === current - 1;
         return (
