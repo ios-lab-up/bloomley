@@ -1,8 +1,6 @@
 import type { IntentionOption } from './types';
 
-// Chip presets, as designed. Only Físico and Mental y emocional have presets
-// in the source design — Social has none, so its screen only shows the
-// free-text field.
+// Chip presets per pillar. Social presets were added beyond the source design.
 export const intentionOptions: IntentionOption[] = [
   { id: 'moverme-mas', pillarId: 'fisico', label: 'Moverme más' },
   { id: 'dormir-mejor', pillarId: 'fisico', label: 'Dormir mejor' },
@@ -15,4 +13,10 @@ export const intentionOptions: IntentionOption[] = [
   { id: 'desconectar-de-pantallas', pillarId: 'mental', label: 'Desconectar de pantallas' },
   { id: 'meditar', pillarId: 'mental', label: 'Meditar' },
   { id: 'escribir-como-me-siento', pillarId: 'mental', label: 'Escribir cómo me siento' },
+  { id: 'llamar-a-alguien', pillarId: 'social', label: 'Llamar a alguien' },
+  { id: 'escribir-a-un-amigo', pillarId: 'social', label: 'Escribir a un amigo' },
+  { id: 'dar-las-gracias', pillarId: 'social', label: 'Dar las gracias' },
+  { id: 'quedar-con-alguien', pillarId: 'social', label: 'Quedar con alguien' },
+  { id: 'ayudar-a-alguien', pillarId: 'social', label: 'Ayudar a alguien' },
+  { id: 'tiempo-en-familia', pillarId: 'social', label: 'Tiempo en familia' },
 ];

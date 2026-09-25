@@ -1,6 +1,14 @@
-import type { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, Text } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { useEffect, type ReactNode } from 'react';
+import { ActivityIndicator, Pressable } from 'react-native';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 
 type ButtonVariant = 'primary' | 'secondary' | 'social';
 
@@ -36,28 +44,45 @@ export function Button({
   icon,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
+  const reduceMotion = useReducedMotion();
   const scale = useSharedValue(1);
-  const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  const enabled = useSharedValue(isDisabled ? 0 : 1);
+
+  useEffect(() => {
+    enabled.value = withTiming(isDisabled ? 0 : 1, { duration: reduceMotion ? 0 : 250 });
+  }, [isDisabled, reduceMotion, enabled]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: 0.4 + enabled.value * 0.6,
+    transform: [{ scale: scale.value }],
+  }));
 
   return (
     <Animated.View style={[{ width: '100%' }, animatedStyle]}>
       <Pressable
         onPress={onPress}
         onPressIn={() => {
-          scale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
+          if (!reduceMotion) scale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
         }}
         onPressOut={() => {
-          scale.value = withSpring(1, { damping: 12, stiffness: 250 });
+          if (!reduceMotion) scale.value = withSpring(1, { damping: 12, stiffness: 250 });
         }}
         disabled={isDisabled}
-        className={`${containerByVariant[variant]} ${isDisabled ? 'opacity-40' : ''}`}
+        className={containerByVariant[variant]}
       >
         {loading ? (
           <ActivityIndicator color={variant === 'primary' ? '#fff' : undefined} />
         ) : (
           <>
             {icon}
-            <Text className={labelByVariant[variant]}>{label}</Text>
+            <Animated.Text
+              key={label}
+              entering={reduceMotion ? undefined : FadeIn.duration(220)}
+              exiting={reduceMotion ? undefined : FadeOut.duration(120)}
+              className={labelByVariant[variant]}
+            >
+              {label}
+            </Animated.Text>
           </>
         )}
       </Pressable>

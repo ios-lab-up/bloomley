@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 import { View } from 'react-native';
 import Animated, {
   Easing,
+  interpolateColor,
   useAnimatedStyle,
+  useReducedMotion,
   useSharedValue,
   withDelay,
   withTiming,
@@ -19,20 +21,23 @@ const DOT = 8;
 const ACTIVE_WIDTH = 24;
 
 function Dot({ isActive }: { isActive: boolean }) {
-  const width = useSharedValue(DOT);
+  const reduceMotion = useReducedMotion();
+  const width = useSharedValue(reduceMotion && isActive ? ACTIVE_WIDTH : DOT);
   const fill = useSharedValue(isActive ? 1 : 0);
 
   useEffect(() => {
+    const duration = reduceMotion ? 0 : 400;
+    const delay = reduceMotion ? 0 : 250;
     width.value = withDelay(
-      250,
-      withTiming(isActive ? ACTIVE_WIDTH : DOT, { duration: 400, easing: Easing.out(Easing.cubic) }),
+      delay,
+      withTiming(isActive ? ACTIVE_WIDTH : DOT, { duration, easing: Easing.out(Easing.cubic) }),
     );
-    fill.value = withDelay(250, withTiming(isActive ? 1 : 0, { duration: 400 }));
-  }, [isActive, width, fill]);
+    fill.value = withDelay(delay, withTiming(isActive ? 1 : 0, { duration }));
+  }, [isActive, reduceMotion, width, fill]);
 
   const style = useAnimatedStyle(() => ({
     width: width.value,
-    backgroundColor: fill.value > 0.5 ? colors.purple : colors.line,
+    backgroundColor: interpolateColor(fill.value, [0, 1], [colors.line, colors.purple]),
   }));
 
   return <Animated.View style={[{ height: DOT, borderRadius: DOT / 2 }, style]} />;
