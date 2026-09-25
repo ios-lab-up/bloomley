@@ -28,25 +28,25 @@ const captions = [
 
   <div class="flow__rail" role="group" aria-label="Four screens from the Bloomley onboarding flow">
     <ol class="flow__track">
-      <li class="flow__item" style="--index:0">
+      <li class="flow__item">
         <PhoneFrame label="Welcome screen: Small actions, big change, with a Get started button.">
           <ScreenWelcome />
         </PhoneFrame>
         <p class="flow__caption"><b>01</b>{captions[0]}</p>
       </li>
-      <li class="flow__item" style="--index:1">
+      <li class="flow__item">
         <PhoneFrame label="Pillar picker: Physical, Mental and emotional, and Social, with two selected.">
           <ScreenPillars />
         </PhoneFrame>
         <p class="flow__caption"><b>02</b>{captions[1]}</p>
       </li>
-      <li class="flow__item" style="--index:2">
+      <li class="flow__item">
         <PhoneFrame label="Energy check-in offering a five, ten or twenty minute mission.">
           <ScreenEnergy />
         </PhoneFrame>
         <p class="flow__caption"><b>03</b>{captions[2]}</p>
       </li>
-      <li class="flow__item" style="--index:3">
+      <li class="flow__item">
         <PhoneFrame label="First mission: Walk for 10 minutes, worth ten XP.">
           <ScreenMission />
         </PhoneFrame>
@@ -88,8 +88,11 @@ const captions = [
     display: flex;
     flex-direction: column;
     gap: var(--s-4);
-    /* Alternating lift gives the row rhythm instead of a flat filmstrip. */
-    translate: 0 calc(var(--index) % 2 * -1.5rem);
+  }
+
+  /* Alternating lift gives the row rhythm instead of a flat filmstrip. Desktop only. */
+  @media (min-width: 721px) {
+    .flow__item:nth-child(even) { translate: 0 -1.5rem; }
   }
 
   .flow__caption {
@@ -106,9 +109,5 @@ const captions = [
     font-size: var(--fs-xs);
     letter-spacing: 0.08em;
     color: var(--purple-deep);
-  }
-
-  @media (max-width: 720px) {
-    .flow__item { translate: none; }
   }
 </style>
