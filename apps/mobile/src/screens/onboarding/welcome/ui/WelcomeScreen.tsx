@@ -23,7 +23,7 @@ export function WelcomeScreen() {
         <View className="flex-1 items-center justify-center gap-8">
           <BloomFrame source={bloomImages.wave} size={200} />
           <Animated.View
-            entering={reduceMotion ? undefined : staggerEntering(STAGGER_MS)}
+            entering={staggerEntering(STAGGER_MS, reduceMotion)}
             className="w-full gap-3"
           >
             <Text className="text-center font-nunito-bold text-[38px] text-bloom-ink">
@@ -35,7 +35,7 @@ export function WelcomeScreen() {
           </Animated.View>
         </View>
         <Animated.View
-          entering={reduceMotion ? undefined : staggerEntering(STAGGER_MS * 2)}
+          entering={staggerEntering(STAGGER_MS * 2, reduceMotion)}
           style={{ gap: 12, paddingBottom: 24 }}
         >
           <Button label="Empezar" onPress={() => router.push('/onboarding/pillars')} />

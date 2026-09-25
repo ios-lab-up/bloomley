@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { ActivityIndicator, Pressable } from 'react-native';
 import Animated, {
   FadeIn,
@@ -6,7 +6,6 @@ import Animated, {
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
-  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -46,6 +45,11 @@ export function Button({
   const isDisabled = disabled || loading;
   const reduceMotion = useReducedMotion();
   const scale = useSharedValue(1);
+  const hasMounted = useRef(false);
+
+  useEffect(() => {
+    hasMounted.current = true;
+  }, []);
   const enabled = useSharedValue(isDisabled ? 0 : 1);
 
   useEffect(() => {
@@ -62,10 +66,10 @@ export function Button({
       <Pressable
         onPress={onPress}
         onPressIn={() => {
-          if (!reduceMotion) scale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
+          if (!reduceMotion) scale.value = withTiming(0.97, { duration: 100 });
         }}
         onPressOut={() => {
-          if (!reduceMotion) scale.value = withSpring(1, { damping: 12, stiffness: 250 });
+          if (!reduceMotion) scale.value = withTiming(1, { duration: 160 });
         }}
         disabled={isDisabled}
         className={containerByVariant[variant]}
@@ -77,7 +81,7 @@ export function Button({
             {icon}
             <Animated.Text
               key={label}
-              entering={reduceMotion ? undefined : FadeIn.duration(220)}
+              entering={reduceMotion || !hasMounted.current ? undefined : FadeIn.duration(200)}
               exiting={reduceMotion ? undefined : FadeOut.duration(120)}
               className={labelByVariant[variant]}
             >

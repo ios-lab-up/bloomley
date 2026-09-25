@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { View } from 'react-native';
 import Animated, {
-  Easing,
   interpolateColor,
   useAnimatedStyle,
   useReducedMotion,
@@ -10,6 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { easeOut } from '@/shared/lib/motion';
 import { colors } from '@/shared/lib/theme';
 
 type ProgressDotsProps = {
@@ -26,11 +26,11 @@ function Dot({ isActive }: { isActive: boolean }) {
   const fill = useSharedValue(isActive ? 1 : 0);
 
   useEffect(() => {
-    const duration = reduceMotion ? 0 : 400;
-    const delay = reduceMotion ? 0 : 250;
+    const duration = reduceMotion ? 0 : 220;
+    const delay = 0;
     width.value = withDelay(
       delay,
-      withTiming(isActive ? ACTIVE_WIDTH : DOT, { duration, easing: Easing.out(Easing.cubic) }),
+      withTiming(isActive ? ACTIVE_WIDTH : DOT, { duration, easing: easeOut }),
     );
     fill.value = withDelay(delay, withTiming(isActive ? 1 : 0, { duration }));
   }, [isActive, reduceMotion, width, fill]);

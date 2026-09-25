@@ -9,7 +9,7 @@ import Animated, {
   withRepeat,
   withSequence,
   withTiming,
-  ZoomIn,
+  FadeIn,
 } from 'react-native-reanimated';
 
 import { useScrollY } from '@/shared/lib/parallax';
@@ -28,7 +28,7 @@ export function BloomFrame({ source, size = 200 }: BloomFrameProps) {
     if (reduceMotion) return;
     offset.value = withRepeat(
       withSequence(
-        withTiming(-6, { duration: 1800, easing: Easing.inOut(Easing.sin) }),
+        withTiming(-4, { duration: 1800, easing: Easing.inOut(Easing.sin) }),
         withTiming(0, { duration: 1800, easing: Easing.inOut(Easing.sin) }),
       ),
       -1,
@@ -43,7 +43,7 @@ export function BloomFrame({ source, size = 200 }: BloomFrameProps) {
 
   return (
     <Animated.View
-      entering={reduceMotion ? undefined : ZoomIn.duration(600).delay(150).springify().damping(14)}
+      entering={FadeIn.duration(reduceMotion ? 150 : 340).delay(60)}
       style={parallaxStyle}
     >
       <Animated.View style={floatStyle}>
