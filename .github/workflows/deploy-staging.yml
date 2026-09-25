@@ -1,0 +1,24 @@
+name: Deploy staging
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, bloomley]
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync source
+        run: |
+          set -eu
+          install -d -m 755 /opt/bloomley/src
+          rsync -a --delete --exclude .git ./ /opt/bloomley/src/
+          git -C "$GITHUB_WORKSPACE" rev-parse HEAD > /opt/bloomley/src/.deploy-sha
+
+      - name: Deploy staging stack
+        run: /opt/bloomley/deploy.sh staging
