@@ -21,8 +21,8 @@ export function EnergyScreen() {
     >
       <ProgressDots current={3} total={4} />
       <View className="gap-2">
-        <Text className="font-nunito-bold text-3xl text-bloom-ink">¿Cómo estás hoy?</Text>
-        <Text className="font-nunito text-base text-bloom-text-secondary">
+        <Text className="text-center font-nunito-bold text-[34px] text-bloom-ink">¿Cómo estás hoy?</Text>
+        <Text className="text-center font-nunito text-[17px] text-bloom-text-secondary">
           Sin respuesta correcta. Solo ajusta el tamaño de tu misión.
         </Text>
       </View>
@@ -36,10 +36,10 @@ export function EnergyScreen() {
             onPress={() => setEnergyLevel(option.id)}
             showDivider={index < energyOptions.length - 1}
             leading={
-              <View className="h-14 w-14 overflow-hidden rounded-2xl bg-bloom-purple-soft">
+              <View className="h-16 w-16 overflow-hidden rounded-full bg-bloom-purple-soft">
                 <Image
                   source={option.image}
-                  style={{ width: 56, height: 56 }}
+                  style={{ width: 64, height: 64 }}
                   resizeMode="cover"
                 />
               </View>

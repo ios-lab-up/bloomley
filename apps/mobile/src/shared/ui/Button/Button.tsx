@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, Text } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 type ButtonVariant = 'primary' | 'secondary' | 'social';
 
@@ -35,21 +36,31 @@ export function Button({
   icon,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
   return (
-    <Pressable
-      onPress={onPress}
-      disabled={isDisabled}
-      className={`${containerByVariant[variant]} ${isDisabled ? 'opacity-40' : ''}`}
-    >
-      {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? '#fff' : undefined} />
-      ) : (
-        <>
-          {icon}
-          <Text className={labelByVariant[variant]}>{label}</Text>
-        </>
-      )}
-    </Pressable>
+    <Animated.View style={[{ width: '100%' }, animatedStyle]}>
+      <Pressable
+        onPress={onPress}
+        onPressIn={() => {
+          scale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
+        }}
+        onPressOut={() => {
+          scale.value = withSpring(1, { damping: 12, stiffness: 250 });
+        }}
+        disabled={isDisabled}
+        className={`${containerByVariant[variant]} ${isDisabled ? 'opacity-40' : ''}`}
+      >
+        {loading ? (
+          <ActivityIndicator color={variant === 'primary' ? '#fff' : undefined} />
+        ) : (
+          <>
+            {icon}
+            <Text className={labelByVariant[variant]}>{label}</Text>
+          </>
+        )}
+      </Pressable>
+    </Animated.View>
   );
 }

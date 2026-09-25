@@ -19,7 +19,7 @@ export function PillarsScreen() {
     <OnboardingScreenLayout
       footer={
         <>
-          <Text className="text-center font-nunito text-sm text-bloom-text-secondary">
+          <Text className="text-center font-nunito text-[15px] text-bloom-text-secondary">
             {helperLabel(selectedPillars.length)}
           </Text>
           <Button
@@ -32,8 +32,8 @@ export function PillarsScreen() {
     >
       <ProgressDots current={1} total={4} />
       <View className="gap-2">
-        <Text className="font-nunito-bold text-3xl text-bloom-ink">¿Qué quieres cuidar?</Text>
-        <Text className="font-nunito text-base text-bloom-text-secondary">
+        <Text className="text-center font-nunito-bold text-[34px] text-bloom-ink">¿Qué quieres cuidar?</Text>
+        <Text className="text-center font-nunito text-[17px] text-bloom-text-secondary">
           Elige uno o más. Puedes cambiarlo cuando quieras.
         </Text>
       </View>

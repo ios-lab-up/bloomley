@@ -88,8 +88,8 @@ export function EmailScreen() {
           <Ionicons name="arrow-back" size={22} color={colors.ink} />
         </Pressable>
         <View className="gap-2">
-          <Text className="font-nunito-bold text-3xl text-bloom-ink">Revisa tu correo</Text>
-          <Text className="font-nunito text-base text-bloom-text-secondary">
+          <Text className="text-center font-nunito-bold text-[34px] text-bloom-ink">Revisa tu correo</Text>
+          <Text className="text-center font-nunito text-[17px] text-bloom-text-secondary">
             Te enviamos un código a {email}.
           </Text>
         </View>
@@ -124,8 +124,8 @@ export function EmailScreen() {
         <Ionicons name="arrow-back" size={22} color={colors.ink} />
       </Pressable>
       <View className="gap-2">
-        <Text className="font-nunito-bold text-3xl text-bloom-ink">Con tu correo</Text>
-        <Text className="font-nunito text-base text-bloom-text-secondary">
+        <Text className="text-center font-nunito-bold text-[34px] text-bloom-ink">Con tu correo</Text>
+        <Text className="text-center font-nunito text-[17px] text-bloom-text-secondary">
           Tu nombre es para que Bloom te hable. Nada más.
         </Text>
       </View>

@@ -35,10 +35,10 @@ export function IntentionScreen() {
     >
       <ProgressDots current={2} total={4} />
       <View className="gap-2">
-        <Text className="font-nunito-bold text-3xl text-bloom-ink">
+        <Text className="text-center font-nunito-bold text-[34px] text-bloom-ink">
           ¿Qué quieres lograr esta semana?
         </Text>
-        <Text className="font-nunito text-base text-bloom-text-secondary">
+        <Text className="text-center font-nunito text-[17px] text-bloom-text-secondary">
           Una sola intención. Bloom la convierte en misiones pequeñas.
         </Text>
       </View>
@@ -47,7 +47,7 @@ export function IntentionScreen() {
         <View key={pillar.id} className="gap-3">
           <View className="flex-row items-center gap-2">
             <View className={`h-2.5 w-2.5 rounded-full ${pillar.dotColorClassName}`} />
-            <Text className="font-nunito text-sm text-bloom-text-secondary">{pillar.title}</Text>
+            <Text className="text-center font-nunito text-[15px] text-bloom-text-secondary">{pillar.title}</Text>
           </View>
           <View className="gap-3">
             {chunk(options, 2).map((row) => (
@@ -69,7 +69,7 @@ export function IntentionScreen() {
       <View className="gap-3">
         <View className="flex-row items-center gap-2">
           <Ionicons name="create-outline" size={16} color={colors.textSecondary} />
-          <Text className="font-nunito text-sm text-bloom-text-secondary">O escribe la tuya</Text>
+          <Text className="text-center font-nunito text-[15px] text-bloom-text-secondary">O escribe la tuya</Text>
         </View>
         <View className="w-full flex-row items-center gap-2 rounded-btn border border-bloom-line bg-bloom-surface px-4 py-3">
           <TextInput

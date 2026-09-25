@@ -27,12 +27,12 @@ export function FirstMissionScreen() {
       <View className="items-center gap-8 pt-4">
         <BloomFrame source={bloomImages.happy} size={200} />
         <View className="w-full gap-2">
-          <Text className="font-nunito-bold text-4xl text-bloom-ink">{firstMission?.title}</Text>
-          <Text className="font-nunito text-base text-bloom-text-secondary">
+          <Text className="text-center font-nunito-bold text-[38px] text-bloom-ink">{firstMission?.title}</Text>
+          <Text className="text-center font-nunito text-[17px] text-bloom-text-secondary">
             {firstMission?.description}
           </Text>
           {firstMission ? (
-            <Text className="font-nunito text-sm text-bloom-text-secondary">
+            <Text className="text-center font-nunito text-[15px] text-bloom-text-secondary">
               {pillarTitle} · {firstMission.durationMinutes} min · +{firstMission.xp} XP
             </Text>
           ) : null}

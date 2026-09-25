@@ -64,8 +64,8 @@ export function SaveProgressScreen() {
       <View className="items-center gap-6 pt-4">
         <BloomFrame source={bloomImages.trophy} size={140} />
         <View className="w-full gap-2">
-          <Text className="font-nunito-bold text-3xl text-bloom-ink">Guarda tu progreso</Text>
-          <Text className="font-nunito text-base text-bloom-text-secondary">
+          <Text className="text-center font-nunito-bold text-[34px] text-bloom-ink">Guarda tu progreso</Text>
+          <Text className="text-center font-nunito text-[17px] text-bloom-text-secondary">
             Crea tu cuenta en un toque para no perder lo que ya elegiste.
           </Text>
         </View>

@@ -14,10 +14,10 @@ export function WelcomeScreen() {
         <View className="flex-1 items-center justify-center gap-8">
           <BloomFrame source={bloomImages.wave} size={200} />
           <View className="w-full gap-3">
-            <Text className="text-center font-nunito-bold text-4xl text-bloom-ink">
+            <Text className="text-center font-nunito-bold text-[38px] text-bloom-ink">
               Pequeñas acciones.{'\n'}Grandes cambios.
             </Text>
-            <Text className="text-center font-nunito text-base text-bloom-text-secondary">
+            <Text className="text-center font-nunito text-[17px] text-bloom-text-secondary">
               Bloomley convierte tus metas de bienestar en una acción de hoy.
             </Text>
           </View>
