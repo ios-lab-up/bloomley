@@ -10,8 +10,9 @@ type TextFieldProps = {
   onChangeText: (value: string) => void;
   placeholder?: string;
   secureTextEntry?: boolean;
-  keyboardType?: 'default' | 'email-address';
+  keyboardType?: 'default' | 'email-address' | 'number-pad';
   autoCapitalize?: 'none' | 'words' | 'sentences';
+  error?: string;
 };
 
 export function TextField({
@@ -22,6 +23,7 @@ export function TextField({
   secureTextEntry,
   keyboardType = 'default',
   autoCapitalize = 'sentences',
+  error,
 }: TextFieldProps) {
   const [isRevealed, setIsRevealed] = useState(false);
   const hidesText = secureTextEntry && !isRevealed;
@@ -29,7 +31,11 @@ export function TextField({
   return (
     <View className="w-full gap-2">
       <Text className="font-nunito-bold text-sm text-bloom-ink">{label}</Text>
-      <View className="h-[54px] w-full flex-row items-center rounded-btn border border-bloom-line bg-bloom-surface px-4">
+      <View
+        className={`h-[54px] w-full flex-row items-center rounded-btn border bg-bloom-surface px-4 ${
+          error ? 'border-red-400' : 'border-bloom-line'
+        }`}
+      >
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -50,6 +56,7 @@ export function TextField({
           </Pressable>
         ) : null}
       </View>
+      {error ? <Text className="font-nunito text-xs text-red-500">{error}</Text> : null}
     </View>
   );
 }

@@ -13,7 +13,7 @@ const missionCopyByPillar: Record<PillarId, Record<EnergyLevel, { title: string;
       title: 'Camina 10 minutos',
       description: 'Sal a la calle o da vueltas en casa. Sin ritmo, sin meta de pasos. Solo moverte.',
     },
-    high: { title: 'Muévete 20 minutos', description: 'Camina, baila o sube escaleras. Lo que te dé más ganas.' },
+    high: { title: 'Camina 20 minutos', description: 'Sal al parque o a tu calle a buen ritmo. Lo que te dé más ganas.' },
   },
   mental: {
     low: { title: 'Respira 5 minutos', description: 'Cierra los ojos y solo respira. Nada más.' },

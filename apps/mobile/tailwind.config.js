@@ -19,7 +19,7 @@ module.exports = {
       },
       borderRadius: {
         card: '24px',
-        btn: '16px',
+        btn: '9999px',
       },
       fontFamily: {
         nunito: ['Nunito_400Regular'],

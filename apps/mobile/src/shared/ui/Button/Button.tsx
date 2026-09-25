@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Pressable, Text } from 'react-native';
+import { ActivityIndicator, Pressable, Text } from 'react-native';
 
 type ButtonVariant = 'primary' | 'secondary' | 'social';
 
@@ -8,6 +8,7 @@ type ButtonProps = {
   onPress: () => void;
   variant?: ButtonVariant;
   disabled?: boolean;
+  loading?: boolean;
   icon?: ReactNode;
 };
 
@@ -25,15 +26,30 @@ const labelByVariant: Record<ButtonVariant, string> = {
   social: 'font-nunito-bold text-[15px] text-bloom-ink',
 };
 
-export function Button({ label, onPress, variant = 'primary', disabled, icon }: ButtonProps) {
+export function Button({
+  label,
+  onPress,
+  variant = 'primary',
+  disabled,
+  loading,
+  icon,
+}: ButtonProps) {
+  const isDisabled = disabled || loading;
+
   return (
     <Pressable
       onPress={onPress}
-      disabled={disabled}
-      className={`${containerByVariant[variant]} ${disabled ? 'opacity-40' : ''}`}
+      disabled={isDisabled}
+      className={`${containerByVariant[variant]} ${isDisabled ? 'opacity-40' : ''}`}
     >
-      {icon}
-      <Text className={labelByVariant[variant]}>{label}</Text>
+      {loading ? (
+        <ActivityIndicator color={variant === 'primary' ? '#fff' : undefined} />
+      ) : (
+        <>
+          {icon}
+          <Text className={labelByVariant[variant]}>{label}</Text>
+        </>
+      )}
     </Pressable>
   );
 }
