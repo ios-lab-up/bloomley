@@ -28,25 +28,25 @@ const captions = [
 
   <div class="flow__rail" role="group" aria-label="Four screens from the Bloomley onboarding flow">
     <ol class="flow__track">
-      <li class="flow__item">
+      <li class="flow__item" data-reveal>
         <PhoneFrame label="Welcome screen: Small actions, big change, with a Get started button.">
           <ScreenWelcome />
         </PhoneFrame>
         <p class="flow__caption"><b>01</b>{captions[0]}</p>
       </li>
-      <li class="flow__item">
+      <li class="flow__item" data-reveal>
         <PhoneFrame label="Pillar picker: Physical, Mental and emotional, and Social, with two selected.">
           <ScreenPillars />
         </PhoneFrame>
         <p class="flow__caption"><b>02</b>{captions[1]}</p>
       </li>
-      <li class="flow__item">
+      <li class="flow__item" data-reveal>
         <PhoneFrame label="Energy check-in offering a five, ten or twenty minute mission.">
           <ScreenEnergy />
         </PhoneFrame>
         <p class="flow__caption"><b>03</b>{captions[2]}</p>
       </li>
-      <li class="flow__item">
+      <li class="flow__item" data-reveal>
         <PhoneFrame label="First mission: Walk for 10 minutes, worth ten XP.">
           <ScreenMission />
         </PhoneFrame>
@@ -65,12 +65,13 @@ const captions = [
 
   /* Full-bleed rail so the overflow reads as deliberate, not cramped. */
   .flow__rail {
-    margin-top: var(--s-12);
+    margin-top: var(--s-6);
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
-    padding-block: var(--s-2) var(--s-4);
+    /* Top padding must exceed the even-item lift: overflow-x:auto also clips Y. */
+    padding-block: var(--s-8) var(--s-4);
   }
   .flow__rail::-webkit-scrollbar { display: none; }
 
@@ -93,6 +94,44 @@ const captions = [
   /* Alternating lift gives the row rhythm instead of a flat filmstrip. Desktop only. */
   @media (min-width: 721px) {
     .flow__item:nth-child(even) { translate: 0 -1.5rem; }
+  }
+
+  /* Entrance: phones slide in right to left, staggered. transform, not translate,
+     so the even-item lift above is kept. Base CSS is the final frame. */
+  .flow__item:nth-child(2) { --index: 1; }
+  .flow__item:nth-child(3) { --index: 2; }
+  .flow__item:nth-child(4) { --index: 3; }
+
+  /* Native: scrubbed by page scroll, settles once the rail is fully on screen.
+     Named timeline so items track the page, not the rail's own x-scroller.
+     This path owns the motion, so the data-reveal fallback is neutralised. */
+  @supports (animation-timeline: view()) {
+    .flow__item[data-reveal] { opacity: 1; transform: none; transition: none; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .flow__rail { view-timeline: --flow-rail block; }
+      .flow__item {
+        animation: flow-in linear backwards;
+        animation-timeline: --flow-rail;
+        animation-range: entry calc(var(--index, 0) * 10%) entry calc(70% + var(--index, 0) * 10%);
+      }
+    }
+  }
+
+  /* Fallback (Firefox): same move, fired once by the page-wide [data-reveal]
+     observer in Base.astro, which also handles Reduce Motion and no-JS. */
+  @supports not (animation-timeline: view()) {
+    .flow__item[data-reveal]:not(.is-in) {
+      transform: translateX(calc(96px + var(--index, 0) * 48px)) rotate(4deg);
+    }
+  }
+
+  @keyframes flow-in {
+    from {
+      opacity: 0;
+      transform: translateX(calc(96px + var(--index, 0) * 48px)) rotate(4deg);
+      animation-timing-function: var(--ease);
+    }
   }
 
   .flow__caption {

@@ -4,13 +4,13 @@
  * These recreate the onboarding screens from bloomley.pen in HTML so the copy
  * can be English while the app ships in Spanish. Authored for a 300px-wide
  * screen area (the app designs at 393px, so every value here is that value
- * times ~0.76). They are decorative: nothing is interactive.
+ * times ~0.763). They are decorative: nothing is interactive.
  */
 
 .phone {
   --screen-w: 300px;
   flex: 0 0 auto;
-  width: var(--screen-w);
+  width: calc(var(--screen-w) + 18px); /* bezel sits outside the 300px screen */
   padding: 9px;
   border-radius: 46px;
   background: linear-gradient(170deg, #322b45, #1b1727);
@@ -33,9 +33,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px 0;
-  font-size: 11px;
-  font-weight: 800;
+  height: 47px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--ink);
   flex: 0 0 auto;
 }
@@ -48,7 +49,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 14px 18px 18px;
+  padding: 6px 18px 18px;
   min-height: 0;
 }
 .scr--spread { justify-content: space-between; }
@@ -58,23 +59,18 @@
   font-size: 23px;
   font-weight: 900;
   line-height: 1.12;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: var(--ink);
 }
 .scr__title--hero { font-size: 27px; }
-.scr__sub { font-size: 13px; line-height: 1.45; color: var(--secondary); }
+.scr__sub { font-size: 12px; line-height: 1.5; color: var(--secondary); }
 .scr__meta { font-size: 11px; font-weight: 800; color: var(--secondary); }
-.scr__eyebrow {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: var(--purple-deep);
-}
-.scr__stack { display: flex; flex-direction: column; gap: 11px; }
+/* stretch: .scr--center would otherwise shrink the CTAs to their label width */
+.scr__stack { display: flex; flex-direction: column; gap: 9px; align-self: stretch; }
 .scr__group { display: flex; flex-direction: column; gap: 14px; }
 
 /* Progress dots */
-.scr__progress { display: flex; gap: 5px; align-items: center; }
+.scr__progress { display: flex; gap: 5px; align-items: center; align-self: center; }
 .scr__progress i { width: 6px; height: 6px; border-radius: 3px; background: var(--line); }
 .scr__progress i[data-on] { width: 18px; background: var(--purple); }
 
@@ -108,7 +104,7 @@
 .scr__row > div { flex: 1 1 auto; min-width: 0; }
 
 .scr__dot { flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%; }
-.scr__badge { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; }
+.scr__badge { flex: 0 0 auto; width: 43px; height: 43px; border-radius: 50%; }
 
 .scr__check {
   flex: 0 0 auto;
@@ -122,34 +118,21 @@
 .scr__check[data-on] { background: var(--purple); box-shadow: none; }
 .scr__check svg { width: 11px; height: 11px; }
 
-/* Speech bubble with a tail, like the app's component */
-.scr__bubble {
-  position: relative;
+/* Bloom inside a soft purple disc; the art overflows the disc, as in the .pen */
+.scr__halo {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   align-self: center;
-  max-width: 220px;
-  padding: 10px 14px;
-  border-radius: 16px;
-  background: var(--surface);
-  box-shadow: inset 0 0 0 1.2px var(--line);
-  font-size: 12px;
-  line-height: 1.4;
-  color: var(--ink);
-  text-align: center;
+  width: 140px;
+  height: 142px;
+  border-radius: 50%;
+  background: rgba(145, 97, 232, 0.1);
 }
-.scr__bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  translate: -50% 0;
-  width: 12px;
-  height: 7px;
-  background: var(--surface);
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-}
-
-.scr__bloom { align-self: center; width: 130px; }
-.scr__bloom--lg { width: 165px; }
+.scr__halo img { flex: none; max-width: none; width: 183px; }
+.scr__halo--lg { width: 198px; height: 198px; }
+.scr__halo--lg img { width: 250px; }
 
 /* Chips */
 .scr__chips { display: flex; flex-wrap: wrap; gap: 6px; }

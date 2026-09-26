@@ -151,3 +151,26 @@ test('no infinite animations: they keep the GPU redrawing the page while idle', 
   const loops = sources.filter((s) => /animation[^;{}]*\binfinite\b/.test(s.text)).map((s) => s.file);
   assert.deepEqual(loops, [], 'give the animation a finite iteration count');
 });
+
+test('flow rail entrance is scroll-driven, optional and lands on the final frame', () => {
+  const flow = sources.find((s) => s.file === 'src/components/FlowShowcase.astro').text;
+  // Native path only where view() exists, and only without Reduce Motion.
+  assert.match(flow, /@supports \(animation-timeline: view\(\)\)[\s\S]*prefers-reduced-motion: no-preference/);
+  // Firefox fallback: every phone rides the page-wide [data-reveal] observer.
+  assert.match(flow, /@supports not \(animation-timeline: view\(\)\)/);
+  assert.equal(flow.match(/class="flow__item" data-reveal/g)?.length, 4);
+  // Items must follow the page scroll via the named timeline, not view() on the rail's own x-scroller.
+  assert.match(flow, /view-timeline: --flow-rail block/);
+  assert.match(flow, /animation-timeline: --flow-rail/);
+  assert.doesNotMatch(flow, /animation:[^;]*\b(both|forwards)\b/, 'use backwards fill so the resting state is the final frame');
+  // translate is owned by the even-item lift; the keyframes must use transform.
+  assert.doesNotMatch(flow.match(/@keyframes flow-in[\s\S]*?\n  \}/)[0], /\btranslate:/);
+});
+
+test('waitlist input sets its own text colour', () => {
+  // global.css makes inputs inherit colour; the footer is white text, the field is white.
+  const form = sources.find((s) => s.file === 'src/components/WaitlistForm.astro').text;
+  const rule = form.match(/\.wl input \{([^}]*)\}/);
+  assert.ok(rule, '.wl input rule is missing');
+  assert.match(rule[1], /(?<!-)\bcolor:\s*var\(--ink\)/);
+});
