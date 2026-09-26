@@ -13,6 +13,7 @@ from app.core.config import get_settings
 
 # Import domain models so they register on SQLModel.metadata for autogenerate.
 # Add your module's import here when you add a domain package.
+from app.groups import models as groups_models  # noqa: F401
 from app.users import models as users_models  # noqa: F401
 
 config = context.config
