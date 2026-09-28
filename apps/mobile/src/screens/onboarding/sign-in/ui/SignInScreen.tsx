@@ -2,8 +2,9 @@ import { isClerkAPIResponseError, useSignIn } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
+import { useSocialAuth } from '@/features/social-auth';
 import { colors } from '@/shared/lib/theme';
 import { Button, OnboardingScreenLayout, TextField } from '@/shared/ui';
 
@@ -17,6 +18,13 @@ function firstClerkErrorMessage(error: unknown, fallback: string) {
 export function SignInScreen() {
   const router = useRouter();
   const { isLoaded, signIn, setActive } = useSignIn();
+  const {
+    signInWithGoogle,
+    signInWithApple,
+    isGoogleLoading,
+    isAppleLoading,
+    error: socialError,
+  } = useSocialAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -49,17 +57,35 @@ export function SignInScreen() {
       footer={
         <>
           <Button label="Entrar" disabled={!canSubmit} loading={isSubmitting} onPress={handleSignIn} />
-          {error ? (
-            <Text className="text-center font-nunito text-xs text-red-500">{error}</Text>
+          {error || socialError ? (
+            <Text className="text-center font-nunito text-xs text-red-500">
+              {error || socialError}
+            </Text>
           ) : null}
           <View className="items-center gap-4 pt-2">
             <Text className="font-nunito text-[13px] text-bloom-text-secondary">o entra con</Text>
             <View className="w-full flex-row gap-3">
-              <Pressable className="h-[52px] flex-1 items-center justify-center rounded-btn border border-bloom-line bg-bloom-surface">
-                <Ionicons name="logo-apple" size={20} color={colors.ink} />
+              <Pressable
+                onPress={signInWithApple}
+                disabled={isAppleLoading || isGoogleLoading}
+                className="h-[52px] flex-1 items-center justify-center rounded-btn border border-bloom-line bg-bloom-surface"
+              >
+                {isAppleLoading ? (
+                  <ActivityIndicator color={colors.ink} />
+                ) : (
+                  <Ionicons name="logo-apple" size={20} color={colors.ink} />
+                )}
               </Pressable>
-              <Pressable className="h-[52px] flex-1 items-center justify-center rounded-btn border border-bloom-line bg-bloom-surface">
-                <Ionicons name="logo-google" size={20} color={colors.ink} />
+              <Pressable
+                onPress={signInWithGoogle}
+                disabled={isAppleLoading || isGoogleLoading}
+                className="h-[52px] flex-1 items-center justify-center rounded-btn border border-bloom-line bg-bloom-surface"
+              >
+                {isGoogleLoading ? (
+                  <ActivityIndicator color={colors.ink} />
+                ) : (
+                  <Ionicons name="logo-google" size={20} color={colors.ink} />
+                )}
               </Pressable>
             </View>
           </View>

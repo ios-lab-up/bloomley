@@ -1,42 +1,19 @@
 import { useAuth } from '@clerk/clerk-expo';
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import { userApi } from '../api/user';
-import type { User } from '../model/types';
+import { userKeys } from '../api/queryKeys';
 
 export function useCurrentUser() {
   const { isSignedIn } = useAuth();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    if (!isSignedIn) {
-      setUser(null);
-      setError(null);
-      setIsLoading(false);
-      return;
-    }
+  const query = useQuery({
+    queryKey: userKeys.me(),
+    queryFn: userApi.me,
+    enabled: !!isSignedIn,
+  });
 
-    let cancelled = false;
-    setIsLoading(true);
-    setError(null);
-    userApi
-      .me()
-      .then((data) => {
-        if (!cancelled) setUser(data);
-      })
-      .catch((err: unknown) => {
-        if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)));
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isSignedIn]);
-
-  return { user, isLoading, error };
+  // While the query is disabled (signed out), it never leaves `pending` on
+  // its own -- callers must check `isSignedIn` before trusting `isPending`.
+  return { ...query, isSignedIn: !!isSignedIn };
 }
