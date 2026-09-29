@@ -6,7 +6,9 @@ so this module has no import-time dependency on `app.users`.
 `ondelete` rules matter: the Clerk `user.deleted` webhook hard-deletes the
 `users` row, so every FK to it must cascade or null out, or that delete fails.
 `created_by` is SET NULL rather than CASCADE so a group survives its creator
-deleting their account.
+deleting their account. Before that delete, `service._release_groups_on_user_delete`
+deletes groups they were the only member of and hands the rest to the oldest remaining
+member (both also done when a member leaves), so SET NULL is only a last-resort fallback.
 """
 
 from datetime import date, datetime

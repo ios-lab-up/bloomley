@@ -7,3 +7,16 @@ separate follow-up, not included here). Depends on `app.users` for `get_current_
 `service.record_group_activity()` is the single write-point for `group_streaks`; Module 2
 (missions) should call it when a `mission_completion` with a `group_id` is created rather than
 writing to `group_streaks` directly.
+
+When a member leaves or their user is deleted (Clerk `user.deleted` webhook):
+
+- if they were the group's only member, the group is deleted (memberships and streak cascade);
+- otherwise, if they owned it (`created_by`), ownership passes to the oldest remaining member by
+  `joined_at`.
+
+Both paths share `service._delete_groups_left_empty` and `service._transfer_ownership` and lock
+the group rows first so concurrent leaves can't leave an empty group behind. User deletion runs
+them from an ORM `before_delete` listener on `User`, so it only covers `session.delete(user)`, not
+bulk or raw SQL deletes.
+
+New tables referencing `groups.id` need `ondelete="CASCADE"` or group deletion fails.

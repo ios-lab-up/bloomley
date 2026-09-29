@@ -12,7 +12,10 @@ from datetime import date, datetime, timedelta
 from uuid import UUID
 
 from fastapi import HTTPException, status
+from sqlalchemy import Delete, Select, Update, delete, event, update
+from sqlalchemy.engine import Connection
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Mapper
 from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -104,6 +107,10 @@ async def join_group(session: AsyncSession, *, user_id: UUID, invite_code: str) 
 
 
 async def leave_group(session: AsyncSession, *, user_id: UUID, group_id: UUID) -> None:
+    # Serialises leaves of the same group, so the last two members leaving at
+    # once can't each still see the other and both skip the group delete.
+    await session.exec(select(Group.id).where(Group.id == group_id).with_for_update())
+
     result = await session.exec(
         select(GroupMembership).where(
             GroupMembership.group_id == group_id,
@@ -114,8 +121,74 @@ async def leave_group(session: AsyncSession, *, user_id: UUID, group_id: UUID) -
     if membership is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Not a member of this group")
 
-    await session.delete(membership)
+    deleted = await session.exec(_delete_groups_left_empty(user_id, group_id=group_id))
+    if deleted.rowcount == 0:
+        await session.delete(membership)
+        await session.exec(_transfer_ownership(user_id, group_id=group_id))
     await session.commit()
+
+
+def _groups_of(user_id: UUID) -> Select:
+    return select(GroupMembership.group_id).where(GroupMembership.user_id == user_id)
+
+
+def _delete_groups_left_empty(user_id: UUID, *, group_id: UUID | None = None) -> Delete:
+    """DELETE of the groups `user_id` is the only member of, run just before
+    they leave or their user is deleted. Memberships and the streak go with the
+    group through their `ondelete="CASCADE"` FKs. `group_id=None` covers every
+    group the user is in.
+    """
+    others = (
+        select(GroupMembership.id)
+        .where(GroupMembership.group_id == Group.id, GroupMembership.user_id != user_id)
+        .correlate(Group)
+    )
+    stmt = delete(Group).where(Group.id.in_(_groups_of(user_id)), ~others.exists())
+    if group_id is not None:
+        stmt = stmt.where(Group.id == group_id)
+    return stmt
+
+
+def _transfer_ownership(user_id: UUID, *, group_id: UUID | None = None) -> Update:
+    """UPDATE handing groups owned (`created_by`) by `user_id` to their oldest
+    other member (earliest `joined_at`), or NULL if nobody else is left.
+    Matches nothing when the user doesn't own the group, so callers needn't
+    check first. `group_id=None` covers every group the user owns.
+    """
+    next_owner = (
+        select(GroupMembership.user_id)
+        .where(GroupMembership.group_id == Group.id, GroupMembership.user_id != user_id)
+        .order_by(GroupMembership.joined_at, GroupMembership.id)
+        .limit(1)
+        .correlate(Group)
+        .scalar_subquery()
+    )
+    stmt = update(Group).where(Group.created_by == user_id).values(created_by=next_owner)
+    if group_id is not None:
+        stmt = stmt.where(Group.id == group_id)
+    return stmt
+
+
+@event.listens_for(User, "before_delete")
+def _release_groups_on_user_delete(
+    mapper: Mapper, connection: Connection, target: User
+) -> None:
+    """Deletes the groups the user was the only member of and hands the rest
+    they own to the next member, in the same transaction as the `users` DELETE.
+    Groups are locked first (in id order, to avoid deadlocks) for the same
+    reason as in `leave_group`.
+
+    Hooked on the ORM delete so `app.users` (the Clerk `user.deleted` webhook)
+    doesn't need to know about groups.
+    """
+    connection.execute(
+        select(Group.id)
+        .where(Group.id.in_(_groups_of(target.id)))
+        .order_by(Group.id)
+        .with_for_update()
+    )
+    connection.execute(_delete_groups_left_empty(target.id))
+    connection.execute(_transfer_ownership(target.id))
 
 
 async def get_member_count(session: AsyncSession, group_id: UUID) -> int:
