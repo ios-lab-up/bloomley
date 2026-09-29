@@ -5,10 +5,10 @@ import { userApi } from '../api/user';
 import { userKeys } from '../api/queryKeys';
 
 export function useCurrentUser() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, userId } = useAuth();
 
   const query = useQuery({
-    queryKey: userKeys.me(),
+    queryKey: userKeys.me(userId ?? 'anonymous'),
     queryFn: userApi.me,
     enabled: !!isSignedIn,
   });
