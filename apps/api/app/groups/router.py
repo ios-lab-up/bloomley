@@ -87,7 +87,6 @@ async def list_group_members(
             membership_id=membership.id,
             user_id=member.id,
             display_name=member.display_name,
-            email=member.email,
             joined_at=membership.joined_at,
         )
         for membership, member in rows
