@@ -65,6 +65,15 @@ async def get_group(
     )
 
 
+@router.delete("/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_group(
+    group_id: UUID,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> None:
+    await service.delete_group(session, user_id=user.id, group_id=group_id)
+
+
 @router.delete("/{group_id}/members/me", status_code=status.HTTP_204_NO_CONTENT)
 async def leave_group(
     group_id: UUID,

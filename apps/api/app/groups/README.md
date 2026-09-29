@@ -8,6 +8,9 @@ separate follow-up, not included here). Depends on `app.users` for `get_current_
 (missions) should call it when a `mission_completion` with a `group_id` is created rather than
 writing to `group_streaks` directly.
 
+The owner (`created_by`) can delete a group with `DELETE /groups/{id}`; other members get 403 and
+non-members 404, like the other member-only routes.
+
 When a member leaves or their user is deleted (Clerk `user.deleted` webhook):
 
 - if they were the group's only member, the group is deleted (memberships and streak cascade);

@@ -128,6 +128,21 @@ async def leave_group(session: AsyncSession, *, user_id: UUID, group_id: UUID) -
     await session.commit()
 
 
+async def delete_group(session: AsyncSession, *, user_id: UUID, group_id: UUID) -> None:
+    """Owner-only. Memberships and the streak go with the group through their
+    `ondelete="CASCADE"` FKs."""
+    # Locked so a concurrent leave can't hand ownership away between the
+    # ownership check and the delete.
+    await session.exec(select(Group.id).where(Group.id == group_id).with_for_update())
+
+    group = await get_member_group_or_404(session, group_id, user_id)
+    if group.created_by != user_id:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Only the group owner can delete it")
+
+    await session.delete(group)
+    await session.commit()
+
+
 def _groups_of(user_id: UUID) -> Select:
     return select(GroupMembership.group_id).where(GroupMembership.user_id == user_id)
 
