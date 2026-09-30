@@ -24,4 +24,6 @@ bulk or raw SQL deletes. It also takes a per-user advisory lock that `create_gro
 `join_group` share, so a group the user creates or joins while being deleted isn't left empty
 or without an owner. The lock order is in the listener's docstring.
 
-New tables referencing `groups.id` need `ondelete="CASCADE"` or group deletion fails.
+New tables referencing `groups.id` need an `ondelete` rule, or deleting a group fails: `CASCADE`
+for rows that belong to the group, or `SET NULL` on a nullable column for rows that should
+outlive it (like `mission_completions.group_id`).
