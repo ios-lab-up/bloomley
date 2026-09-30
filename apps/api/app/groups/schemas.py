@@ -44,8 +44,8 @@ class GroupDetailRead(GroupRead):
 
 
 class GroupMemberRead(BaseModel):
+    # No `email`: fellow members only see public profile fields, not contact details.
     membership_id: UUID
     user_id: UUID
     display_name: str
-    email: str
     joined_at: datetime
