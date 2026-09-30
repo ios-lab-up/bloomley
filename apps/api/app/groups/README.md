@@ -20,6 +20,8 @@ When a member leaves or their user is deleted (Clerk `user.deleted` webhook):
 Both paths share `service._delete_groups_left_empty` and `service._transfer_ownership` and lock
 the group rows first so concurrent leaves can't leave an empty group behind. User deletion runs
 them from an ORM `before_delete` listener on `User`, so it only covers `session.delete(user)`, not
-bulk or raw SQL deletes.
+bulk or raw SQL deletes. It also takes a per-user advisory lock that `create_group` and
+`join_group` share, so a group the user creates or joins while being deleted isn't left empty
+or without an owner. The lock order is in the listener's docstring.
 
 New tables referencing `groups.id` need `ondelete="CASCADE"` or group deletion fails.

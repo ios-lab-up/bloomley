@@ -37,6 +37,7 @@ async def _generate_unique_invite_code(session: AsyncSession) -> str:
 
 
 async def create_group(session: AsyncSession, *, owner_id: UUID, name: str) -> Group:
+    await _lock_user_against_delete(session, owner_id)
     invite_code = await _generate_unique_invite_code(session)
     group = Group(name=name, invite_code=invite_code, created_by=owner_id)
     session.add(group)
@@ -81,6 +82,7 @@ async def list_user_groups(session: AsyncSession, user_id: UUID) -> list[Group]:
 
 
 async def join_group(session: AsyncSession, *, user_id: UUID, invite_code: str) -> Group:
+    await _lock_user_against_delete(session, user_id)
     result = await session.exec(select(Group).where(Group.invite_code == invite_code))
     group = result.first()
     if group is None:
@@ -143,6 +145,27 @@ async def delete_group(session: AsyncSession, *, user_id: UUID, group_id: UUID) 
     await session.commit()
 
 
+def _user_lock_key(user_id: UUID) -> int:
+    """Postgres advisory lock key for a user: the first 8 bytes of their id."""
+    return int.from_bytes(user_id.bytes[:8], "big", signed=True)
+
+
+async def _lock_user_against_delete(session: AsyncSession, user_id: UUID) -> None:
+    """Shared side of the per-user lock `_release_groups_on_user_delete` takes
+    exclusively, held until commit. Creates and joins wait for an in-flight
+    deletion of the same user, and the deletion waits for them, so it always
+    sees the memberships they add.
+
+    An advisory lock rather than the `users` row, so it doesn't conflict with
+    other modules' row locks (e.g. `add_xp`) or the FK checks on `users.id`.
+    """
+    await session.exec(select(func.pg_advisory_xact_lock_shared(_user_lock_key(user_id))))
+    # The deletion we waited on may have just committed.
+    result = await session.exec(select(User.id).where(User.id == user_id))
+    if result.first() is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "User no longer exists")
+
+
 def _groups_of(user_id: UUID) -> Select:
     return select(GroupMembership.group_id).where(GroupMembership.user_id == user_id)
 
@@ -190,12 +213,19 @@ def _release_groups_on_user_delete(
 ) -> None:
     """Deletes the groups the user was the only member of and hands the rest
     they own to the next member, in the same transaction as the `users` DELETE.
-    Groups are locked first (in id order, to avoid deadlocks) for the same
-    reason as in `leave_group`.
+
+    Lock order, the same in every path that takes more than one of these:
+    1. the per-user advisory lock, exclusive, so a concurrent `create_group` or
+       `join_group` for this user either commits before the group query below
+       or waits until the user is gone (see `_lock_user_against_delete`);
+    2. the user's group rows, in id order, for the same reason as in
+       `leave_group`;
+    3. the `users` row, taken by the DELETE itself after this listener.
 
     Hooked on the ORM delete so `app.users` (the Clerk `user.deleted` webhook)
     doesn't need to know about groups.
     """
+    connection.execute(select(func.pg_advisory_xact_lock(_user_lock_key(target.id))))
     connection.execute(
         select(Group.id)
         .where(Group.id.in_(_groups_of(target.id)))
