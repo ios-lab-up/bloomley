@@ -1,3 +1,11 @@
 export { groupApi } from './api/client';
+export { groupKeys } from './api/queryKeys';
+export { useMyGroups } from './hooks/useMyGroups';
+export { useGroup } from './hooks/useGroup';
+export { useGroupMembers } from './hooks/useGroupMembers';
+export { useGroupStreak } from './hooks/useGroupStreak';
+export { useCreateGroup } from './hooks/useCreateGroup';
+export { useJoinGroup } from './hooks/useJoinGroup';
+export { useLeaveGroup } from './hooks/useLeaveGroup';
 export type { Group, GroupDetail, GroupMember, GroupStreak } from './model/types';
 export { GroupCard } from './ui/GroupCard';

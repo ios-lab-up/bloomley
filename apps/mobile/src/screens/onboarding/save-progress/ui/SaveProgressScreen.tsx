@@ -1,12 +1,62 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { intentionOptions, pillars } from '@/entities/onboarding';
 import { useOnboardingFlow } from '@/features/onboarding-flow';
+import { useSocialAuth } from '@/features/social-auth';
 import { bloomImages } from '@/shared/assets/bloom';
+import { isClerkConfigured } from '@/shared/lib/clerk';
 import { colors } from '@/shared/lib/theme';
 import { BloomFrame, OnboardingScreenLayout } from '@/shared/ui';
+
+// Only mounted when Clerk is configured -- isolates the useSSO() call so
+// this screen doesn't crash in the no-Clerk dev fallback (AppProviders
+// renders the tree without ClerkProvider in that case).
+function SocialSignInButtons() {
+  const { signInWithGoogle, signInWithApple, isGoogleLoading, isAppleLoading, error } =
+    useSocialAuth();
+
+  return (
+    <>
+      <Pressable
+        onPress={signInWithApple}
+        disabled={isAppleLoading || isGoogleLoading}
+        className="h-14 w-full flex-row items-center justify-center gap-2 rounded-btn bg-bloom-ink"
+      >
+        {isAppleLoading ? (
+          <ActivityIndicator color={colors.surface} />
+        ) : (
+          <>
+            <Ionicons name="logo-apple" size={18} color={colors.surface} />
+            <Text className="font-nunito-bold text-[17px] text-bloom-surface">
+              Continuar con Apple
+            </Text>
+          </>
+        )}
+      </Pressable>
+      <Pressable
+        onPress={signInWithGoogle}
+        disabled={isAppleLoading || isGoogleLoading}
+        className="h-14 w-full flex-row items-center justify-center gap-2 rounded-btn border border-bloom-line bg-bloom-surface"
+      >
+        {isGoogleLoading ? (
+          <ActivityIndicator color={colors.ink} />
+        ) : (
+          <>
+            <Ionicons name="logo-google" size={18} color={colors.ink} />
+            <Text className="font-nunito-bold text-[17px] text-bloom-ink">
+              Continuar con Google
+            </Text>
+          </>
+        )}
+      </Pressable>
+      {error ? (
+        <Text className="text-center font-nunito text-xs text-red-500">{error}</Text>
+      ) : null}
+    </>
+  );
+}
 
 export function SaveProgressScreen() {
   const router = useRouter();
@@ -21,38 +71,14 @@ export function SaveProgressScreen() {
     .filter(Boolean)
     .join(', ');
 
-  const completeSignUp = () => router.replace('/');
-
   return (
     <OnboardingScreenLayout
       footer={
         <>
-          <Pressable
-            onPress={completeSignUp}
-            className="h-14 w-full flex-row items-center justify-center gap-2 rounded-btn bg-bloom-ink"
-          >
-            <Ionicons name="logo-apple" size={18} color={colors.surface} />
-            <Text className="font-nunito-bold text-[17px] text-bloom-surface">
-              Continuar con Apple
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={completeSignUp}
-            className="h-14 w-full flex-row items-center justify-center gap-2 rounded-btn border border-bloom-line bg-bloom-surface"
-          >
-            <Ionicons name="logo-google" size={18} color={colors.ink} />
-            <Text className="font-nunito-bold text-[17px] text-bloom-ink">
-              Continuar con Google
-            </Text>
-          </Pressable>
+          {isClerkConfigured ? <SocialSignInButtons /> : null}
           <Pressable onPress={() => router.push('/onboarding/email')}>
             <Text className="text-center font-nunito-bold text-[15px] text-bloom-purple-deep">
               Usar correo
-            </Text>
-          </Pressable>
-          <Pressable onPress={completeSignUp}>
-            <Text className="text-center font-nunito text-[15px] text-bloom-text-secondary">
-              Ahora no
             </Text>
           </Pressable>
           <Text className="text-center font-nunito text-xs text-bloom-text-secondary">
