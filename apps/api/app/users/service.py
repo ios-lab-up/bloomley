@@ -3,6 +3,10 @@
 `add_xp` is the single write path for `xp_total`/`level`: other modules
 (missions, groups, ...) must call it instead of mutating those columns
 directly, so the leveling rule lives in exactly one place.
+
+`grant_xp` is the non-committing variant for callers that bundle the XP award
+into their own transaction (e.g. a mission completion). It shares the same
+atomic UPDATE as `add_xp`, so concurrent awards never lose updates.
 """
 
 from datetime import datetime
@@ -28,6 +32,30 @@ async def get_user_by_clerk_id(session: AsyncSession, clerk_user_id: str) -> Use
     return result.first()
 
 
+async def grant_xp(session: AsyncSession, user_id: UUID, amount: int) -> None:
+    """Awards XP/level inside a caller-owned transaction (does NOT commit).
+
+    Same atomic UPDATE as :func:`add_xp`, minus the commit: callers that
+    bundle the award into their own unit of work (e.g. a mission completion
+    writing completion + feedback + streak + XP together) use this and commit
+    once at the end.
+
+    Atomicity note (see :func:`add_xp`): the arithmetic happens in the SET
+    clause, so concurrent awards queue on the row lock and add up instead of
+    overwriting each other.
+    """
+    new_xp = User.xp_total + amount
+    stmt = (
+        update(User)
+        .where(User.id == user_id)
+        .values(xp_total=new_xp, level=func.greatest(1, new_xp / XP_PER_LEVEL + 1))
+        .returning(User.id)
+    )
+    result = await session.exec(stmt)
+    if result.first() is None:
+        raise ValueError(f"User {user_id} not found")
+
+
 async def add_xp(session: AsyncSession, user_id: UUID, amount: int) -> User:
     """Atomically increments xp_total and recomputes level in one UPDATE.
 
@@ -45,16 +73,7 @@ async def add_xp(session: AsyncSession, user_id: UUID, amount: int) -> User:
     derive both columns from the same in-flight `xp_total` expression to
     stay atomic. test_add_xp_concurrency.py asserts they agree.
     """
-    new_xp = User.xp_total + amount
-    stmt = (
-        update(User)
-        .where(User.id == user_id)
-        .values(xp_total=new_xp, level=func.greatest(1, new_xp / XP_PER_LEVEL + 1))
-        .returning(User.id)
-    )
-    result = await session.exec(stmt)
-    if result.first() is None:
-        raise ValueError(f"User {user_id} not found")
+    await grant_xp(session, user_id, amount)
     await session.commit()
 
     user = await session.get(User, user_id)
