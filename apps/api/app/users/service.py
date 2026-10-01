@@ -3,6 +3,10 @@
 `add_xp` is the single write path for `xp_total`/`level`: other modules
 (missions, groups, ...) must call it instead of mutating those columns
 directly, so the leveling rule lives in exactly one place.
+
+`grant_xp` is the non-committing variant for callers that bundle the XP award
+into their own transaction (e.g. a mission completion): it applies the same
+rule and uses SELECT ... FOR UPDATE so concurrent awards never lose updates.
 """
 
 from datetime import datetime
@@ -27,14 +31,26 @@ async def get_user_by_clerk_id(session: AsyncSession, clerk_user_id: str) -> Use
     return result.first()
 
 
-async def add_xp(session: AsyncSession, user_id: UUID, amount: int) -> User:
-    user = await session.get(User, user_id)
+async def grant_xp(session: AsyncSession, user_id: UUID, amount: int) -> User:
+    """Awards XP/level inside a caller-owned transaction (does NOT commit).
+
+    Uses ``SELECT ... FOR UPDATE`` on the user row so concurrent awards for
+    the same user add up instead of overwriting each other (lost update).
+    The caller must commit (and ideally refresh) as part of its own unit of
+    work.
+    """
+    user = await session.get(User, user_id, with_for_update=True)
     if user is None:
         raise ValueError(f"User {user_id} not found")
 
     user.xp_total += amount
     user.level = calculate_level(user.xp_total)
     session.add(user)
+    return user
+
+
+async def add_xp(session: AsyncSession, user_id: UUID, amount: int) -> User:
+    user = await grant_xp(session, user_id, amount)
     await session.commit()
     await session.refresh(user)
     return user

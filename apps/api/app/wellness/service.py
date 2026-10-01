@@ -110,8 +110,17 @@ async def bump_streak_for_activity(session: AsyncSession, user_id: UUID) -> Stre
 
     Calendar day (UTC): the streak advances once per day, resets when the
     user misses a day, and ``longest_streak`` is kept in lockstep.
+
+    Does NOT commit: the caller owns the surrounding transaction (a mission
+    completion) and commits it, so the streak, the completion and the XP
+    award always land atomically.
     """
-    streak = await get_or_create_streak(session, user_id)
+    result = await session.exec(select(Streak).where(Streak.user_id == user_id))
+    streak = result.first()
+    if streak is None:
+        streak = Streak(user_id=user_id)
+        session.add(streak)
+
     today = datetime.utcnow().date()
     if streak.last_active_date == today:
         return streak
@@ -124,6 +133,4 @@ async def bump_streak_for_activity(session: AsyncSession, user_id: UUID) -> Stre
     streak.last_active_date = today
     streak.updated_at = datetime.utcnow()
     session.add(streak)
-    await session.commit()
-    await session.refresh(streak)
     return streak
