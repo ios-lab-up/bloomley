@@ -1,5 +1,5 @@
 {
-  "version": "2.14",
+  "version": "2.20",
   "children": [
     {
       "type": "frame",
@@ -2894,68 +2894,6 @@
     },
     {
       "type": "frame",
-      "id": "i3XrE9",
-      "x": 300,
-      "y": 2322,
-      "name": "v2 Speech Bubble",
-      "reusable": true,
-      "width": 300,
-      "layout": "vertical",
-      "alignItems": "center",
-      "children": [
-        {
-          "type": "frame",
-          "id": "t2pHEI",
-          "name": "Body",
-          "width": "fill_container",
-          "fill": "$v2-surface",
-          "cornerRadius": 22,
-          "effect": {
-            "type": "shadow",
-            "shadowType": "outer",
-            "color": "#2B265014",
-            "offset": {
-              "x": 0,
-              "y": 6
-            },
-            "blur": 18
-          },
-          "layout": "vertical",
-          "padding": [
-            16,
-            20
-          ],
-          "children": [
-            {
-              "type": "text",
-              "id": "fXCv3",
-              "name": "Text",
-              "fill": "$v2-ink",
-              "textGrowth": "fixed-width",
-              "width": "fill_container",
-              "content": "Hola, soy Bloom.",
-              "lineHeight": 1.4,
-              "textAlign": "center",
-              "fontFamily": "$v2-font",
-              "fontSize": 16,
-              "fontWeight": "600"
-            }
-          ]
-        },
-        {
-          "type": "polygon",
-          "polygonCount": 3,
-          "id": "sGlRi",
-          "name": "Tail",
-          "flipY": true,
-          "fill": "$v2-surface",
-          "width": 18,
-          "height": 12
-        }
-      ]
-    },
-    {
-      "type": "frame",
       "id": "o3rawl",
       "x": 0,
       "y": 2572,
@@ -3358,16 +3296,24 @@
                   "alignItems": "center",
                   "children": [
                     {
+                      "type": "frame",
                       "id": "euoKK",
-                      "type": "ref",
-                      "ref": "i3XrE9",
                       "name": "Bubble",
                       "width": 320,
-                      "descendants": {
-                        "fXCv3": {
-                          "content": "Hola, soy Bloom. Voy a acompañarte, no a juzgarte. Empecemos con algo pequeño."
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "polygon",
+                          "polygonCount": 3,
+                          "id": "aBlMG",
+                          "name": "Tail",
+                          "flipY": true,
+                          "fill": "$v2-surface",
+                          "width": 18,
+                          "height": 12
                         }
-                      }
+                      ]
                     },
                     {
                       "id": "lKE7Q",
@@ -4552,16 +4498,24 @@
                   "alignItems": "center",
                   "children": [
                     {
+                      "type": "frame",
                       "id": "QJwMH",
-                      "type": "ref",
-                      "ref": "i3XrE9",
                       "name": "Bubble",
                       "width": 280,
-                      "descendants": {
-                        "fXCv3": {
-                          "content": "Esto es todo por hoy. En serio."
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "polygon",
+                          "polygonCount": 3,
+                          "id": "g2nLeR",
+                          "name": "Tail",
+                          "flipY": true,
+                          "fill": "$v2-surface",
+                          "width": 18,
+                          "height": 12
                         }
-                      }
+                      ]
                     },
                     {
                       "id": "u1xBFF",
@@ -5933,7 +5887,7 @@
                         "type": "image",
                         "enabled": true,
                         "url": "apps/mobile/assets/bloom/BloomWave.png",
-                        "mode": "fill"
+                        "mode": "cover"
                       },
                       "width": 327,
                       "height": 330
@@ -6419,7 +6373,7 @@
                                     "type": "image",
                                     "enabled": true,
                                     "url": "apps/mobile/assets/bloom/bloom-sleep.png",
-                                    "mode": "fit"
+                                    "mode": "contain"
                                   },
                                   "width": 82,
                                   "height": 56
@@ -6540,7 +6494,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "apps/mobile/assets/bloom/bloom-tea.png",
-                                "mode": "fit"
+                                "mode": "contain"
                               },
                               "width": 78,
                               "height": 64
@@ -6590,7 +6544,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "apps/mobile/assets/bloom/bloom-cheer.png",
-                                "mode": "fit"
+                                "mode": "contain"
                               },
                               "width": 76,
                               "height": 52
@@ -7258,7 +7212,7 @@
                             "type": "image",
                             "enabled": true,
                             "url": "apps/mobile/assets/bloom/BloomHappy.png",
-                            "mode": "fill"
+                            "mode": "cover"
                           },
                           "width": 240,
                           "height": 243
@@ -7432,7 +7386,7 @@
                         "type": "image",
                         "enabled": true,
                         "url": "apps/mobile/assets/bloom/BloomTrophy.png",
-                        "mode": "fill"
+                        "mode": "cover"
                       },
                       "width": 271,
                       "height": 259
@@ -8139,20 +8093,6 @@
       ]
     },
     {
-      "type": "rectangle",
-      "id": "hZHN9",
-      "x": 1703,
-      "y": 6292,
-      "fill": {
-        "type": "image",
-        "enabled": true,
-        "url": "Bloom03.png",
-        "mode": "fill"
-      },
-      "width": 1144,
-      "height": 1179
-    },
-    {
       "type": "frame",
       "id": "rEbUy",
       "x": 2967,
@@ -8163,6 +8103,2328 @@
       "fill": "#00000000",
       "layout": "vertical",
       "gap": 48
+    },
+    {
+      "type": "frame",
+      "id": "ZsI20",
+      "x": 4764,
+      "y": 5000,
+      "name": "19 Home · Editorial Hoy",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#faf9f5ff",
+      "layout": "vertical",
+      "justifyContent": "end",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "gL6oC",
+          "name": "Status Bar",
+          "width": 393,
+          "height": 62,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "ONwLh",
+              "name": "Time",
+              "fill": "$v3-ink",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "gs0yi",
+              "name": "Icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "P92jb6",
+                  "name": "Signal",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "DHmP2",
+                  "name": "Wifi",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "u8NObi",
+                  "name": "Battery",
+                  "width": 22,
+                  "height": 18,
+                  "icon": "battery-full",
+                  "library": "lucide",
+                  "fill": "$ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "N8c3B",
+          "name": "Home navigation area",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            20
+          ],
+          "justifyContent": "end",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "C0frE1",
+              "name": "Navigation spacer",
+              "width": "fill_container",
+              "height": "fill_container",
+              "justifyContent": "center",
+              "alignItems": "end",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "TFFje",
+                  "name": "Curved tab bar · Grupo activo",
+                  "reusable": true,
+                  "width": 353,
+                  "height": 76,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "r5EE6d",
+                      "x": 0,
+                      "y": 4,
+                      "name": "Pill container",
+                      "width": 353,
+                      "height": 68,
+                      "fill": "$v3-surface",
+                      "cornerRadius": 34,
+                      "stroke": "$v3-line",
+                      "strokeWidth": 1.5,
+                      "strokeAlignment": "inner",
+                      "layout": "none"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "W9WITr",
+                      "x": 8,
+                      "y": 16,
+                      "name": "Hoy tab",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$v3-purple-soft",
+                      "cornerRadius": 22,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "uIc2l",
+                          "name": "Hoy icon",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "sun",
+                          "library": "lucide",
+                          "fill": "$v3-purple-deep"
+                        },
+                        {
+                          "type": "text",
+                          "id": "cAazT",
+                          "x": 71,
+                          "y": 16.5,
+                          "name": "Hoy label",
+                          "enabled": false,
+                          "fill": "$v3-surface",
+                          "content": "Hoy",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 17,
+                          "fontWeight": "900"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cX95D",
+                      "x": 72,
+                      "y": 10,
+                      "name": "Grupo active pill",
+                      "width": 145,
+                      "height": 56,
+                      "fill": "$v3-purple-deep",
+                      "cornerRadius": 28,
+                      "gap": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "T1kV3",
+                          "name": "Grupo icon",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "users",
+                          "library": "lucide",
+                          "fill": "$v3-surface"
+                        },
+                        {
+                          "type": "text",
+                          "id": "h0vWX",
+                          "name": "Grupo label",
+                          "fill": "$v3-surface",
+                          "content": "Grupo",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 17,
+                          "fontWeight": "900"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "h2UBUw",
+                      "x": 237,
+                      "y": 16,
+                      "name": "Perfil tab",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$v3-purple-soft",
+                      "cornerRadius": 22,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "F2prx4",
+                          "name": "Perfil icon",
+                          "width": 21,
+                          "height": 21,
+                          "icon": "user-round",
+                          "library": "lucide",
+                          "fill": "$v3-purple-deep"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "GbnVM",
+                      "x": 207,
+                      "y": 15,
+                      "name": "Grupo notification",
+                      "enabled": false,
+                      "fill": "$v3-coral",
+                      "width": 10,
+                      "height": 10,
+                      "stroke": "$v3-surface",
+                      "strokeWidth": 2
+                    },
+                    {
+                      "type": "frame",
+                      "id": "oiSqT",
+                      "x": 301,
+                      "y": 16,
+                      "name": "Ajustes tab",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$v3-purple-soft",
+                      "cornerRadius": 22,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Za8AO",
+                          "name": "Ajustes icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "settings",
+                          "library": "lucide",
+                          "fill": "$v3-purple-deep"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "F1UANi",
+      "x": 5247,
+      "y": 5000,
+      "name": "21 Home · Perfil activo",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#faf9f5ff",
+      "layout": "vertical",
+      "justifyContent": "end",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "kfRn5",
+          "name": "Status Bar",
+          "width": 393,
+          "height": 62,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "C06kL",
+              "name": "Time",
+              "fill": "$v3-ink",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "K3DmJJ",
+              "name": "Icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "aeFxM",
+                  "name": "Signal",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "iVySF",
+                  "name": "Wifi",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "dOC6f",
+                  "name": "Battery",
+                  "width": 22,
+                  "height": 18,
+                  "icon": "battery-full",
+                  "library": "lucide",
+                  "fill": "$ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VDkNV",
+          "name": "Home navigation area",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            20
+          ],
+          "justifyContent": "end",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "dk1Es",
+              "name": "Navigation spacer",
+              "width": "fill_container",
+              "height": "fill_container",
+              "justifyContent": "center",
+              "alignItems": "end",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "B0mfQ",
+                  "name": "Curved tab bar · Grupo activo",
+                  "width": 353,
+                  "height": 76,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "n38rc",
+                      "x": 0,
+                      "y": 4,
+                      "name": "Pill container",
+                      "width": 353,
+                      "height": 68,
+                      "fill": "$v3-surface",
+                      "cornerRadius": 34,
+                      "stroke": "$v3-line",
+                      "strokeWidth": 1.5,
+                      "strokeAlignment": "inner",
+                      "layout": "none"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Q3NG9B",
+                      "x": 8,
+                      "y": 16,
+                      "name": "Hoy tab",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$v3-purple-soft",
+                      "cornerRadius": 22,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "UWFaX",
+                          "name": "Hoy icon",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "sun",
+                          "library": "lucide",
+                          "fill": "$v3-purple-deep"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wrYj4",
+                          "x": 71,
+                          "y": 16.5,
+                          "name": "Hoy label",
+                          "enabled": false,
+                          "fill": "$v3-surface",
+                          "content": "Hoy",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 17,
+                          "fontWeight": "900"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "HpnIP",
+                      "x": 72,
+                      "y": 16,
+                      "name": "Grupo tab",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$v3-purple-soft",
+                      "cornerRadius": 22,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Tsn84",
+                          "name": "Grupo icon",
+                          "width": 21,
+                          "height": 21,
+                          "icon": "users",
+                          "library": "lucide",
+                          "fill": "$v3-purple-deep"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DyZO4",
+                      "x": 136,
+                      "y": 10,
+                      "name": "Perfil active pill",
+                      "width": 145,
+                      "height": 56,
+                      "fill": "$v3-purple-deep",
+                      "cornerRadius": 28,
+                      "gap": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "NiTM9",
+                          "name": "Perfil icon",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "user-round",
+                          "library": "lucide",
+                          "fill": "$v3-surface"
+                        },
+                        {
+                          "type": "text",
+                          "id": "D7CWYJ",
+                          "name": "Perfil label",
+                          "fill": "$v3-surface",
+                          "content": "Perfil",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 17,
+                          "fontWeight": "900"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "RezHX",
+                      "x": 207,
+                      "y": 15,
+                      "name": "Grupo notification",
+                      "enabled": false,
+                      "fill": "$v3-coral",
+                      "width": 10,
+                      "height": 10,
+                      "stroke": "$v3-surface",
+                      "strokeWidth": 2
+                    },
+                    {
+                      "type": "frame",
+                      "id": "r54Oz4",
+                      "x": 301,
+                      "y": 16,
+                      "name": "Ajustes tab",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$v3-purple-soft",
+                      "cornerRadius": 22,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "dADKL",
+                          "name": "Ajustes icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "settings",
+                          "library": "lucide",
+                          "fill": "$v3-purple-deep"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "l3tgdv",
+      "x": 4284,
+      "y": 5000,
+      "name": "19 Home · Editorial Hoy",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#faf9f5ff",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "lVjq7",
+          "name": "Status Bar",
+          "width": 393,
+          "height": 62,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Fttk4",
+              "name": "Time",
+              "fill": "$v3-ink",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "a9WEz",
+              "name": "Icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "stzZX",
+                  "name": "Signal",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "Ihb2M",
+                  "name": "Wifi",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "hatd9",
+                  "name": "Battery",
+                  "width": 22,
+                  "height": 18,
+                  "icon": "battery-full",
+                  "library": "lucide",
+                  "fill": "$ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VPav8",
+          "name": "Home navigation area",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "d5pqt",
+              "name": "Navigation spacer",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "mDWzr",
+              "name": "Curved tab bar",
+              "width": "fill_container",
+              "height": 76,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hCV8I",
+                  "x": 0,
+                  "y": 4,
+                  "name": "Pill container",
+                  "width": 353,
+                  "height": 68,
+                  "fill": "$v3-surface",
+                  "cornerRadius": 34,
+                  "stroke": "$v3-line",
+                  "strokeWidth": 1.5,
+                  "strokeAlignment": "inner",
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "crHRb",
+                  "x": 8,
+                  "y": 10,
+                  "name": "Hoy active pill",
+                  "width": 145,
+                  "height": 56,
+                  "fill": "$v3-purple-deep",
+                  "cornerRadius": 28,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "EMY7H",
+                      "name": "Hoy icon",
+                      "width": 22,
+                      "height": 22,
+                      "icon": "sun",
+                      "library": "lucide",
+                      "fill": "$v3-surface"
+                    },
+                    {
+                      "type": "text",
+                      "id": "OviOZ",
+                      "name": "Hoy label",
+                      "fill": "$v3-surface",
+                      "content": "Hoy",
+                      "fontFamily": "$v3-font",
+                      "fontSize": 17,
+                      "fontWeight": "900"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qxMce",
+                  "x": 173,
+                  "y": 16,
+                  "name": "Grupo tab",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$v3-purple-soft",
+                  "cornerRadius": 22,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "MwYPS",
+                      "name": "Grupo icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "users",
+                      "library": "lucide",
+                      "fill": "$v3-purple-deep"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "W13pPb",
+                  "x": 240,
+                  "y": 16,
+                  "name": "Perfil tab",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$v3-purple-soft",
+                  "cornerRadius": 22,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "K6FjB",
+                      "name": "Perfil icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "user-round",
+                      "library": "lucide",
+                      "fill": "$v3-purple-deep"
+                    }
+                  ]
+                },
+                {
+                  "type": "ellipse",
+                  "id": "tmS72",
+                  "x": 207,
+                  "y": 15,
+                  "name": "Grupo notification",
+                  "fill": "$v3-coral",
+                  "width": 10,
+                  "height": 10,
+                  "stroke": "$v3-surface",
+                  "strokeWidth": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "BrgAV",
+                  "x": 301,
+                  "y": 16,
+                  "name": "Ajustes tab",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$v3-purple-soft",
+                  "cornerRadius": 22,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "i9Htxk",
+                      "name": "Ajustes icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "settings",
+                      "library": "lucide",
+                      "fill": "$v3-purple-deep"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "a1Hfz",
+      "x": 4284,
+      "y": 5000,
+      "name": "19 Home · Editorial Hoy",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#faf9f5ff",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "GFzd3",
+          "name": "Status Bar",
+          "width": 393,
+          "height": 62,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "CrdaY",
+              "name": "Time",
+              "fill": "$v3-ink",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "KOZPe",
+              "name": "Icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "l56tJ",
+                  "name": "Signal",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "I0VlPW",
+                  "name": "Wifi",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "sn5yT",
+                  "name": "Battery",
+                  "width": 22,
+                  "height": 18,
+                  "icon": "battery-full",
+                  "library": "lucide",
+                  "fill": "$ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VU5yX",
+          "name": "Home navigation area",
+          "width": 393,
+          "height": 790,
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "ACiwB",
+              "x": 20,
+              "y": 0,
+              "name": "Frame 1",
+              "width": 353,
+              "height": 714,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "OGdyh",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Contenido check-in",
+                  "width": 353,
+                  "height": 714,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "h5eQAm",
+                      "x": 1,
+                      "y": 18,
+                      "name": "Saludo",
+                      "width": "fill_container(313)",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "LaYKM",
+                          "name": "Saludo usuario",
+                          "fill": "$v3-ink",
+                          "content": "Hola, Sofía ✦",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 28,
+                          "fontWeight": "900"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ofvmo",
+                          "name": "Pregunta de energía",
+                          "fill": "$v3-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "¿Cómo está tu energía hoy?",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 18,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "AW457",
+                      "x": 1,
+                      "y": 99,
+                      "name": "Opciones de energía",
+                      "width": 352,
+                      "height": 75,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "qKre2",
+                          "x": 6,
+                          "y": 30,
+                          "name": "Energía suave",
+                          "fill": "#ffffffff",
+                          "cornerRadius": 18,
+                          "stroke": "#e6e1edff",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "padding": [
+                            9,
+                            10.5
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "pFrwl",
+                              "name": "Etiqueta",
+                              "fill": "$v3-ink",
+                              "content": "Poca energía",
+                              "fontFamily": "$v3-font",
+                              "fontSize": 13,
+                              "fontWeight": "800"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "AV76Z",
+                          "x": 78.0343254849713,
+                          "y": 10,
+                          "rotation": -0.061459556116489435,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "Sleepy%20Mint%20Character%20with%20Floating%20Zs.png",
+                            "mode": "cover"
+                          },
+                          "width": 36,
+                          "height": 32
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Vstpl",
+                          "x": 124,
+                          "y": 29,
+                          "name": "Energía media",
+                          "width": 100,
+                          "height": 37,
+                          "fill": "#ffffffff",
+                          "cornerRadius": 18,
+                          "stroke": "$v3-line",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 7,
+                          "padding": [
+                            10,
+                            4
+                          ],
+                          "justifyContent": "end",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "F1lfwS",
+                              "name": "Etiqueta",
+                              "fill": "$v3-ink",
+                              "content": "Normal",
+                              "fontFamily": "$v3-font",
+                              "fontSize": 13,
+                              "fontWeight": "800"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "t02DZQ",
+                          "x": 193,
+                          "y": 8,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "Cozy%20Mint%20Mascot%20With%20Mug.png",
+                            "mode": "cover"
+                          },
+                          "width": 36,
+                          "height": 32
+                        },
+                        {
+                          "type": "frame",
+                          "id": "jg1PC",
+                          "x": 246,
+                          "y": 29,
+                          "name": "Energía alta",
+                          "fill": "#f2ebffff",
+                          "cornerRadius": 18,
+                          "stroke": "$v3-line",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "padding": [
+                            9.5,
+                            22
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "LWXLk",
+                              "name": "Etiqueta",
+                              "fill": "$v3-ink",
+                              "content": "Con todo",
+                              "fontFamily": "$v3-font",
+                              "fontSize": 13,
+                              "fontWeight": "800"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "Q9gJv",
+                          "x": 315,
+                          "y": 8,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "Joyful%20Mint%20Mascot%20Celebration.png",
+                            "mode": "cover"
+                          },
+                          "width": 36,
+                          "height": 32
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "F8JgRa",
+                      "x": 1,
+                      "y": 188,
+                      "name": "Card tarea · Caminar 5 min",
+                      "reusable": true,
+                      "clip": true,
+                      "width": 352,
+                      "height": 200,
+                      "fill": "#f2ebffff",
+                      "cornerRadius": 24,
+                      "layout": "vertical",
+                      "gap": 7,
+                      "padding": [
+                        20,
+                        0,
+                        0,
+                        19
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "DjrCV",
+                          "name": "Título",
+                          "fill": "$v3-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Camina 5 minutos",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 27,
+                          "fontWeight": "900"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "LSOtm",
+                          "name": "Cabecera",
+                          "width": "fill_container",
+                          "gap": 20,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Es4oh",
+                              "name": "Etiqueta energía media",
+                              "fill": "$v3-surface",
+                              "cornerRadius": 14,
+                              "gap": 6,
+                              "padding": [
+                                7,
+                                10
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "wYoh0",
+                                  "name": "Chispa",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "sparkles",
+                                  "library": "lucide",
+                                  "fill": "#6f42c2ff"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "k1Nun",
+                                  "name": "Texto etiqueta",
+                                  "fill": "#6f42c2ff",
+                                  "content": "Ideal para energía media",
+                                  "fontFamily": "$v3-font",
+                                  "fontSize": 12,
+                                  "fontWeight": "800"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "V5j68m",
+                              "name": "Tiempo",
+                              "fill": "$v3-surface",
+                              "cornerRadius": 14,
+                              "gap": 6,
+                              "padding": [
+                                7,
+                                10
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "q0CUT",
+                                  "name": "Reloj",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "clock-3",
+                                  "library": "lucide",
+                                  "fill": "$v3-text-secondary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "o3FfQo",
+                                  "name": "Duración",
+                                  "fill": "$v3-text-secondary",
+                                  "content": "5 min",
+                                  "fontFamily": "$v3-font",
+                                  "fontSize": 13,
+                                  "fontWeight": "800"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "f9BhS",
+                          "name": "Frame 2",
+                          "width": "fill_container",
+                          "padding": [
+                            12,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "m8AV0",
+                              "name": "Descripción",
+                              "fill": "$v3-text-secondary",
+                              "textGrowth": "fixed-width-height",
+                              "width": "fill_container",
+                              "height": 38,
+                              "content": "Sal a tomar aire o camina por tu espacio. Un paso a la vez.",
+                              "lineHeight": 1.35,
+                              "fontFamily": "$v3-font",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "S6QDN",
+                              "name": "Rectangle",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "Cheerful%20Mint%20Blob%20Marching.png",
+                                "mode": "cover",
+                                "transform": [
+                                  1.145577,
+                                  0,
+                                  0,
+                                  1.383148,
+                                  -0.112411,
+                                  -0.084302
+                                ]
+                              },
+                              "width": 132.00000000000037,
+                              "height": 99.91140412859185
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ePvgB",
+                      "x": 299,
+                      "y": 11,
+                      "name": "Notificaciones",
+                      "width": 46,
+                      "height": 46,
+                      "fill": "$v3-surface",
+                      "cornerRadius": 23,
+                      "stroke": "$v3-line",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "ozwwN",
+                          "x": 12,
+                          "y": 12,
+                          "name": "Campana",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "bell",
+                          "library": "lucide",
+                          "fill": "$v3-ink"
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "e4jyG1",
+                          "x": 30,
+                          "y": 6,
+                          "name": "Indicador notificación",
+                          "fill": "$v3-coral",
+                          "width": 9,
+                          "height": 9,
+                          "stroke": "$v3-surface",
+                          "strokeWidth": 2
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "VrcDc",
+                  "x": -9,
+                  "y": 393,
+                  "name": "Frame 3",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": 10,
+                  "children": [
+                    {
+                      "type": "group",
+                      "id": "AlGSk",
+                      "reusable": true,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": "$gap-section",
+                          "id": "l1WcBw",
+                          "x": 0,
+                          "y": 0,
+                          "name": "RACHA",
+                          "fill": "$v3-surface",
+                          "width": 157,
+                          "height": 144,
+                          "stroke": "$v3-line",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner"
+                        },
+                        {
+                          "type": "text",
+                          "id": "u71HcO",
+                          "x": 20,
+                          "y": 114.30000000000018,
+                          "fill": "#000000",
+                          "textGrowth": "fixed-width-height",
+                          "width": 125,
+                          "height": 18,
+                          "content": "Dias de racha",
+                          "fontFamily": "Nunito",
+                          "fontSize": "$radius-btn",
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "iPvLT",
+                          "x": 20,
+                          "y": 83.69999999999982,
+                          "fill": "#000000",
+                          "textGrowth": "fixed-width-height",
+                          "width": 125,
+                          "height": 28.8,
+                          "content": "22",
+                          "fontFamily": "Nunito",
+                          "fontSize": 27,
+                          "fontWeight": "900"
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "D9aG6A",
+                          "x": 69,
+                          "y": 13.5,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "Cheerful%20Mint%20Flame%20Mascot.png",
+                            "mode": "cover"
+                          },
+                          "width": 75,
+                          "height": 100.8
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": "$gap-section",
+                  "id": "x3IUCW",
+                  "x": 0,
+                  "y": 557,
+                  "name": "RACHA",
+                  "fill": "$v3-surface",
+                  "width": 353,
+                  "height": 144,
+                  "stroke": "$v3-line",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FGlng",
+              "x": 20,
+              "y": 714,
+              "name": "Curved tab bar",
+              "width": "fill_container(353)",
+              "height": 76,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "trQs2",
+                  "x": 0,
+                  "y": 4,
+                  "name": "Pill container",
+                  "width": 353,
+                  "height": 68,
+                  "fill": "$v3-surface",
+                  "cornerRadius": 34,
+                  "stroke": "$v3-line",
+                  "strokeWidth": 1.5,
+                  "strokeAlignment": "inner",
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "W4v698",
+                  "x": 8,
+                  "y": 10,
+                  "name": "Hoy active pill",
+                  "width": 145,
+                  "height": 56,
+                  "fill": "$v3-purple-deep",
+                  "cornerRadius": 28,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "FcUw7",
+                      "name": "Hoy icon",
+                      "width": 22,
+                      "height": 22,
+                      "icon": "sun",
+                      "library": "lucide",
+                      "fill": "$v3-surface"
+                    },
+                    {
+                      "type": "text",
+                      "id": "XK0jH",
+                      "name": "Hoy label",
+                      "fill": "$v3-surface",
+                      "content": "Hoy",
+                      "fontFamily": "$v3-font",
+                      "fontSize": 17,
+                      "fontWeight": "900"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "PlbNU",
+                  "x": 173,
+                  "y": 16,
+                  "name": "Grupo tab",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$v3-purple-soft",
+                  "cornerRadius": 22,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "yATIf",
+                      "name": "Grupo icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "users",
+                      "library": "lucide",
+                      "fill": "$v3-purple-deep"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NUoyx",
+                  "x": 240,
+                  "y": 16,
+                  "name": "Perfil tab",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$v3-purple-soft",
+                  "cornerRadius": 22,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "YIlEF",
+                      "name": "Perfil icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "user-round",
+                      "library": "lucide",
+                      "fill": "$v3-purple-deep"
+                    }
+                  ]
+                },
+                {
+                  "type": "ellipse",
+                  "id": "FtkPi",
+                  "x": 207,
+                  "y": 15,
+                  "name": "Grupo notification",
+                  "fill": "$v3-coral",
+                  "width": 10,
+                  "height": 10,
+                  "stroke": "$v3-surface",
+                  "strokeWidth": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "DEBck",
+                  "x": 301,
+                  "y": 16,
+                  "name": "Ajustes tab",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$v3-purple-soft",
+                  "cornerRadius": 22,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "y5jztS",
+                      "name": "Ajustes icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "settings",
+                      "library": "lucide",
+                      "fill": "$v3-purple-deep"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "IrjOz",
+      "x": 5730,
+      "y": 5000,
+      "name": "22 Home · Ajustes activo",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#faf9f5ff",
+      "layout": "vertical",
+      "justifyContent": "end",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "q9Fm3",
+          "name": "Status Bar",
+          "width": 393,
+          "height": 62,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "a6LBj",
+              "name": "Time",
+              "fill": "$v3-ink",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "mjTOF",
+              "name": "Icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "qcDLl",
+                  "name": "Signal",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "FPoXg",
+                  "name": "Wifi",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "$ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "NqTiT",
+                  "name": "Battery",
+                  "width": 22,
+                  "height": 18,
+                  "icon": "battery-full",
+                  "library": "lucide",
+                  "fill": "$ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "AE45k",
+          "name": "Home navigation area",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            20
+          ],
+          "justifyContent": "end",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "uUTMi",
+              "name": "Navigation spacer",
+              "width": "fill_container",
+              "height": "fill_container",
+              "justifyContent": "center",
+              "alignItems": "end",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Iygu2",
+                  "name": "Curved tab bar · Grupo activo",
+                  "width": 353,
+                  "height": 76,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sbus8",
+                      "x": 0,
+                      "y": 4,
+                      "name": "Pill container",
+                      "width": 353,
+                      "height": 68,
+                      "fill": "$v3-surface",
+                      "cornerRadius": 34,
+                      "stroke": "$v3-line",
+                      "strokeWidth": 1.5,
+                      "strokeAlignment": "inner",
+                      "layout": "none"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "sCbta",
+                      "x": 8,
+                      "y": 16,
+                      "name": "Hoy tab",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$v3-purple-soft",
+                      "cornerRadius": 22,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "lkCIj",
+                          "name": "Hoy icon",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "sun",
+                          "library": "lucide",
+                          "fill": "$v3-purple-deep"
+                        },
+                        {
+                          "type": "text",
+                          "id": "jBiDX",
+                          "x": 71,
+                          "y": 16.5,
+                          "name": "Hoy label",
+                          "enabled": false,
+                          "fill": "$v3-surface",
+                          "content": "Hoy",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 17,
+                          "fontWeight": "900"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qalZt",
+                      "x": 72,
+                      "y": 16,
+                      "name": "Grupo tab",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$v3-purple-soft",
+                      "cornerRadius": 22,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "T0oz0O",
+                          "name": "Grupo icon",
+                          "width": 21,
+                          "height": 21,
+                          "icon": "users",
+                          "library": "lucide",
+                          "fill": "$v3-purple-deep"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "aaXPS",
+                      "x": 136,
+                      "y": 16,
+                      "name": "Perfil tab",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$v3-purple-soft",
+                      "cornerRadius": 22,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "A3mUW",
+                          "name": "Perfil icon",
+                          "width": 21,
+                          "height": 21,
+                          "icon": "user-round",
+                          "library": "lucide",
+                          "fill": "$v3-purple-deep"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "Bn4Fq",
+                      "x": 207,
+                      "y": 15,
+                      "name": "Grupo notification",
+                      "enabled": false,
+                      "fill": "$v3-coral",
+                      "width": 10,
+                      "height": 10,
+                      "stroke": "$v3-surface",
+                      "strokeWidth": 2
+                    },
+                    {
+                      "type": "frame",
+                      "id": "CCEwN",
+                      "x": 200,
+                      "y": 10,
+                      "name": "Ajustes active pill",
+                      "width": 145,
+                      "height": 56,
+                      "fill": "$v3-purple-deep",
+                      "cornerRadius": 28,
+                      "gap": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "xC4vf",
+                          "name": "Ajustes icon",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "settings",
+                          "library": "lucide",
+                          "fill": "$v3-surface"
+                        },
+                        {
+                          "type": "text",
+                          "id": "UVAno",
+                          "name": "Ajustes label",
+                          "fill": "$v3-surface",
+                          "content": "Ajustes",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 17,
+                          "fontWeight": "900"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "rectangle",
+      "id": "hZHN9",
+      "x": 6059,
+      "y": 5877,
+      "fill": {
+        "type": "image",
+        "enabled": true,
+        "url": "Bloom03.png",
+        "mode": "cover",
+        "transform": [
+          3.002625,
+          0,
+          0,
+          3.373053,
+          -0.664042,
+          -0.159278
+        ]
+      },
+      "width": 380.99999999999955,
+      "height": 366.9999999999997
+    },
+    {
+      "type": "rectangle",
+      "id": "SwnyO",
+      "x": 3984,
+      "y": 3642,
+      "fill": {
+        "type": "image",
+        "enabled": true,
+        "url": "Screenshot%202026-10-02%20at%2010.32.48%E2%80%AFAM.png",
+        "mode": "cover"
+      },
+      "width": 1385,
+      "height": 921
+    },
+    {
+      "type": "frame",
+      "id": "abg3g",
+      "x": 6707,
+      "y": 0,
+      "name": "24 Tarea · Poca energía",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "$v3-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "TtoSH",
+          "name": "Status bar",
+          "width": "fill_container",
+          "height": 56,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "h4LvyZ",
+              "name": "Hora",
+              "fill": "$v3-ink",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "khQkw",
+              "name": "System icons",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "S62sD",
+                  "name": "Signal",
+                  "width": 15,
+                  "height": 15,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "$v3-ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "JT6FE",
+                  "name": "Wifi",
+                  "width": 15,
+                  "height": 15,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "$v3-ink"
+                },
+                {
+                  "type": "icon",
+                  "id": "yAMnu",
+                  "name": "Battery",
+                  "width": 17,
+                  "height": 15,
+                  "icon": "battery-medium",
+                  "library": "lucide",
+                  "fill": "$v3-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "jK1kn",
+          "name": "Contenido tarea",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            18,
+            20,
+            12,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "aeahA",
+              "name": "Volver",
+              "gap": 7,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "sMWrW",
+                  "name": "Flecha atrás",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "arrow-left",
+                  "library": "lucide",
+                  "fill": "$v3-purple-deep"
+                },
+                {
+                  "type": "text",
+                  "id": "VGEli",
+                  "name": "Texto volver",
+                  "fill": "$v3-purple-deep",
+                  "content": "Volver",
+                  "fontFamily": "$v3-font",
+                  "fontSize": 14,
+                  "fontWeight": "800"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "D7vO6u",
+              "name": "Introducción",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Y2p0Ou",
+                  "name": "Estado seleccionado",
+                  "fill": "#EEF5FC",
+                  "cornerRadius": 14,
+                  "gap": 7,
+                  "padding": [
+                    7,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "I2oBPx",
+                      "name": "Batería baja",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "battery-low",
+                      "library": "lucide",
+                      "fill": "$v3-sky"
+                    },
+                    {
+                      "type": "text",
+                      "id": "W7XDKG",
+                      "name": "Etiqueta estado",
+                      "fill": "$v3-sky",
+                      "content": "POCA ENERGÍA",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "700",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "ZvWyY",
+                  "name": "Título",
+                  "fill": "$v3-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Hoy vamos despacito.",
+                  "lineHeight": 1.1,
+                  "fontFamily": "$v3-font",
+                  "fontSize": 28,
+                  "fontWeight": "900"
+                },
+                {
+                  "type": "text",
+                  "id": "kUocc",
+                  "name": "Subtítulo",
+                  "fill": "$v3-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Una tarea pequeña también cuenta como avanzar.",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$v3-font",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lZQy7",
+              "name": "Tarea de baja energía",
+              "width": "fill_container",
+              "fill": "#EEF5FC",
+              "cornerRadius": 26,
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pzgmT",
+                  "name": "Cabecera tarea",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "aZzgg",
+                      "name": "Icono agua",
+                      "width": 48,
+                      "height": 48,
+                      "fill": "$v3-surface",
+                      "cornerRadius": 24,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "U4779",
+                          "name": "Vaso de agua",
+                          "width": 25,
+                          "height": 25,
+                          "icon": "glass-water",
+                          "library": "lucide",
+                          "fill": "$v3-sky"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "w7YGG",
+                      "name": "Duración tarea",
+                      "fill": "$v3-surface",
+                      "cornerRadius": 14,
+                      "gap": 6,
+                      "padding": [
+                        7,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "HvZvo",
+                          "name": "Reloj",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "clock-3",
+                          "library": "lucide",
+                          "fill": "$v3-text-secondary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "OhbUw",
+                          "name": "Minutos",
+                          "fill": "$v3-text-secondary",
+                          "content": "2 min",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 13,
+                          "fontWeight": "800"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "mGpb4",
+                  "name": "Nombre tarea",
+                  "fill": "$v3-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Toma un vaso de agua",
+                  "lineHeight": 1.1,
+                  "fontFamily": "$v3-font",
+                  "fontSize": 23,
+                  "fontWeight": "900"
+                },
+                {
+                  "type": "text",
+                  "id": "Mubuq",
+                  "name": "Descripción",
+                  "fill": "$v3-text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Ve por un vaso, respira profundo y toma unos sorbitos. Eso es todo por ahora.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$v3-font",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "psW6S",
+                  "name": "Nota de cuidado",
+                  "width": "fill_container",
+                  "fill": "#FFFFFFA8",
+                  "cornerRadius": 14,
+                  "gap": 9,
+                  "padding": [
+                    11,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Zh3NB",
+                      "name": "Corazón",
+                      "width": 17,
+                      "height": 17,
+                      "icon": "heart",
+                      "library": "lucide",
+                      "fill": "$v3-coral"
+                    },
+                    {
+                      "type": "text",
+                      "id": "EqPKO",
+                      "name": "Texto cuidado",
+                      "fill": "$v3-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Sin presión: puedes hacerla cuando quieras.",
+                      "fontFamily": "$v3-font",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PcfSj",
+              "name": "Botón completar",
+              "width": "fill_container",
+              "height": 54,
+              "fill": "$v3-purple-deep",
+              "cornerRadius": 18,
+              "gap": 9,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "aBfOa",
+                  "name": "Icono completar",
+                  "width": 19,
+                  "height": 19,
+                  "icon": "check",
+                  "library": "lucide",
+                  "fill": "$v3-surface"
+                },
+                {
+                  "type": "text",
+                  "id": "h7bPaP",
+                  "name": "Texto completar",
+                  "fill": "$v3-surface",
+                  "content": "Marcar como hecha",
+                  "fontFamily": "$v3-font",
+                  "fontSize": 16,
+                  "fontWeight": "900"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "gzhKw",
+              "name": "Cambiar tarea",
+              "fill": "$v3-purple-deep",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Prefiero otra tarea",
+              "textAlign": "center",
+              "fontFamily": "$v3-font",
+              "fontSize": 14,
+              "fontWeight": "800"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Bhpm0",
+          "name": "Navegación inferior",
+          "width": "fill_container",
+          "height": 92,
+          "padding": [
+            8,
+            20,
+            16,
+            20
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "Xjy8c",
+              "type": "ref",
+              "ref": "TFFje",
+              "name": "Barra Hoy activa",
+              "descendants": {
+                "W9WITr": {
+                  "x": 72,
+                  "width": 145,
+                  "fill": "$v3-purple-deep",
+                  "gap": 8
+                },
+                "uIc2l": {
+                  "fill": "$v3-surface"
+                },
+                "cAazT": {
+                  "enabled": true,
+                  "x": 71,
+                  "y": 10.5,
+                  "fill": "$v3-surface",
+                  "content": "Hoy",
+                  "fontFamily": "$v3-font",
+                  "fontSize": 17,
+                  "fontWeight": "900"
+                },
+                "cX95D": {
+                  "x": 8,
+                  "width": 44,
+                  "height": 44,
+                  "y": 16,
+                  "fill": "$v3-purple-soft"
+                },
+                "T1kV3": {
+                  "fill": "$v3-purple-deep"
+                },
+                "h0vWX": {
+                  "enabled": false
+                },
+                "h2UBUw": {
+                  "x": 237
+                },
+                "GbnVM": {
+                  "enabled": false
+                },
+                "oiSqT": {
+                  "x": 301
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "YK9rj",
+      "type": "ref",
+      "ref": "s1wTx",
+      "x": 7140,
+      "y": 0
+    },
+    {
+      "id": "NOFSM",
+      "type": "ref",
+      "ref": "s1wTx",
+      "x": 7480,
+      "y": 0
+    },
+    {
+      "id": "F61eW",
+      "type": "ref",
+      "ref": "s1wTx",
+      "x": 7820,
+      "y": 0
     }
   ],
   "variables": {
