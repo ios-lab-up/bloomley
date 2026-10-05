@@ -27,7 +27,7 @@ export const settingsSections: SettingsSection[] = [
     id: 'perfil',
     title: 'Perfil',
     items: [
-      { id: 'foto', label: 'Foto de perfil', icon: 'camera-outline', route: null },
+      { id: 'foto', label: 'Foto de perfil', icon: 'camera-outline', route: '/profile-photo' },
       { id: 'nombre', label: 'Nombre y usuario', icon: 'person-outline', route: null },
     ],
   },
