@@ -1,3 +1,4 @@
+import { useUser } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,6 +8,7 @@ import { Button } from '@/shared/ui';
 
 export function ProfileScreen() {
   const router = useRouter();
+  const { user: clerkUser } = useUser();
   const { data: user, isPending, isError, refetch, isFetching, isSignedIn } = useCurrentUser();
 
   if (!isSignedIn) {
@@ -44,7 +46,11 @@ export function ProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-bloom-bg px-6">
       <View className="flex-1 items-center justify-center gap-6">
-        <UserAvatar displayName={user.display_name} />
+        <UserAvatar
+          displayName={user.display_name}
+          imageUrl={clerkUser?.hasImage ? clerkUser.imageUrl : null}
+          size={96}
+        />
         <View className="items-center gap-1">
           <Text className="font-nunito-bold text-[22px] text-bloom-ink">{user.display_name}</Text>
           <Text className="font-nunito text-bloom-text-secondary">{user.email}</Text>
