@@ -1,6 +1,7 @@
 import { useAuth } from '@clerk/clerk-expo';
 import { Redirect } from 'expo-router';
 
+import { useSyncOnboardingChoices } from '@/features/onboarding-sync';
 import { ProfileScreen } from '@/screens/profile';
 import { isClerkConfigured } from '@/shared/lib/clerk';
 
@@ -24,5 +25,10 @@ function AuthGatedHome() {
     return <Redirect href="/onboarding/welcome" />;
   }
 
+  return <SignedInHome />;
+}
+
+function SignedInHome() {
+  useSyncOnboardingChoices();
   return <ProfileScreen />;
 }
