@@ -1,9 +1,10 @@
 import { useClerk } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { UserAvatar, useCurrentUser } from '@/entities/user';
+import { PreparingGardenScreen } from '@/screens/preparing-garden';
 import { Button } from '@/shared/ui';
 
 export function ProfileScreen() {
@@ -27,21 +28,11 @@ export function ProfileScreen() {
   }
 
   if (isPending) {
-    return (
-      <SafeAreaView className="flex-1 items-center justify-center gap-3 bg-bloom-bg">
-        <ActivityIndicator />
-        <Text className="font-nunito text-bloom-text-secondary">Cargando...</Text>
-      </SafeAreaView>
-    );
+    return <PreparingGardenScreen status="preparing" onRetry={() => refetch()} />;
   }
 
   if (isError) {
-    return (
-      <SafeAreaView className="flex-1 items-center justify-center gap-4 bg-bloom-bg px-6">
-        <Text className="text-center font-nunito text-bloom-ink">No pudimos cargar tu perfil.</Text>
-        <Button label="Reintentar" onPress={() => refetch()} />
-      </SafeAreaView>
-    );
+    return <PreparingGardenScreen status="error" onRetry={() => refetch()} />;
   }
 
   if (!user) {
