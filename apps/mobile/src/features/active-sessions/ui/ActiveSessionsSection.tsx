@@ -1,4 +1,3 @@
-import type { SessionWithActivitiesResource } from '@clerk/types';
 import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
@@ -6,6 +5,8 @@ import { colors } from '@/shared/lib/theme';
 import { Button } from '@/shared/ui';
 
 import { useActiveSessions } from '../model/useActiveSessions';
+
+type SessionWithActivitiesResource = ReturnType<typeof useActiveSessions>['sessions'][number];
 
 function deviceLabel(session: SessionWithActivitiesResource) {
   const activity = session.latestActivity;
