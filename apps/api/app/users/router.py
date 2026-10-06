@@ -43,6 +43,14 @@ async def update_me(
     return user
 
 
+@router.get("/me/notification-settings", response_model=NotificationSettingsRead)
+async def read_notification_settings(
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    return await service.get_or_create_notification_settings(session, user.id)
+
+
 @router.patch("/me/notification-settings", response_model=NotificationSettingsRead)
 async def update_notification_settings(
     payload: NotificationSettingsUpdate,

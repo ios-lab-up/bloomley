@@ -44,7 +44,12 @@ export const settingsSections: SettingsSection[] = [
     id: 'notificaciones',
     title: 'Notificaciones',
     items: [
-      { id: 'preferencias', label: 'Preferencias', icon: 'notifications-outline', route: null },
+      {
+        id: 'preferencias',
+        label: 'Preferencias',
+        icon: 'notifications-outline',
+        route: '/notification-settings',
+      },
     ],
   },
   {
