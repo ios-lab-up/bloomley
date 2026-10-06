@@ -9217,7 +9217,7 @@
                           "fill": "$v3-ink",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "Camina 5 minutos",
+                          "content": "Camina 15 minutos",
                           "fontFamily": "$v3-font",
                           "fontSize": 27,
                           "fontWeight": "900"
@@ -9393,6 +9393,243 @@
                           "strokeWidth": 2
                         }
                       ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "L0VDx",
+                      "x": 0,
+                      "y": 559,
+                      "name": "Card · Tus amigos hoy",
+                      "reusable": true,
+                      "clip": true,
+                      "width": 353,
+                      "height": 144,
+                      "fill": "$v3-bg",
+                      "cornerRadius": 24,
+                      "stroke": "$v3-line",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#4B316312",
+                        "offset": {
+                          "x": 0,
+                          "y": 10
+                        },
+                        "blur": 30
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "U1IF9",
+                          "x": 14,
+                          "y": 14,
+                          "name": "Encabezado",
+                          "width": "fill_container(325)",
+                          "height": 36,
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "POjT4",
+                              "name": "Título e icono",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "zwiTB",
+                                  "name": "Textos cabecera",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "C168Gt",
+                                      "name": "Título",
+                                      "fill": "$v3-ink",
+                                      "content": "Tus amigos hoy",
+                                      "fontFamily": "$v3-font",
+                                      "fontSize": 18,
+                                      "fontWeight": "900"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "AT53N",
+                              "name": "Ver amigos",
+                              "width": 32,
+                              "height": 32,
+                              "fill": "$v3-purple-soft",
+                              "cornerRadius": 16,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "TGn6o",
+                                  "name": "Flecha",
+                                  "width": 18,
+                                  "height": 18,
+                                  "icon": "chevron-right",
+                                  "library": "lucide",
+                                  "fill": "$v3-purple-deep"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "r0AR2f",
+                          "x": 14,
+                          "y": 58,
+                          "name": "Amiga · Fer",
+                          "width": 325,
+                          "height": 72,
+                          "fill": "#F0EBFC",
+                          "cornerRadius": 18,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "oFSeE",
+                              "x": 10,
+                              "y": 14,
+                              "name": "Avatar · Fer",
+                              "width": 44,
+                              "height": 44,
+                              "fill": "#B58BE8",
+                              "cornerRadius": 22,
+                              "stroke": "#FFFFFF",
+                              "strokeWidth": 3,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#34205A1F",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 3
+                                },
+                                "blur": 8
+                              },
+                              "layout": "none",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Yu9Xg",
+                                  "x": 0,
+                                  "y": 8,
+                                  "name": "Inicial Fer",
+                                  "fill": "#FFFFFF",
+                                  "textGrowth": "fixed-width",
+                                  "width": 44,
+                                  "content": "F",
+                                  "textAlign": "center",
+                                  "fontFamily": "$v3-font",
+                                  "fontSize": 18,
+                                  "fontWeight": "900"
+                                },
+                                {
+                                  "type": "ellipse",
+                                  "id": "D1gjlJ",
+                                  "x": 31,
+                                  "y": 31,
+                                  "name": "Estado Fer",
+                                  "fill": "#35C989",
+                                  "width": 13,
+                                  "height": 13,
+                                  "stroke": "#FFFFFF",
+                                  "strokeWidth": 2
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "R6agk",
+                              "x": 62,
+                              "y": 17,
+                              "name": "Información · Fer",
+                              "width": "fill_container(195)",
+                              "layout": "vertical",
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "U5kzW2",
+                                  "name": "Nombre · Fer",
+                                  "fill": "$v3-ink",
+                                  "content": "Fer",
+                                  "fontFamily": "$v3-font",
+                                  "fontSize": 17,
+                                  "fontWeight": "900"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "K0Zkv9",
+                                  "name": "Mensaje · Fer",
+                                  "fill": "$v3-text-secondary",
+                                  "textGrowth": "fixed-width",
+                                  "width": 122,
+                                  "content": "¡Hoy caminó 10 min! 💜",
+                                  "fontFamily": "$v3-font",
+                                  "fontSize": 10,
+                                  "fontWeight": "700"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "group",
+                              "id": "MjYMw",
+                              "x": 269,
+                              "y": 13,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "Y0o2dN",
+                                  "x": 0,
+                                  "y": 0,
+                                  "name": "Racha · Fer",
+                                  "width": 50,
+                                  "height": 45,
+                                  "layout": "none",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "PGwFe",
+                                      "x": 15,
+                                      "y": 0,
+                                      "name": "Fuego · Fer",
+                                      "width": 20,
+                                      "height": 20,
+                                      "icon": "flame",
+                                      "library": "lucide",
+                                      "fill": "#FF8B36"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "TyMV9",
+                                      "x": 14,
+                                      "y": 20,
+                                      "name": "Días · Fer",
+                                      "fill": "$v3-ink",
+                                      "content": "28",
+                                      "fontFamily": "$v3-font",
+                                      "fontSize": 18,
+                                      "fontWeight": "900"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 },
@@ -9400,90 +9637,408 @@
                   "type": "frame",
                   "id": "VrcDc",
                   "x": -9,
-                  "y": 393,
+                  "y": 392,
                   "name": "Frame 3",
                   "layout": "vertical",
                   "gap": 10,
                   "padding": 10,
                   "children": [
                     {
-                      "type": "group",
-                      "id": "AlGSk",
+                      "type": "frame",
+                      "id": "YGk9N",
+                      "name": "Card · Racha semanal",
                       "reusable": true,
+                      "clip": true,
+                      "width": 352,
+                      "height": 140,
+                      "fill": "$v3-surface",
+                      "cornerRadius": 24,
+                      "stroke": "$v3-line",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#372A6010",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 18
+                      },
+                      "layout": "none",
                       "children": [
                         {
-                          "type": "rectangle",
-                          "cornerRadius": "$gap-section",
-                          "id": "l1WcBw",
-                          "x": 0,
-                          "y": 0,
-                          "name": "RACHA",
-                          "fill": "$v3-surface",
-                          "width": 157,
-                          "height": 144,
-                          "stroke": "$v3-line",
-                          "strokeWidth": 1,
-                          "strokeAlignment": "inner"
-                        },
-                        {
                           "type": "text",
-                          "id": "u71HcO",
-                          "x": 20,
-                          "y": 114.30000000000018,
-                          "fill": "#000000",
-                          "textGrowth": "fixed-width-height",
-                          "width": 125,
-                          "height": 18,
-                          "content": "Dias de racha",
-                          "fontFamily": "Nunito",
-                          "fontSize": "$radius-btn",
-                          "fontWeight": "700"
-                        },
-                        {
-                          "type": "text",
-                          "id": "iPvLT",
-                          "x": 20,
-                          "y": 83.69999999999982,
-                          "fill": "#000000",
-                          "textGrowth": "fixed-width-height",
-                          "width": 125,
-                          "height": 28.8,
+                          "id": "dRC5o",
+                          "x": 18,
+                          "y": 15,
+                          "name": "Días de racha",
+                          "fill": "$v3-ink",
                           "content": "22",
-                          "fontFamily": "Nunito",
-                          "fontSize": 27,
+                          "fontFamily": "$v3-font",
+                          "fontSize": 31,
                           "fontWeight": "900"
                         },
                         {
+                          "type": "text",
+                          "id": "folf2",
+                          "x": 20,
+                          "y": 47,
+                          "name": "Etiqueta racha",
+                          "fill": "$v3-ink",
+                          "content": "Días de racha",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 13,
+                          "fontWeight": "800"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "f5BTC0",
+                          "x": 22,
+                          "y": 69,
+                          "name": "Meta próxima",
+                          "width": 135,
+                          "height": 13,
+                          "fill": "#FFFFFF00",
+                          "cornerRadius": 14,
+                          "stroke": "#FFFFFF00",
+                          "strokeWidth": 1,
+                          "gap": 5,
+                          "padding": [
+                            4,
+                            8
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "iZ0Au",
+                              "name": "Corona",
+                              "width": 13,
+                              "height": 13,
+                              "icon": "crown",
+                              "library": "lucide",
+                              "fill": "$v3-sun"
+                            },
+                            {
+                              "type": "text",
+                              "id": "VyvLY",
+                              "name": "Texto meta",
+                              "fill": "$v3-text-secondary",
+                              "content": "A 4 días de tu récord",
+                              "fontFamily": "$v3-font",
+                              "fontSize": 9,
+                              "fontWeight": "800"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "qYLyB",
+                              "name": "Ir a meta",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "chevron-right",
+                              "library": "lucide",
+                              "fill": "$v3-purple"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "path",
+                          "id": "l5FYzr",
+                          "x": 22,
+                          "y": 83,
+                          "name": "Curva de progreso",
+                          "geometry": "M0 19c70 2 121 3 173 0 49-3 83-16 130-14",
+                          "viewBox": [
+                            0,
+                            0,
+                            303,
+                            25
+                          ],
+                          "fill": "#00000000",
+                          "width": 308,
+                          "height": 24,
+                          "stroke": "#D9C6FA",
+                          "strokeWidth": 3,
+                          "strokeLinecap": "round"
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "p3dhXw",
+                          "x": 32,
+                          "y": 98,
+                          "name": "Punto progreso 1",
+                          "fill": "#D7B8FF",
+                          "width": 7,
+                          "height": 7
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "dv8sE",
+                          "x": 79,
+                          "y": 99,
+                          "name": "Punto progreso 2",
+                          "fill": "#D7B8FF",
+                          "width": 7,
+                          "height": 7
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "OI5JJ",
+                          "x": 126,
+                          "y": 99,
+                          "name": "Punto progreso 3",
+                          "fill": "#A878F0",
+                          "width": 7,
+                          "height": 7
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "xo7Or",
+                          "x": 173,
+                          "y": 99,
+                          "name": "Punto progreso 4",
+                          "fill": "#A878F0",
+                          "width": 7,
+                          "height": 7
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "FlQ1u",
+                          "x": 218,
+                          "y": 97,
+                          "name": "Punto progreso 5",
+                          "fill": "#C8A8F6",
+                          "width": 7,
+                          "height": 7
+                        },
+                        {
+                          "type": "text",
+                          "id": "y79HyR",
+                          "x": 29,
+                          "y": 111,
+                          "name": "Día L0",
+                          "fill": "$v3-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 14,
+                          "content": "L",
+                          "textAlign": "center",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 9,
+                          "fontWeight": "800"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "qyIaJ",
+                          "x": 29,
+                          "y": 123,
+                          "name": "Estado día 0",
+                          "width": 13,
+                          "height": 13,
+                          "icon": "flower-2",
+                          "library": "lucide",
+                          "fill": "$v3-purple"
+                        },
+                        {
+                          "type": "text",
+                          "id": "MOJNd",
+                          "x": 76,
+                          "y": 111,
+                          "name": "Día M1",
+                          "fill": "$v3-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 14,
+                          "content": "M",
+                          "textAlign": "center",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 9,
+                          "fontWeight": "800"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "k3oAmc",
+                          "x": 76,
+                          "y": 123,
+                          "name": "Estado día 1",
+                          "width": 13,
+                          "height": 13,
+                          "icon": "flower-2",
+                          "library": "lucide",
+                          "fill": "$v3-purple"
+                        },
+                        {
+                          "type": "text",
+                          "id": "jaQzL",
+                          "x": 123,
+                          "y": 111,
+                          "name": "Día M2",
+                          "fill": "$v3-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 14,
+                          "content": "M",
+                          "textAlign": "center",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 9,
+                          "fontWeight": "800"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "lXyGq",
+                          "x": 124,
+                          "y": 123,
+                          "name": "Estado día 2",
+                          "width": 13,
+                          "height": 13,
+                          "icon": "flower-2",
+                          "library": "lucide",
+                          "fill": "$v3-purple"
+                        },
+                        {
+                          "type": "text",
+                          "id": "kHs4H",
+                          "x": 170,
+                          "y": 111,
+                          "name": "Día J3",
+                          "fill": "$v3-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 14,
+                          "content": "J",
+                          "textAlign": "center",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 9,
+                          "fontWeight": "800"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "BJMo7",
+                          "x": 170,
+                          "y": 123,
+                          "name": "Estado día 3",
+                          "width": 13,
+                          "height": 13,
+                          "icon": "flower-2",
+                          "library": "lucide",
+                          "fill": "$v3-purple"
+                        },
+                        {
                           "type": "rectangle",
-                          "id": "D9aG6A",
-                          "x": 69,
-                          "y": 13.5,
+                          "id": "xbvaY",
+                          "x": 165,
+                          "y": 14,
+                          "name": "Bloom racha",
                           "fill": {
                             "type": "image",
                             "enabled": true,
                             "url": "Cheerful%20Mint%20Flame%20Mascot.png",
-                            "mode": "cover"
+                            "mode": "contain"
                           },
-                          "width": 75,
-                          "height": 100.8
+                          "width": 105,
+                          "height": 97
+                        },
+                        {
+                          "type": "text",
+                          "id": "AbqPt",
+                          "x": 213,
+                          "y": 111,
+                          "name": "Día V4",
+                          "fill": "$v3-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 28,
+                          "content": "HOY",
+                          "textAlign": "center",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 8,
+                          "fontWeight": "800"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "X3XFue",
+                          "x": 220,
+                          "y": 123,
+                          "name": "Estado día 4",
+                          "width": 13,
+                          "height": 13,
+                          "icon": "flower-2",
+                          "library": "lucide",
+                          "fill": "$v3-purple"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hrpMX",
+                          "x": 264,
+                          "y": 111,
+                          "name": "Día S5",
+                          "fill": "$v3-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 14,
+                          "content": "S",
+                          "textAlign": "center",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 9,
+                          "fontWeight": "800"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "Ya39b",
+                          "x": 263,
+                          "y": 123,
+                          "name": "Estado día 5",
+                          "width": 13,
+                          "height": 13,
+                          "icon": "circle-dashed",
+                          "library": "lucide",
+                          "fill": "#D9CFF0"
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "r2qV0G",
+                          "x": 266,
+                          "y": 88,
+                          "name": "Punto progreso 6",
+                          "fill": "#C8A8F6",
+                          "width": 7,
+                          "height": 7
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "WnvtQ",
+                          "x": 314,
+                          "y": 84,
+                          "name": "Punto progreso 7",
+                          "fill": "#D9CFF0",
+                          "width": 7,
+                          "height": 7
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwQDJ",
+                          "x": 311,
+                          "y": 111,
+                          "name": "Día D6",
+                          "fill": "$v3-text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 14,
+                          "content": "D",
+                          "textAlign": "center",
+                          "fontFamily": "$v3-font",
+                          "fontSize": 9,
+                          "fontWeight": "800"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "y5FN0Y",
+                          "x": 310,
+                          "y": 123,
+                          "name": "Estado día 6",
+                          "width": 13,
+                          "height": 13,
+                          "icon": "circle-dashed",
+                          "library": "lucide",
+                          "fill": "#D9CFF0"
                         }
                       ]
                     }
                   ]
-                },
-                {
-                  "type": "rectangle",
-                  "cornerRadius": "$gap-section",
-                  "id": "x3IUCW",
-                  "x": 0,
-                  "y": 557,
-                  "name": "RACHA",
-                  "fill": "$v3-surface",
-                  "width": 353,
-                  "height": 144,
-                  "stroke": "$v3-line",
-                  "strokeWidth": 1,
-                  "strokeAlignment": "inner"
                 }
               ]
             },
