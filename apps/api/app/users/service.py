@@ -9,6 +9,7 @@ from datetime import datetime
 from uuid import UUID
 
 import httpx
+from sqlalchemy import func, update
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -28,15 +29,36 @@ async def get_user_by_clerk_id(session: AsyncSession, clerk_user_id: str) -> Use
 
 
 async def add_xp(session: AsyncSession, user_id: UUID, amount: int) -> User:
-    user = await session.get(User, user_id)
-    if user is None:
-        raise ValueError(f"User {user_id} not found")
+    """Atomically increments xp_total and recomputes level in one UPDATE.
 
-    user.xp_total += amount
-    user.level = calculate_level(user.xp_total)
-    session.add(user)
+    A prior read-modify-write version (SELECT, `xp_total += amount` in
+    Python, then write back the final value) lost updates under
+    concurrency: two overlapping calls could both read the same starting
+    xp_total and the later commit would silently overwrite the earlier
+    one. Doing the arithmetic in the SET clause instead means Postgres
+    computes it against the current row under the row lock it already
+    takes for the UPDATE, so concurrent calls queue up and each one adds
+    on top of the last committed value -- no lost updates.
+
+    The `level` expression below must stay in sync with calculate_level()
+    -- it can't just call that function, since a single UPDATE has to
+    derive both columns from the same in-flight `xp_total` expression to
+    stay atomic. test_add_xp_concurrency.py asserts they agree.
+    """
+    new_xp = User.xp_total + amount
+    stmt = (
+        update(User)
+        .where(User.id == user_id)
+        .values(xp_total=new_xp, level=func.greatest(1, new_xp / XP_PER_LEVEL + 1))
+        .returning(User.id)
+    )
+    result = await session.exec(stmt)
+    if result.first() is None:
+        raise ValueError(f"User {user_id} not found")
     await session.commit()
-    await session.refresh(user)
+
+    user = await session.get(User, user_id)
+    assert user is not None
     return user
 
 
