@@ -1,4 +1,3 @@
-import { useClerk } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,13 +7,7 @@ import { Button } from '@/shared/ui';
 
 export function ProfileScreen() {
   const router = useRouter();
-  const { signOut } = useClerk();
   const { data: user, isPending, isError, refetch, isFetching, isSignedIn } = useCurrentUser();
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.replace('/');
-  };
 
   if (!isSignedIn) {
     return (
@@ -76,7 +69,7 @@ export function ProfileScreen() {
         ) : null}
       </View>
       <View className="pb-6">
-        <Button label="Cerrar sesión" variant="secondary" onPress={handleSignOut} />
+        <Button label="Ajustes" variant="secondary" onPress={() => router.push('/settings')} />
       </View>
     </SafeAreaView>
   );
