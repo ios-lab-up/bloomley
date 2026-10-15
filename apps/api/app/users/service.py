@@ -148,17 +148,41 @@ def _display_name(clerk_data: dict) -> str:
     return full or clerk_data.get("username") or _primary_email(clerk_data)
 
 
+def _username(clerk_data: dict) -> str | None:
+    # Clerk compares usernames case-insensitively; storing them lowercase
+    # keeps our unique index and lookups consistent with that.
+    username = (clerk_data.get("username") or "").strip().lower()
+    return username or None
+
+
 async def _upsert_user_from_clerk_data(
     session: AsyncSession, clerk_user_id: str, data: dict
 ) -> User:
-    """Only place allowed to write `clerk_user_id`/`email`/initial
+    """Only place allowed to write `clerk_user_id`/`email`/`username`/initial
     `display_name`. Shared by both sync paths (see module docstring below)."""
     user = await get_user_by_clerk_id(session, clerk_user_id)
     email = _primary_email(data)
     display_name = _display_name(data)
+    username = _username(data)
+    if username is not None:
+        # Clerk only keeps usernames unique among its live users, so another
+        # row here can still hold this one (a missed user.deleted, or webhooks
+        # arriving out of order after a rename). Clerk says it's this user's
+        # now: release it instead of failing on ix_users_username.
+        await session.exec(
+            update(User)
+            .where(User.username == username, User.clerk_user_id != clerk_user_id)
+            .values(username=None)
+        )
     if user is None:
-        user = User(clerk_user_id=clerk_user_id, email=email, display_name=display_name)
+        user = User(
+            clerk_user_id=clerk_user_id,
+            username=username,
+            email=email,
+            display_name=display_name,
+        )
     else:
+        user.username = username
         user.email = email
         user.display_name = display_name
     session.add(user)
