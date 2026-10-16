@@ -9,7 +9,8 @@ import { Button } from '@/shared/ui';
 export function ProfileScreen() {
   const router = useRouter();
   const { signOut } = useClerk();
-  const { data: user, isPending, isError, refetch, isFetching, isSignedIn } = useCurrentUser();
+  const { data: user, isPending, isError, error, refetch, isFetching, isSignedIn } =
+    useCurrentUser();
 
   const handleSignOut = async () => {
     await signOut();
@@ -39,7 +40,21 @@ export function ProfileScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center gap-4 bg-bloom-bg px-6">
         <Text className="text-center font-nunito text-bloom-ink">No pudimos cargar tu perfil.</Text>
+        {__DEV__ ? (
+          // Dev-only: surface the real failure instead of hiding it behind a
+          // generic message (network error vs. HTTP status from the API).
+          <Text selectable className="text-center font-nunito text-xs text-red-500">
+            {String(error)}
+          </Text>
+        ) : null}
         <Button label="Reintentar" onPress={() => refetch()} />
+        {__DEV__ ? (
+          <Button
+            label="Debug de sesión"
+            variant="secondary"
+            onPress={() => router.push('/debug-auth')}
+          />
+        ) : null}
       </SafeAreaView>
     );
   }
@@ -75,7 +90,14 @@ export function ProfileScreen() {
           <Text className="font-nunito text-xs text-bloom-text-secondary">Actualizando...</Text>
         ) : null}
       </View>
-      <View className="pb-6">
+      <View className="gap-3 pb-6">
+        {__DEV__ ? (
+          <Button
+            label="Debug de sesión"
+            variant="secondary"
+            onPress={() => router.push('/debug-auth')}
+          />
+        ) : null}
         <Button label="Cerrar sesión" variant="secondary" onPress={handleSignOut} />
       </View>
     </SafeAreaView>
