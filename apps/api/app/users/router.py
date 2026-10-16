@@ -43,6 +43,14 @@ async def update_me(
     return user
 
 
+@router.get("/me/notification-settings", response_model=NotificationSettingsRead)
+async def read_notification_settings(
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    return await service.get_or_create_notification_settings(session, user.id)
+
+
 @router.patch("/me/notification-settings", response_model=NotificationSettingsRead)
 async def update_notification_settings(
     payload: NotificationSettingsUpdate,
@@ -71,6 +79,17 @@ async def register_push_token(
         device_id=payload.device_id,
         platform=payload.platform,
     )
+
+
+@router.delete("/me/push-tokens/{expo_push_token}", status_code=status.HTTP_204_NO_CONTENT)
+async def deactivate_push_token(
+    expo_push_token: str,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> None:
+    """Call on logout, before the Clerk session ends, so this device stops
+    receiving pushes. Idempotent: an unknown token is a no-op."""
+    await service.deactivate_push_token(session, user.id, expo_push_token)
 
 
 @webhook_router.post("/clerk", status_code=status.HTTP_204_NO_CONTENT)

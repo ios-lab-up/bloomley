@@ -12,6 +12,7 @@ Do not re-implement Clerk verification in other routers — import this.
 
 from uuid import UUID
 
+import httpx
 import jwt
 from fastapi import Depends, Header, HTTPException, status
 from jwt import PyJWKClient
@@ -56,6 +57,13 @@ async def get_current_user(
     except jwt.PyJWTError as exc:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid or expired token") from exc
 
+    # Optional hardening (off unless CLERK_AUTHORIZED_PARTIES is set). Only
+    # reject when `azp` is present and unlisted -- same rule Clerk's own
+    # SDKs apply, since some token types don't carry it at all.
+    azp = payload.get("azp")
+    if settings.clerk_authorized_parties and azp and azp not in settings.clerk_authorized_parties:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token issued for another application")
+
     clerk_user_id = payload.get("sub")
     if not clerk_user_id:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token missing subject")
@@ -63,7 +71,12 @@ async def get_current_user(
     # Just-in-time provisioning: creates the local `users` row on first
     # sight of this clerk_user_id (via the Backend API) instead of relying
     # on the `user.created` webhook having fired first.
-    user = await service.get_or_provision_user(session, clerk_user_id, settings)
+    try:
+        user = await service.get_or_provision_user(session, clerk_user_id, settings)
+    except httpx.HTTPError as exc:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE, "Auth provider unavailable, try again"
+        ) from exc
     if user is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Unknown Clerk user")
     return user
