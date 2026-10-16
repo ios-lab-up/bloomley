@@ -35,7 +35,7 @@ export const settingsSections: SettingsSection[] = [
     id: 'cuenta',
     title: 'Cuenta',
     items: [
-      { id: 'correo', label: 'Correo', icon: 'mail-outline', route: null },
+      { id: 'correo', label: 'Correo', icon: 'mail-outline', route: '/edit-email' },
       { id: 'seguridad', label: 'Seguridad', icon: 'shield-checkmark-outline', route: null },
       { id: 'borrar', label: 'Borrar mi cuenta', icon: 'trash-outline', route: null },
     ],
