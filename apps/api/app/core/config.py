@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     clerk_webhook_secret: str = ""
     clerk_jwks_url: str = ""
     clerk_backend_api_url: str = "https://api.clerk.com"
+    clerk_authorized_parties: list[str] = []
+    """Optional allowlist for the JWT `azp` (authorized party) claim, i.e.
+    the app origin Clerk issued the token for. Empty = not checked. When
+    set, a token whose `azp` is present but not listed is rejected, so a
+    token minted for some other Clerk app/frontend can't be replayed here."""
 
     @model_validator(mode="after")
     def _forbid_dev_bypass_outside_development(self) -> "Settings":

@@ -14,19 +14,39 @@ function firstClerkErrorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
+// Clerk lower-cases usernames and (by default) accepts 4-64 chars of letters,
+// digits and "_"; we cap at 30 so it still looks fine in a group member list.
+const USERNAME_PATTERN = /^[a-z0-9_]{4,30}$/;
+
+function normalizeUsername(value: string) {
+  return value.trim().toLowerCase();
+}
+
+// Human-readable names for the fields Clerk can say are still missing.
+const MISSING_FIELD_LABELS: Record<string, string> = {
+  username: 'nombre de usuario',
+  first_name: 'nombre',
+  last_name: 'apellido',
+  phone_number: 'teléfono',
+  password: 'contraseña',
+};
+
 export function EmailScreen() {
   const router = useRouter();
   const { isLoaded, signUp, setActive } = useSignUp();
 
   const [step, setStep] = useState<'details' | 'verify'>('details');
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const canSubmitDetails = name.trim().length > 0 && email.trim().length > 0 && password.length > 0;
+  const isUsernameValid = USERNAME_PATTERN.test(normalizeUsername(username));
+  const canSubmitDetails =
+    name.trim().length > 0 && isUsernameValid && email.trim().length > 0 && password.length > 0;
   const canSubmitCode = code.trim().length > 0;
 
   const handleCreateAccount = async () => {
@@ -36,6 +56,7 @@ export function EmailScreen() {
     try {
       await signUp.create({
         emailAddress: email.trim(),
+        username: normalizeUsername(username),
         password,
         firstName: name.trim(),
       });
@@ -58,7 +79,20 @@ export function EmailScreen() {
         await setActive({ session: result.createdSessionId });
         router.replace('/');
       } else {
-        setError('Código incorrecto. Revisa tu correo e intenta de nuevo.');
+        // The code was accepted (a wrong code throws, handled below) but
+        // Clerk still needs something else before it creates the session.
+        // Say what, instead of blaming the code.
+        console.warn('[email-signup] verification finished without a session', {
+          status: result.status,
+          missingFields: result.missingFields,
+          unverifiedFields: result.unverifiedFields,
+        });
+        const missing = result.missingFields.map((f) => MISSING_FIELD_LABELS[f] ?? f);
+        setError(
+          missing.length > 0
+            ? `Tu correo ya está verificado, pero falta: ${missing.join(', ')}.`
+            : 'No pudimos terminar tu registro. Intenta de nuevo.',
+        );
       }
     } catch (err) {
       setError(firstClerkErrorMessage(err, 'Código incorrecto. Intenta de nuevo.'));
@@ -84,7 +118,14 @@ export function EmailScreen() {
           </>
         }
       >
-        <Pressable onPress={() => setStep('details')} hitSlop={8} className="h-6 w-6 justify-center">
+        <Pressable
+          onPress={() => {
+            setError('');
+            setStep('details');
+          }}
+          hitSlop={8}
+          className="h-6 w-6 justify-center"
+        >
           <Ionicons name="arrow-back" size={22} color={colors.ink} />
         </Pressable>
         <View className="gap-2">
@@ -131,6 +172,13 @@ export function EmailScreen() {
       </View>
       <View className="gap-4">
         <TextField label="Nombre" value={name} onChangeText={setName} placeholder="Tu nombre" />
+        <TextField
+          label="Usuario"
+          value={username}
+          onChangeText={setUsername}
+          placeholder="4-30: minúsculas, números y _"
+          autoCapitalize="none"
+        />
         <TextField
           label="Correo"
           value={email}
