@@ -81,7 +81,7 @@ pnpm install
 pnpm start
 ```
 
-Use the Expo CLI prompts to open the app on an iOS simulator, Android emulator, or a physical device. `EXPO_PUBLIC_API_URL` is defined in `apps/mobile/.env` for future API integration.
+Use the Expo CLI prompts to open the app on an iOS simulator, Android emulator, or a physical device. Leave `EXPO_PUBLIC_API_URL` empty in `apps/mobile/.env` for local dev: the app calls the API on port 8000 of the same Mac that serves Metro, so it keeps working when you switch networks. Set it only to point at a fixed API (staging, a tunnel).
 
 ## Stop local services
 
