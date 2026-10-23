@@ -174,36 +174,104 @@ def _username(clerk_data: dict) -> str | None:
     return username or None
 
 
+def _clerk_updated_at(clerk_data: dict) -> int | None:
+    value = clerk_data.get("updated_at")
+    return value if isinstance(value, int) else None
+
+
+def _is_older(incoming: int | None, stored: int | None) -> bool:
+    """Whether a profile snapshot taken at `incoming` predates the one at
+    `stored`. Unknown timestamps (rows synced before `clerk_updated_at`
+    existed, or a payload without `updated_at`) never count as newer."""
+    return incoming is not None and stored is not None and incoming < stored
+
+
+# Namespaces for the two-key form of pg_advisory_xact_lock. Postgres keeps
+# that key space apart from the single-bigint one app.groups uses.
+_CLERK_USER_LOCK = 1
+_USERNAME_LOCK = 2
+
+
+async def _advisory_lock(session: AsyncSession, namespace: int, value: str) -> None:
+    """Held until the transaction ends. A hashtext collision between two
+    values only makes them wait for each other, never lets both through."""
+    await session.exec(select(func.pg_advisory_xact_lock(namespace, func.hashtext(value))))
+
+
 async def _upsert_user_from_clerk_data(
     session: AsyncSession, clerk_user_id: str, data: dict
 ) -> User:
     """Only place allowed to write `clerk_user_id`/`email`/`username`/initial
-    `display_name`. Shared by both sync paths (see module docstring below)."""
+    `display_name`. Shared by both sync paths (see module docstring below).
+
+    Webhooks can arrive late (Clerk retries failed deliveries with the
+    original payload) and concurrently, so arrival order says nothing about
+    which data is current. Clerk's `updated_at` does:
+    - an event older than what the row already has is ignored;
+    - Clerk never lets two users hold a username at the same time, so when
+      another row holds the incoming username, whichever side has the newer
+      snapshot owns it, and the other side's claim is out of date.
+
+    Locks: this user's, then the username's (always in that order, and only
+    one username, so two syncs can't deadlock). The first makes concurrent
+    syncs of one user -- including two first requests JIT-provisioning the
+    same new user -- run one after the other; the second does the same for
+    syncs claiming one username. A sync that waited on a lock then reads the
+    rows the other one committed.
+    """
+    updated_at = _clerk_updated_at(data)
+    username = _username(data)
+    await _advisory_lock(session, _CLERK_USER_LOCK, clerk_user_id)
+    if username is not None:
+        await _advisory_lock(session, _USERNAME_LOCK, username)
+
+    # Read only once both locks are held: a sync that held the username lock
+    # may have just released this row's claim on it.
     user = await get_user_by_clerk_id(session, clerk_user_id)
+    if user is not None and _is_older(updated_at, user.clerk_updated_at):
+        await session.commit()  # releases the locks
+        return user
+
+    if username is not None:
+        result = await session.exec(
+            select(User.id, User.clerk_updated_at).where(
+                User.username == username, User.clerk_user_id != clerk_user_id
+            )
+        )
+        holder = result.first()
+        if holder is not None:
+            holder_id, holder_updated_at = holder
+            if _is_older(updated_at, holder_updated_at):
+                # The holder had it more recently, so this event's claim is
+                # stale; this user's current username comes with a later event.
+                username = None
+            else:
+                # The holder's claim is the stale one (a missed user.deleted,
+                # or a rename whose webhook hasn't arrived). The username
+                # condition keeps this from clobbering a rename of the holder
+                # that committed since the SELECT.
+                await session.exec(
+                    update(User)
+                    .where(User.id == holder_id, User.username == username)
+                    .values(username=None)
+                )
+
     email = _primary_email(data)
     display_name = _display_name(data)
-    username = _username(data)
-    if username is not None:
-        # Clerk only keeps usernames unique among its live users, so another
-        # row here can still hold this one (a missed user.deleted, or webhooks
-        # arriving out of order after a rename). Clerk says it's this user's
-        # now: release it instead of failing on ix_users_username.
-        await session.exec(
-            update(User)
-            .where(User.username == username, User.clerk_user_id != clerk_user_id)
-            .values(username=None)
-        )
     if user is None:
         user = User(
             clerk_user_id=clerk_user_id,
             username=username,
             email=email,
             display_name=display_name,
+            clerk_updated_at=updated_at,
         )
     else:
         user.username = username
         user.email = email
         user.display_name = display_name
+        if updated_at is not None:
+            user.clerk_updated_at = updated_at
     session.add(user)
     await session.commit()
     await session.refresh(user)
