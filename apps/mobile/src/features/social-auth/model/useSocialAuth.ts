@@ -12,8 +12,17 @@ function firstClerkErrorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
+type SocialAuthOptions = {
+  /**
+   * `signIn` is for "Ya tengo cuenta": Clerk still creates an account when
+   * the Google/Apple identity is new, but the user is then sent through
+   * onboarding instead of landing on an empty /home.
+   */
+  intent?: 'signUp' | 'signIn';
+};
+
 /** Google/Apple sign-in via Clerk's hosted OAuth flow (works for both sign-up and sign-in). */
-export function useSocialAuth() {
+export function useSocialAuth({ intent = 'signUp' }: SocialAuthOptions = {}) {
   const { startSSOFlow } = useSSO();
   const router = useRouter();
   const [error, setError] = useState('');
@@ -31,7 +40,8 @@ export function useSocialAuth() {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
-        router.replace('/');
+        const isNewAccount = signUp?.status === 'complete';
+        router.replace(intent === 'signIn' && isNewAccount ? '/onboarding/pillars' : '/');
         return;
       }
 

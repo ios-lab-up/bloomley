@@ -7,6 +7,9 @@ export const userApi = {
   updateMe: (payload: { display_name?: string }) =>
     apiClient.patch<User>('/users/me', payload),
 
+  notificationSettings: () =>
+    apiClient.get<NotificationSettings>('/users/me/notification-settings'),
+
   updateNotificationSettings: (payload: Partial<NotificationSettings>) =>
     apiClient.patch<NotificationSettings>('/users/me/notification-settings', payload),
 

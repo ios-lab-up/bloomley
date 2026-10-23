@@ -1,4 +1,4 @@
-import { isClerkAPIResponseError, useSignIn } from '@clerk/clerk-expo';
+import { useSignIn } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -6,22 +6,16 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { useSocialAuth } from '@/features/social-auth';
 import { isClerkConfigured } from '@/shared/lib/clerk';
+import { signInErrorMessage } from '@/shared/lib/clerkErrors';
 import { colors } from '@/shared/lib/theme';
 import { Button, OnboardingScreenLayout, TextField } from '@/shared/ui';
-
-function firstClerkErrorMessage(error: unknown, fallback: string) {
-  if (isClerkAPIResponseError(error)) {
-    return error.errors[0]?.longMessage ?? error.errors[0]?.message ?? fallback;
-  }
-  return fallback;
-}
 
 // Only mounted when Clerk is configured -- isolates the useSSO() call so
 // this screen doesn't crash in the no-Clerk dev fallback (AppProviders
 // renders the tree without ClerkProvider in that case).
 function SocialSignInButtons() {
   const { signInWithGoogle, signInWithApple, isGoogleLoading, isAppleLoading, error } =
-    useSocialAuth();
+    useSocialAuth({ intent: 'signIn' });
 
   return (
     <View className="items-center gap-4 pt-2">
@@ -81,7 +75,7 @@ export function SignInScreen() {
         setError('No pudimos completar el inicio de sesión. Intenta de nuevo.');
       }
     } catch (err) {
-      setError(firstClerkErrorMessage(err, 'Correo o contraseña incorrectos.'));
+      setError(signInErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -125,9 +119,13 @@ export function SignInScreen() {
           secureTextEntry
           autoCapitalize="none"
         />
-        <Text className="self-end font-nunito text-sm text-bloom-purple-deep">
-          Olvidé mi contraseña
-        </Text>
+        <Pressable
+          onPress={() => router.push('/onboarding/forgot-password')}
+          hitSlop={8}
+          className="self-end"
+        >
+          <Text className="font-nunito text-sm text-bloom-purple-deep">Olvidé mi contraseña</Text>
+        </Pressable>
       </View>
     </OnboardingScreenLayout>
   );

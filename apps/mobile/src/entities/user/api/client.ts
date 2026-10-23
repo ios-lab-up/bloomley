@@ -8,8 +8,18 @@
  * stays a plain module with no React/hook dependency.
  */
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8000';
+import Constants from 'expo-constants';
+
+import { resolveApiBaseUrl } from '@/shared/lib/apiBaseUrl';
+
+const API_BASE_URL = resolveApiBaseUrl({
+  envUrl: process.env.EXPO_PUBLIC_API_URL,
+  hostUri: Constants.expoConfig?.hostUri,
+});
 const API_PREFIX = '/api/v1';
+// An unreachable host makes fetch hang with no error, freezing loading states
+// forever. Abort so callers reach their error/retry UI instead.
+const REQUEST_TIMEOUT_MS = 10_000;
 
 type TokenGetter = () => Promise<string | null>;
 
@@ -38,10 +48,26 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  const response = await fetch(`${API_BASE_URL}${API_PREFIX}${path}`, {
-    ...init,
-    headers,
-  });
+  // ponytail: overrides any caller signal; none pass one today. Combine them
+  // (AbortSignal.any) if a caller ever needs its own cancellation.
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${API_PREFIX}${path}`, {
+      ...init,
+      headers,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (controller.signal.aborted) {
+      throw new ApiError(0, `No response from ${API_BASE_URL} after ${REQUEST_TIMEOUT_MS / 1000}s`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!response.ok) {
     const body = await response.text();

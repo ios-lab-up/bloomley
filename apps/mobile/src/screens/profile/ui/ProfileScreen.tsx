@@ -1,20 +1,16 @@
-import { useClerk } from '@clerk/clerk-expo';
+import { useUser } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { UserAvatar, useCurrentUser } from '@/entities/user';
+import { PreparingGardenScreen } from '@/screens/preparing-garden';
 import { Button } from '@/shared/ui';
 
 export function ProfileScreen() {
   const router = useRouter();
-  const { signOut } = useClerk();
+  const { user: clerkUser } = useUser();
   const { data: user, isPending, isError, refetch, isFetching, isSignedIn } = useCurrentUser();
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.replace('/');
-  };
 
   if (!isSignedIn) {
     return (
@@ -27,21 +23,11 @@ export function ProfileScreen() {
   }
 
   if (isPending) {
-    return (
-      <SafeAreaView className="flex-1 items-center justify-center gap-3 bg-bloom-bg">
-        <ActivityIndicator />
-        <Text className="font-nunito text-bloom-text-secondary">Cargando...</Text>
-      </SafeAreaView>
-    );
+    return <PreparingGardenScreen status="preparing" onRetry={() => refetch()} />;
   }
 
   if (isError) {
-    return (
-      <SafeAreaView className="flex-1 items-center justify-center gap-4 bg-bloom-bg px-6">
-        <Text className="text-center font-nunito text-bloom-ink">No pudimos cargar tu perfil.</Text>
-        <Button label="Reintentar" onPress={() => refetch()} />
-      </SafeAreaView>
-    );
+    return <PreparingGardenScreen status="error" onRetry={() => refetch()} />;
   }
 
   if (!user) {
@@ -51,7 +37,11 @@ export function ProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-bloom-bg px-6">
       <View className="flex-1 items-center justify-center gap-6">
-        <UserAvatar displayName={user.display_name} />
+        <UserAvatar
+          displayName={user.display_name}
+          imageUrl={clerkUser?.hasImage ? clerkUser.imageUrl : null}
+          size={96}
+        />
         <View className="items-center gap-1">
           <Text className="font-nunito-bold text-[22px] text-bloom-ink">{user.display_name}</Text>
           <Text className="font-nunito text-bloom-text-secondary">{user.email}</Text>
@@ -76,7 +66,7 @@ export function ProfileScreen() {
         ) : null}
       </View>
       <View className="pb-6">
-        <Button label="Cerrar sesión" variant="secondary" onPress={handleSignOut} />
+        <Button label="Ajustes" variant="secondary" onPress={() => router.push('/settings')} />
       </View>
     </SafeAreaView>
   );
