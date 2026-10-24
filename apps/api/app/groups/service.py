@@ -130,18 +130,100 @@ async def leave_group(session: AsyncSession, *, user_id: UUID, group_id: UUID) -
     await session.commit()
 
 
-async def delete_group(session: AsyncSession, *, user_id: UUID, group_id: UUID) -> None:
-    """Owner-only. Memberships and the streak go with the group through their
-    `ondelete="CASCADE"` FKs."""
-    # Locked so a concurrent leave can't hand ownership away between the
-    # ownership check and the delete.
+async def _get_owned_group_for_update(
+    session: AsyncSession, group_id: UUID, user_id: UUID
+) -> Group:
+    """404 for non-members (like `get_member_group_or_404`), 403 for members
+    who aren't the owner. The group row stays locked until commit, so a
+    concurrent leave can't hand ownership away between this check and the
+    caller's change."""
     await session.exec(select(Group.id).where(Group.id == group_id).with_for_update())
 
     group = await get_member_group_or_404(session, group_id, user_id)
     if group.created_by != user_id:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Only the group owner can delete it")
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Only the group owner can do this")
+    return group
 
+
+async def delete_group(session: AsyncSession, *, user_id: UUID, group_id: UUID) -> None:
+    """Owner-only. Memberships and the streak go with the group through their
+    `ondelete="CASCADE"` FKs."""
+    group = await _get_owned_group_for_update(session, group_id, user_id)
     await session.delete(group)
+    await session.commit()
+
+
+async def rename_group(
+    session: AsyncSession, *, user_id: UUID, group_id: UUID, name: str
+) -> Group:
+    group = await _get_owned_group_for_update(session, group_id, user_id)
+    group.name = name
+    session.add(group)
+    await session.commit()
+    await session.refresh(group)
+    return group
+
+
+async def add_member(
+    session: AsyncSession, *, owner_id: UUID, group_id: UUID, username: str
+) -> tuple[GroupMembership, User]:
+    """Owner-only: adds the user with this username straight away (no
+    invitation to accept), as joining by invite code does."""
+    result = await session.exec(select(User).where(User.username == username))
+    target = result.first()
+    if target is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
+    # Same lock join_group takes, so the target's user.deleted can't miss
+    # the membership added here.
+    await _lock_user_shared(session, target.id)
+    if (await session.exec(select(User.id).where(User.id == target.id))).first() is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
+
+    await _get_owned_group_for_update(session, group_id, owner_id)
+    existing = await session.exec(
+        select(GroupMembership.id).where(
+            GroupMembership.group_id == group_id,
+            GroupMembership.user_id == target.id,
+        )
+    )
+    if existing.first() is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "User is already a member of this group")
+
+    membership = GroupMembership(group_id=group_id, user_id=target.id)
+    session.add(membership)
+    try:
+        await session.commit()
+    except IntegrityError as exc:
+        # The user joined by invite code at the same moment.
+        await session.rollback()
+        raise HTTPException(
+            status.HTTP_409_CONFLICT, "User is already a member of this group"
+        ) from exc
+    await session.refresh(membership)
+    return membership, target
+
+
+async def remove_member(
+    session: AsyncSession, *, owner_id: UUID, group_id: UUID, member_id: UUID
+) -> None:
+    """Owner-only. The owner can't remove themselves: leaving goes through
+    `leave_group`, which hands ownership on and deletes the group once empty.
+    Since the owner stays, the group never ends up empty or ownerless here."""
+    await _get_owned_group_for_update(session, group_id, owner_id)
+    if member_id == owner_id:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            "The owner can't remove themselves; leave the group instead",
+        )
+
+    deleted = await session.exec(
+        delete(GroupMembership).where(
+            GroupMembership.group_id == group_id,
+            GroupMembership.user_id == member_id,
+        )
+    )
+    if deleted.rowcount == 0:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Not a member of this group")
     await session.commit()
 
 
@@ -150,16 +232,21 @@ def _user_lock_key(user_id: UUID) -> int:
     return int.from_bytes(user_id.bytes[:8], "big", signed=True)
 
 
+async def _lock_user_shared(session: AsyncSession, user_id: UUID) -> None:
+    """Shared side of the per-user lock; see `_lock_user_against_delete`."""
+    await session.exec(select(func.pg_advisory_xact_lock_shared(_user_lock_key(user_id))))
+
+
 async def _lock_user_against_delete(session: AsyncSession, user_id: UUID) -> None:
     """Shared side of the per-user lock `_release_groups_on_user_delete` takes
-    exclusively, held until commit. Creates and joins wait for an in-flight
-    deletion of the same user, and the deletion waits for them, so it always
-    sees the memberships they add.
+    exclusively, held until commit. Creates, joins and owner adds
+    (`add_member`) wait for an in-flight deletion of the same user, and the
+    deletion waits for them, so it always sees the memberships they add.
 
     An advisory lock rather than the `users` row, so it doesn't conflict with
     other modules' row locks (e.g. `add_xp`) or the FK checks on `users.id`.
     """
-    await session.exec(select(func.pg_advisory_xact_lock_shared(_user_lock_key(user_id))))
+    await _lock_user_shared(session, user_id)
     # The deletion we waited on may have just committed.
     result = await session.exec(select(User.id).where(User.id == user_id))
     if result.first() is None:
@@ -215,8 +302,8 @@ def _release_groups_on_user_delete(
     they own to the next member, in the same transaction as the `users` DELETE.
 
     Lock order, the same in every path that takes more than one of these:
-    1. the per-user advisory lock, exclusive, so a concurrent `create_group` or
-       `join_group` for this user either commits before the group query below
+    1. the per-user advisory lock, exclusive, so a concurrent `create_group`,
+       `join_group` or `add_member` for this user either commits before the group query below
        or waits until the user is gone (see `_lock_user_against_delete`);
     2. the user's group rows, in id order, for the same reason as in
        `leave_group`;
