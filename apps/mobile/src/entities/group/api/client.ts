@@ -13,6 +13,15 @@ export const groupApi = {
 
   leave: (groupId: string) => apiClient.delete<void>(`/groups/${groupId}/members/me`),
 
+  // Owner-only (403 for other members).
+  rename: (groupId: string, name: string) => apiClient.patch<Group>(`/groups/${groupId}`, { name }),
+
+  addMember: (groupId: string, username: string) =>
+    apiClient.post<GroupMember>(`/groups/${groupId}/members`, { username }),
+
+  removeMember: (groupId: string, userId: string) =>
+    apiClient.delete<void>(`/groups/${groupId}/members/${userId}`),
+
   members: (groupId: string) => apiClient.get<GroupMember[]>(`/groups/${groupId}/members`),
 
   streak: (groupId: string) => apiClient.get<GroupStreak>(`/groups/${groupId}/streak`),

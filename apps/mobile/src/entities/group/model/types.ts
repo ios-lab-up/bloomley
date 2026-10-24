@@ -26,6 +26,7 @@ export type GroupDetail = Group & {
 export type GroupMember = {
   membership_id: string;
   user_id: string;
+  username: string | null;
   display_name: string;
   joined_at: string;
 };
