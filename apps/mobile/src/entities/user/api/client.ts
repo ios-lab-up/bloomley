@@ -32,6 +32,13 @@ function setUnauthorizedHandler(handler: () => void): void {
   onUnauthorized = handler;
 }
 
+/** Re-arms the 401 handler. Call when the Clerk user changes: the latch
+ * would otherwise stay set until some request succeeds, so a new session
+ * that is dead from its first call would never be signed out. */
+function resetUnauthorized(): void {
+  unauthorizedHandled = false;
+}
+
 class ApiError extends Error {
   constructor(
     public status: number,
@@ -115,6 +122,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const apiClient = {
   setAuthTokenGetter,
   setUnauthorizedHandler,
+  resetUnauthorized,
   get: <T>(path: string) => request<T>(path),
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, {

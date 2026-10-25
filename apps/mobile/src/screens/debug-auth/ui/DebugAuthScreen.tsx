@@ -23,6 +23,11 @@ function decodeJwt(token: string): JwtClaims | null {
   }
 }
 
+// Never render the whole bearer credential; the decoded claims are shown separately.
+function maskToken(token: string): string {
+  return `${token.slice(0, 12)}…${token.slice(-6)} (${token.length} chars)`;
+}
+
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.row}>
@@ -91,7 +96,7 @@ function DebugAuthInner() {
       />
       <Row label="iat" value={claims?.iat ? new Date(claims.iat * 1000).toISOString() : '-'} />
       <Row label="exp" value={claims?.exp ? new Date(claims.exp * 1000).toISOString() : '-'} />
-      <Row label="token" value={token ?? '-'} />
+      <Row label="token" value={token ? maskToken(token) : '-'} />
       <Action label="Obtener token (cache)" onPress={() => loadToken(false)} />
       <Action label="Forzar refresh (skipCache)" onPress={() => loadToken(true)} />
 

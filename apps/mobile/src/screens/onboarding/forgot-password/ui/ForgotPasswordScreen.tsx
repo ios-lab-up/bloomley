@@ -83,7 +83,7 @@ export function ForgotPasswordScreen() {
         </Text>
         <Text className="text-center font-nunito text-[17px] text-bloom-text-secondary">
           {step === 'request'
-            ? 'Te enviamos un código a tu correo.'
+            ? 'Escribe tu correo y te enviaremos un código.'
             : `Escribe el código que enviamos a ${email.trim()}.`}
         </Text>
       </View>

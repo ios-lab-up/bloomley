@@ -16,8 +16,14 @@ import { apiClient } from '@/entities/user';
  * every entity, not just the ones whose keys we remembered to scope.
  */
 export function AuthTokenBridge() {
-  const { getToken, isSignedIn, signOut } = useAuth();
+  const { getToken, isSignedIn, signOut, userId } = useAuth();
   const queryClient = useQueryClient();
+
+  // A different Clerk user is a different session: re-arm the 401 latch so
+  // it can sign them out even if no request has succeeded since the last one.
+  useEffect(() => {
+    apiClient.resetUnauthorized();
+  }, [userId]);
 
   useEffect(() => {
     apiClient.setAuthTokenGetter((options) => getToken(options));
