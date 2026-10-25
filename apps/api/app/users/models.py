@@ -15,6 +15,9 @@ class User(SQLModel, table=True):
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     clerk_user_id: str = Field(unique=True, index=True)
+    # Mirrors the Clerk username (synced, never edited through our API).
+    # NULL for users who haven't set one in Clerk yet.
+    username: str | None = Field(default=None, unique=True, index=True)
     email: str
     display_name: str
     xp_total: int = Field(default=0)

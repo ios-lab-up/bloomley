@@ -3,6 +3,10 @@
 `add_xp` is the single write path for `xp_total`/`level`: other modules
 (missions, groups, ...) must call it instead of mutating those columns
 directly, so the leveling rule lives in exactly one place.
+
+`grant_xp` is the non-committing variant for callers that bundle the XP award
+into their own transaction (e.g. a mission completion). It shares the same
+atomic UPDATE as `add_xp`, so concurrent awards never lose updates.
 """
 
 from datetime import datetime
@@ -28,6 +32,30 @@ async def get_user_by_clerk_id(session: AsyncSession, clerk_user_id: str) -> Use
     return result.first()
 
 
+async def grant_xp(session: AsyncSession, user_id: UUID, amount: int) -> None:
+    """Awards XP/level inside a caller-owned transaction (does NOT commit).
+
+    Same atomic UPDATE as :func:`add_xp`, minus the commit: callers that
+    bundle the award into their own unit of work (e.g. a mission completion
+    writing completion + feedback + streak + XP together) use this and commit
+    once at the end.
+
+    Atomicity note (see :func:`add_xp`): the arithmetic happens in the SET
+    clause, so concurrent awards queue on the row lock and add up instead of
+    overwriting each other.
+    """
+    new_xp = User.xp_total + amount
+    stmt = (
+        update(User)
+        .where(User.id == user_id)
+        .values(xp_total=new_xp, level=func.greatest(1, new_xp / XP_PER_LEVEL + 1))
+        .returning(User.id)
+    )
+    result = await session.exec(stmt)
+    if result.first() is None:
+        raise ValueError(f"User {user_id} not found")
+
+
 async def add_xp(session: AsyncSession, user_id: UUID, amount: int) -> User:
     """Atomically increments xp_total and recomputes level in one UPDATE.
 
@@ -45,16 +73,7 @@ async def add_xp(session: AsyncSession, user_id: UUID, amount: int) -> User:
     derive both columns from the same in-flight `xp_total` expression to
     stay atomic. test_add_xp_concurrency.py asserts they agree.
     """
-    new_xp = User.xp_total + amount
-    stmt = (
-        update(User)
-        .where(User.id == user_id)
-        .values(xp_total=new_xp, level=func.greatest(1, new_xp / XP_PER_LEVEL + 1))
-        .returning(User.id)
-    )
-    result = await session.exec(stmt)
-    if result.first() is None:
-        raise ValueError(f"User {user_id} not found")
+    await grant_xp(session, user_id, amount)
     await session.commit()
 
     user = await session.get(User, user_id)
@@ -166,20 +185,44 @@ def _display_name(clerk_data: dict) -> str:
     return full or clerk_data.get("username") or _primary_email(clerk_data)
 
 
+def _username(clerk_data: dict) -> str | None:
+    # Clerk compares usernames case-insensitively; storing them lowercase
+    # keeps our unique index and lookups consistent with that.
+    username = (clerk_data.get("username") or "").strip().lower()
+    return username or None
+
+
 async def _upsert_user_from_clerk_data(
     session: AsyncSession, clerk_user_id: str, data: dict
 ) -> User:
-    """Only place allowed to write `clerk_user_id`/`email`/initial
+    """Only place allowed to write `clerk_user_id`/`email`/`username`/initial
     `display_name` (afterwards only PATCH /users/me changes it). Shared by
-    both sync paths."""
+    both sync paths (see module docstring below)."""
     user = await get_user_by_clerk_id(session, clerk_user_id)
     email = _primary_email(data)
     display_name = _display_name(data)
+    username = _username(data)
+    if username is not None:
+        # Clerk only keeps usernames unique among its live users, so another
+        # row here can still hold this one (a missed user.deleted, or webhooks
+        # arriving out of order after a rename). Clerk says it's this user's
+        # now: release it instead of failing on ix_users_username.
+        await session.exec(
+            update(User)
+            .where(User.username == username, User.clerk_user_id != clerk_user_id)
+            .values(username=None)
+        )
     if user is None:
-        user = User(clerk_user_id=clerk_user_id, email=email, display_name=display_name)
+        user = User(
+            clerk_user_id=clerk_user_id,
+            username=username,
+            email=email,
+            display_name=display_name,
+        )
     else:
         # Keep the local display_name: it may have been edited via
         # PATCH /users/me, and a later user.updated must not clobber it.
+        user.username = username
         user.email = email
     session.add(user)
     await session.commit()

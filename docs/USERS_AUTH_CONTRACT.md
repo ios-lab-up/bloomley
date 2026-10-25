@@ -87,12 +87,15 @@ class User(SQLModel, table=True):
     __tablename__ = "users"
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     clerk_user_id: str = Field(unique=True, index=True)
+    username: str | None = Field(default=None, unique=True, index=True)
     email: str
     display_name: str
     xp_total: int = Field(default=0)
     level: int = Field(default=1)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 ```
+
+`username` se sincroniza desde Clerk (en minúsculas) y es de solo lectura en nuestra API: se cambia en Clerk (`user.update({ username })`), no con `PATCH /users/me`. Es `NULL` mientras el usuario no tenga uno en Clerk.
 
 Cualquier FK a un usuario en sus tablas apunta a `users.id` (uuid interno), **nunca** a `clerk_user_id`.
 

@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 class UserRead(BaseModel):
     id: UUID
+    username: str | None
     email: str
     display_name: str
     xp_total: int
