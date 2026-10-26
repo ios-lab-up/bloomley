@@ -151,6 +151,24 @@ async def upsert_push_token(
     return token
 
 
+async def deactivate_push_token(session: AsyncSession, user_id: UUID, expo_push_token: str) -> bool:
+    """Marks one of the user's tokens inactive (called on logout so a
+    signed-out device stops receiving pushes). Scoped by user_id so one
+    user can't deactivate another's token. Returns False if not found."""
+    result = await session.exec(
+        select(PushToken).where(
+            PushToken.expo_push_token == expo_push_token, PushToken.user_id == user_id
+        )
+    )
+    token = result.first()
+    if token is None:
+        return False
+    token.is_active = False
+    session.add(token)
+    await session.commit()
+    return True
+
+
 def _primary_email(clerk_data: dict) -> str:
     addresses = clerk_data.get("email_addresses", [])
     primary_id = clerk_data.get("primary_email_address_id")
@@ -178,7 +196,8 @@ async def _upsert_user_from_clerk_data(
     session: AsyncSession, clerk_user_id: str, data: dict
 ) -> User:
     """Only place allowed to write `clerk_user_id`/`email`/`username`/initial
-    `display_name`. Shared by both sync paths (see module docstring below)."""
+    `display_name` (afterwards only PATCH /users/me changes it). Shared by
+    both sync paths (see module docstring below)."""
     user = await get_user_by_clerk_id(session, clerk_user_id)
     email = _primary_email(data)
     display_name = _display_name(data)
@@ -201,9 +220,10 @@ async def _upsert_user_from_clerk_data(
             display_name=display_name,
         )
     else:
+        # Keep the local display_name: it may have been edited via
+        # PATCH /users/me, and a later user.updated must not clobber it.
         user.username = username
         user.email = email
-        user.display_name = display_name
     session.add(user)
     await session.commit()
     await session.refresh(user)

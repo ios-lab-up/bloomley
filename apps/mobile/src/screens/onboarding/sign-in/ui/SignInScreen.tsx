@@ -125,9 +125,13 @@ export function SignInScreen() {
           secureTextEntry
           autoCapitalize="none"
         />
-        <Text className="self-end font-nunito text-sm text-bloom-purple-deep">
-          Olvidé mi contraseña
-        </Text>
+        <Pressable
+          onPress={() => router.push('/onboarding/forgot-password')}
+          hitSlop={8}
+          className="self-end"
+        >
+          <Text className="font-nunito text-sm text-bloom-purple-deep">Olvidé mi contraseña</Text>
+        </Pressable>
       </View>
     </OnboardingScreenLayout>
   );

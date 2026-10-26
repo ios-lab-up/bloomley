@@ -22,7 +22,10 @@ app = FastAPI(title=settings.app_name)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
-    allow_credentials=True,
+    # Auth travels in the Authorization header, never in cookies, so the
+    # browser "credentials" mode isn't needed (and "*" + credentials is a
+    # combination browsers reject anyway).
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
