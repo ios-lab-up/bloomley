@@ -10,9 +10,9 @@ type PreparingGardenScreenProps = {
   onRetry: () => void;
 };
 
-// Covers the gap between Clerk activating the session and the backend
-// creating the user (webhook `user.created`): /users/me answers 401 until
-// then. The spinner is static-friendly, so reduced motion needs no variant.
+// Shown while /users/me loads (the API provisions the user on that first
+// call) and if it still fails after retries. The spinner is static-friendly,
+// so reduced motion needs no variant.
 export function PreparingGardenScreen({ status, onRetry }: PreparingGardenScreenProps) {
   const isError = status === 'error';
 

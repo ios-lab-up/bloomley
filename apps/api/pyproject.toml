@@ -26,3 +26,8 @@ dev = [
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+# app.core.database's engine is module-level, so its pooled asyncpg
+# connections belong to the event loop that opened them. One loop for the
+# whole run lets several tests share that pool.
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"

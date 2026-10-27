@@ -81,6 +81,17 @@ async def register_push_token(
     )
 
 
+@router.delete("/me/push-tokens/{expo_push_token}", status_code=status.HTTP_204_NO_CONTENT)
+async def deactivate_push_token(
+    expo_push_token: str,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> None:
+    """Call on logout, before the Clerk session ends, so this device stops
+    receiving pushes. Idempotent: an unknown token is a no-op."""
+    await service.deactivate_push_token(session, user.id, expo_push_token)
+
+
 @webhook_router.post("/clerk", status_code=status.HTTP_204_NO_CONTENT)
 async def clerk_webhook(
     request: Request,

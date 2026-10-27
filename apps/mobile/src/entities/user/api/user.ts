@@ -15,4 +15,9 @@ export const userApi = {
 
   registerPushToken: (payload: PushTokenPayload) =>
     apiClient.post<{ id: string }>('/users/me/push-tokens', payload),
+
+  /** Call on logout, BEFORE signOut() (it needs the session token), so this
+   * device stops receiving pushes for the account. */
+  deactivatePushToken: (expoPushToken: string) =>
+    apiClient.delete<void>(`/users/me/push-tokens/${encodeURIComponent(expoPushToken)}`),
 };

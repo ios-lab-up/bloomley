@@ -65,7 +65,14 @@ export function ProfileScreen() {
           <Text className="font-nunito text-xs text-bloom-text-secondary">Actualizando...</Text>
         ) : null}
       </View>
-      <View className="pb-6">
+      <View className="gap-3 pb-6">
+        {__DEV__ ? (
+          <Button
+            label="Debug de sesión"
+            variant="secondary"
+            onPress={() => router.push('/debug-auth')}
+          />
+        ) : null}
         <Button label="Ajustes" variant="secondary" onPress={() => router.push('/settings')} />
       </View>
     </SafeAreaView>

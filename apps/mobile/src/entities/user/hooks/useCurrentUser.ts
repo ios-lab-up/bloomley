@@ -1,11 +1,11 @@
 import { useAuth } from '@clerk/clerk-expo';
 import { useQuery } from '@tanstack/react-query';
 
-import { ApiError } from '../api/client';
+import { isTransientError } from '../api/isTransientError';
 import { userApi } from '../api/user';
 import { userKeys } from '../api/queryKeys';
 
-const USER_PROVISIONING_RETRIES = 10;
+const TRANSIENT_RETRIES = 3;
 
 export function useCurrentUser() {
   const { isSignedIn, userId } = useAuth();
@@ -14,11 +14,10 @@ export function useCurrentUser() {
     queryKey: userKeys.me(userId ?? 'anonymous'),
     queryFn: userApi.me,
     enabled: !!isSignedIn,
-    // Right after sign-up the backend hasn't created the user yet (webhook
-    // `user.created`), so /users/me answers 401 for a few seconds. Retry
-    // that case every second for ~10 s before surfacing an error.
-    retry: (failureCount, error) =>
-      error instanceof ApiError && error.status === 401 && failureCount < USER_PROVISIONING_RETRIES,
+    // The API provisions the user on this first call, so there's no 401 to
+    // wait out anymore (a 401 now means a dead session, handled in the
+    // client). Retry only network blips and 5xx, then show the error state.
+    retry: (failureCount, error) => isTransientError(error) && failureCount < TRANSIENT_RETRIES,
     retryDelay: 1000,
   });
 
