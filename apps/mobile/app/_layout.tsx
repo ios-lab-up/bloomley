@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
 import { AppProviders } from '@/app';
+import { OnboardingFlowProvider } from '@/features/onboarding-flow';
 import { isClerkConfigured } from '@/shared/lib/clerk';
 
 // Only rendered when ClerkProvider is mounted (useAuth throws otherwise).
@@ -26,6 +27,13 @@ function AuthStack() {
           to the anchor route (`index`), which redirects to onboarding. */}
       <Stack.Protected guard={!!isSignedIn}>
         <Stack.Screen name="home" />
+        <Stack.Screen name="settings" />
+        <Stack.Screen name="settings/security" />
+        <Stack.Screen name="settings/delete-account" />
+        <Stack.Screen name="profile-photo" />
+        <Stack.Screen name="edit-profile" />
+        <Stack.Screen name="edit-email" />
+        <Stack.Screen name="notification-settings" />
       </Stack.Protected>
     </Stack>
   );
@@ -34,8 +42,12 @@ function AuthStack() {
 export default function RootLayout() {
   return (
     <AppProviders>
-      {isClerkConfigured ? <AuthStack /> : <Stack screenOptions={{ headerShown: false }} />}
-      <StatusBar style="auto" />
+      {/* Above the whole router so the onboarding choices outlive the
+          onboarding screens and can be saved once the user is signed in. */}
+      <OnboardingFlowProvider>
+        {isClerkConfigured ? <AuthStack /> : <Stack screenOptions={{ headerShown: false }} />}
+        <StatusBar style="auto" />
+      </OnboardingFlowProvider>
     </AppProviders>
   );
 }

@@ -10,30 +10,14 @@
 
 import Constants from 'expo-constants';
 
-const API_PORT = 8000;
+import { resolveApiBaseUrl } from '@/shared/lib/apiBaseUrl';
 
-/**
- * An explicit EXPO_PUBLIC_API_URL always wins (staging, production). Without
- * it, in development the API is assumed to run on the same machine as Metro,
- * so reuse the host the app was loaded from: the LAN IP then follows the
- * network without editing .env.
- */
-function resolveApiBaseUrl(): string {
-  const explicit = process.env.EXPO_PUBLIC_API_URL;
-  if (explicit) {
-    return explicit;
-  }
-
-  // `hostUri` looks like "172.25.27.169:8081" (Metro's address).
-  const metroHost = Constants.expoConfig?.hostUri?.split(':')[0];
-  if (__DEV__ && metroHost) {
-    return `http://${metroHost}:${API_PORT}`;
-  }
-
-  return `http://localhost:${API_PORT}`;
-}
-
-const API_BASE_URL = resolveApiBaseUrl();
+// Tested in shared/lib/apiBaseUrl.test.mjs. `hostUri` only exists in dev, so
+// no __DEV__ check is needed.
+const API_BASE_URL = resolveApiBaseUrl({
+  envUrl: process.env.EXPO_PUBLIC_API_URL,
+  hostUri: Constants.expoConfig?.hostUri,
+});
 const API_PREFIX = '/api/v1';
 
 // `fetch` in React Native has no timeout of its own: when packets get lost
