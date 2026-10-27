@@ -30,3 +30,13 @@ export function signInErrorMessage(error: unknown, fallback = GENERIC_CREDENTIAL
 export function isIdentifierNotFound(error: unknown) {
   return isClerkAPIResponseError(error) && error.errors[0]?.code === 'form_identifier_not_found';
 }
+
+/** Spanish message for the first Clerk error code found in `messages`, else `fallback`. */
+export function clerkErrorMessage(
+  error: unknown,
+  messages: Record<string, string>,
+  fallback: string,
+): string {
+  if (!isClerkAPIResponseError(error)) return fallback;
+  return messages[error.errors[0]?.code ?? ''] ?? fallback;
+}

@@ -1,10 +1,10 @@
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { userKeys } from '@/entities/user';
+import { clerkErrorMessage } from '@/shared/lib/clerkErrors';
 
-import { clerkErrorMessage } from './clerkErrors';
 import { normalizeEmail } from './validation';
 
 export type ManagedEmail = {
@@ -14,14 +14,23 @@ export type ManagedEmail = {
   isPrimary: boolean;
 };
 
+const EMAIL_ERRORS: Record<string, string> = {
+  form_identifier_exists: 'Ese correo ya está en uso.',
+  form_param_format_invalid: 'Escribe un correo válido.',
+  form_param_nil: 'Escribe tu correo.',
+  form_code_incorrect: 'Código incorrecto. Revisa tu correo e intenta de nuevo.',
+  verification_expired: 'El código expiró. Pide uno nuevo.',
+  verification_failed: 'Demasiados intentos. Pide un código nuevo.',
+  too_many_requests: 'Demasiados intentos. Espera un momento e intenta de nuevo.',
+};
+
 /** `null` = todo salio bien; si no, el mensaje en español para mostrar. */
-type Outcome = string | null;
+export type Outcome = string | null;
 
 export function useManageEmails() {
   const { user } = useUser();
   const { userId } = useAuth();
   const queryClient = useQueryClient();
-  const [, setVersion] = useState(0);
 
   const emails: ManagedEmail[] = (user?.emailAddresses ?? []).map((address) => ({
     id: address.id,
@@ -35,26 +44,22 @@ export function useManageEmails() {
   // nuevo puede tardar unos segundos en aparecer ahi.
   const refresh = useCallback(async () => {
     await user?.reload();
-    setVersion((version) => version + 1);
     if (userId) {
       await queryClient.invalidateQueries({ queryKey: userKeys.me(userId) });
     }
   }, [user, userId, queryClient]);
 
-  const find = (id: string) => user?.emailAddresses.find((address) => address.id === id);
-
   const sendCode = useCallback(
     async (id: string): Promise<Outcome> => {
-      const address = find(id);
+      const address = user?.emailAddresses.find((item) => item.id === id);
       if (!address) return 'No encontramos ese correo. Intenta de nuevo.';
       try {
         await address.prepareVerification({ strategy: 'email_code' });
         return null;
       } catch (error) {
-        return clerkErrorMessage(error, 'No pudimos enviar el código. Intenta de nuevo.');
+        return clerkErrorMessage(error, EMAIL_ERRORS, 'No pudimos enviar el código. Intenta de nuevo.');
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [user],
   );
 
@@ -67,7 +72,7 @@ export function useManageEmails() {
         await refresh();
         return { id: address.id };
       } catch (error) {
-        return { error: clerkErrorMessage(error, 'No pudimos agregar ese correo. Intenta de nuevo.') };
+        return { error: clerkErrorMessage(error, EMAIL_ERRORS, 'No pudimos agregar ese correo. Intenta de nuevo.') };
       }
     },
     [user, refresh],
@@ -75,7 +80,7 @@ export function useManageEmails() {
 
   const verify = useCallback(
     async (id: string, code: string): Promise<Outcome> => {
-      const address = find(id);
+      const address = user?.emailAddresses.find((item) => item.id === id);
       if (!address) return 'No encontramos ese correo. Intenta de nuevo.';
       try {
         const result = await address.attemptVerification({ code: code.trim() });
@@ -85,10 +90,9 @@ export function useManageEmails() {
         await refresh();
         return null;
       } catch (error) {
-        return clerkErrorMessage(error, 'No pudimos verificar el código. Intenta de nuevo.');
+        return clerkErrorMessage(error, EMAIL_ERRORS, 'No pudimos verificar el código. Intenta de nuevo.');
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [user, refresh],
   );
 
@@ -100,7 +104,7 @@ export function useManageEmails() {
         await refresh();
         return null;
       } catch (error) {
-        return clerkErrorMessage(error, 'No pudimos cambiar tu correo principal. Intenta de nuevo.');
+        return clerkErrorMessage(error, EMAIL_ERRORS, 'No pudimos cambiar tu correo principal. Intenta de nuevo.');
       }
     },
     [user, refresh],
@@ -108,7 +112,7 @@ export function useManageEmails() {
 
   const remove = useCallback(
     async (id: string): Promise<Outcome> => {
-      const address = find(id);
+      const address = user?.emailAddresses.find((item) => item.id === id);
       if (!address) return 'No encontramos ese correo. Intenta de nuevo.';
       // Clerk tambien lo rechaza, pero asi el mensaje sale claro y sin viaje.
       if (id === user?.primaryEmailAddressId) {
@@ -119,10 +123,9 @@ export function useManageEmails() {
         await refresh();
         return null;
       } catch (error) {
-        return clerkErrorMessage(error, 'No pudimos quitar ese correo. Intenta de nuevo.');
+        return clerkErrorMessage(error, EMAIL_ERRORS, 'No pudimos quitar ese correo. Intenta de nuevo.');
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [user, refresh],
   );
 

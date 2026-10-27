@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 
-import type { ManagedEmail } from '@/features/manage-email';
+import type { ManagedEmail, Outcome } from '@/features/manage-email';
 import { Button } from '@/shared/ui';
-
-type Outcome = string | null;
 
 type Props = {
   emails: ManagedEmail[];

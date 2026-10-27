@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
 
+import type { Outcome } from '@/features/manage-email';
 import { Button, TextField } from '@/shared/ui';
-
-type Outcome = string | null;
 
 type Props = {
   email: string;

@@ -1,5 +1,1 @@
-import { ProfilePhotoScreen } from '@/screens/profile-photo';
-
-export default function ProfilePhoto() {
-  return <ProfilePhotoScreen />;
-}
+export { ProfilePhotoScreen as default } from '@/screens/profile-photo';

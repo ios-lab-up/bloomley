@@ -1,5 +1,1 @@
-import { SecurityScreen } from '@/screens/settings-security';
-
-export default function Security() {
-  return <SecurityScreen />;
-}
+export { SecurityScreen as default } from '@/screens/settings-security';

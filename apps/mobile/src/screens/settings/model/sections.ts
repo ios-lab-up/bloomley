@@ -8,7 +8,7 @@ export type SettingsItem = {
   id: string;
   label: string;
   icon: IconName;
-} & ({ route: Href | null } | { action: 'sign-out' });
+} & ({ route: Href } | { action: 'sign-out' });
 
 export type SettingsSection = {
   id: string;
@@ -16,12 +16,6 @@ export type SettingsSection = {
   items: SettingsItem[];
 };
 
-/**
- * `route: null` = la pantalla de esa fila aun no existe, asi que no se pinta
- * (no queda una fila rota). Quien construya cada historia solo pone aqui su
- * ruta: BLO-19 foto, BLO-20 nombre, BLO-21 correo, BLO-16 seguridad,
- * BLO-17 borrar cuenta, BLO-22 notificaciones.
- */
 export const settingsSections: SettingsSection[] = [
   {
     id: 'perfil',
@@ -58,12 +52,3 @@ export const settingsSections: SettingsSection[] = [
     items: [{ id: 'cerrar-sesion', label: 'Cerrar sesión', icon: 'log-out-outline', action: 'sign-out' }],
   },
 ];
-
-export function visibleSections(sections: SettingsSection[]): SettingsSection[] {
-  return sections
-    .map((section) => ({
-      ...section,
-      items: section.items.filter((item) => 'action' in item || item.route !== null),
-    }))
-    .filter((section) => section.items.length > 0);
-}

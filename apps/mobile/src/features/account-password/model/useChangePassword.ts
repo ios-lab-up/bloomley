@@ -1,7 +1,17 @@
 import { useUser } from '@clerk/clerk-expo';
 import { useState } from 'react';
 
-import { passwordErrorMessage } from './passwordErrorMessage';
+import { clerkErrorMessage } from '@/shared/lib/clerkErrors';
+
+const PASSWORD_ERRORS: Record<string, string> = {
+  form_password_incorrect: 'La contraseña actual es incorrecta.',
+  form_password_pwned: 'Esa contraseña apareció en una filtración. Elige otra.',
+  form_password_not_strong_enough: 'Elige una contraseña más segura.',
+  form_password_length_too_short: 'La contraseña es muy corta.',
+  form_password_size_in_bytes_exceeded: 'La contraseña es demasiado larga.',
+  too_many_requests: 'Demasiados intentos. Espera un momento e intenta de nuevo.',
+  session_reverification_required: 'Por seguridad, vuelve a iniciar sesión para hacer este cambio.',
+};
 
 type ChangePasswordInput = {
   currentPassword: string;
@@ -34,7 +44,7 @@ export function useChangePassword() {
       await user.reload();
       return true;
     } catch (err) {
-      setError(passwordErrorMessage(err));
+      setError(clerkErrorMessage(err, PASSWORD_ERRORS, 'No pudimos cambiar tu contraseña. Intenta de nuevo.'));
       return false;
     } finally {
       setIsSubmitting(false);

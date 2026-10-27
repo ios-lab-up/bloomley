@@ -30,7 +30,3 @@ test('no host at all (production build) -> localhost', () => {
   assert.equal(resolveApiBaseUrl({ hostUri: null }), 'http://localhost:8000');
   assert.equal(resolveApiBaseUrl({}), 'http://localhost:8000');
 });
-
-test('custom API port', () => {
-  assert.equal(resolveApiBaseUrl({ hostUri: '10.0.0.5:8081', apiPort: 9000 }), 'http://10.0.0.5:9000');
-});

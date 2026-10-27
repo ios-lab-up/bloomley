@@ -1,8 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCurrentUser } from '@/entities/user';
@@ -12,8 +11,7 @@ import {
   validateDisplayName,
   validateUsername,
 } from '@/features/edit-profile';
-import { colors } from '@/shared/lib/theme';
-import { Button, TextField } from '@/shared/ui';
+import { Button, ScreenHeader, TextField } from '@/shared/ui';
 
 export function EditProfileScreen() {
   const router = useRouter();
@@ -22,20 +20,7 @@ export function EditProfileScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-bloom-bg">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-1">
-        <Pressable
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel="Volver"
-          hitSlop={8}
-          className="h-11 w-11 items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={26} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-nunito-bold text-[22px] text-bloom-ink">
-          Nombre y usuario
-        </Text>
-      </View>
+      <ScreenHeader title="Nombre y usuario" />
 
       {isError ? (
         <View className="flex-1 items-center justify-center gap-4 px-6">
@@ -67,10 +52,7 @@ type FormProps = {
 function EditProfileForm({ initialDisplayName, initialUsername, onSaved }: FormProps) {
   const [displayName, setDisplayName] = useState(initialDisplayName);
   const [username, setUsername] = useState(initialUsername);
-  const { save, errors, isSaving } = useEditProfile({
-    displayName: initialDisplayName,
-    username: initialUsername,
-  });
+  const { save, errors, isSaving } = useEditProfile();
 
   const nameChanged = displayName.trim() !== initialDisplayName.trim();
   const usernameChanged = normalizeUsername(username) !== initialUsername;
@@ -79,7 +61,10 @@ function EditProfileForm({ initialDisplayName, initialUsername, onSaved }: FormP
   const canSave = (nameChanged || usernameChanged) && !nameError && !usernameError;
 
   const handleSave = async () => {
-    const ok = await save({ displayName, username });
+    const ok = await save({
+      displayName: nameChanged ? displayName.trim() : undefined,
+      username: usernameChanged ? normalizeUsername(username) : undefined,
+    });
     if (ok) onSaved();
   };
 

@@ -1,5 +1,1 @@
-import { EditEmailScreen } from '@/screens/edit-email';
-
-export default function EditEmail() {
-  return <EditEmailScreen />;
-}
+export { EditEmailScreen as default } from '@/screens/edit-email';

@@ -1,17 +1,13 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { ActivityIndicator, Linking, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { UserAvatar, useCurrentUser } from '@/entities/user';
 import { useProfilePhoto } from '@/features/profile-photo';
-import { colors } from '@/shared/lib/theme';
-import { Button } from '@/shared/ui';
+import { Button, ScreenHeader } from '@/shared/ui';
 
 const AVATAR_SIZE = 144;
 
 export function ProfilePhotoScreen() {
-  const router = useRouter();
   const { data: user } = useCurrentUser();
   const photo = useProfilePhoto();
   const shownImage = photo.previewUri ?? photo.currentImageUrl;
@@ -19,20 +15,7 @@ export function ProfilePhotoScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-bloom-bg">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-1">
-        <Pressable
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel="Volver"
-          hitSlop={8}
-          className="h-11 w-11 items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={26} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-nunito-bold text-[22px] text-bloom-ink">
-          Foto de perfil
-        </Text>
-      </View>
+      <ScreenHeader title="Foto de perfil" />
 
       <View className="flex-1 items-center gap-6 px-6 pt-6">
         <View accessibilityLabel={photo.isBusy ? 'Subiendo foto' : 'Tu foto de perfil'}>

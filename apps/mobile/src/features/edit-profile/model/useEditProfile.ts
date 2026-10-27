@@ -2,49 +2,51 @@ import { useUser } from '@clerk/clerk-expo';
 import { useCallback, useState } from 'react';
 
 import { useUpdateMe } from '@/entities/user';
+import { clerkErrorMessage } from '@/shared/lib/clerkErrors';
 
-import { clerkErrorMessage } from './clerkErrors';
-import { normalizeUsername } from './validation';
+const USERNAME_ERRORS: Record<string, string> = {
+  form_identifier_exists: 'Ese nombre de usuario ya está en uso.',
+  form_username_invalid_length: 'La longitud del nombre de usuario no es válida.',
+  form_username_invalid_character: 'Usa solo letras minúsculas, números y guion bajo (_).',
+  form_param_format_invalid: 'El formato del nombre de usuario no es válido.',
+  form_param_nil: 'Escribe un nombre de usuario.',
+};
 
-type Draft = { displayName: string; username: string };
+/** Only the fields that changed, already trimmed/normalized by the form. */
+type Changes = { displayName?: string; username?: string };
 type SaveErrors = { displayName?: string; username?: string };
 
-export function useEditProfile(initial: Draft) {
+export function useEditProfile() {
   const { user: clerkUser } = useUser();
   const updateMe = useUpdateMe();
   const [errors, setErrors] = useState<SaveErrors>({});
   const [isSaving, setIsSaving] = useState(false);
 
   const save = useCallback(
-    async (draft: Draft): Promise<boolean> => {
-      const nextName = draft.displayName.trim();
-      const nextUsername = normalizeUsername(draft.username);
-      const nameChanged = nextName !== initial.displayName.trim();
-      const usernameChanged = nextUsername !== initial.username;
-
+    async ({ displayName, username }: Changes): Promise<boolean> => {
       setErrors({});
       setIsSaving(true);
       try {
         // El username va primero: es lo que puede fallar por validacion de
         // Clerk (ocupado, formato). Asi un rechazo no deja el nombre a medias.
-        if (usernameChanged) {
+        if (username !== undefined) {
           if (!clerkUser) {
             setErrors({ username: 'No pudimos cargar tu cuenta. Intenta de nuevo.' });
             return false;
           }
           try {
-            await clerkUser.update({ username: nextUsername });
+            await clerkUser.update({ username });
           } catch (error) {
             setErrors({
-              username: clerkErrorMessage(error, 'No pudimos guardar tu usuario. Intenta de nuevo.'),
+              username: clerkErrorMessage(error, USERNAME_ERRORS, 'No pudimos guardar tu usuario. Intenta de nuevo.'),
             });
             return false;
           }
         }
-        if (nameChanged) {
+        if (displayName !== undefined) {
           try {
             // Optimista: useUpdateMe revierte solo si el PATCH falla.
-            await updateMe.mutateAsync({ display_name: nextName });
+            await updateMe.mutateAsync({ display_name: displayName });
           } catch {
             setErrors({ displayName: 'No pudimos guardar tu nombre. Intenta de nuevo.' });
             return false;
@@ -55,7 +57,7 @@ export function useEditProfile(initial: Draft) {
         setIsSaving(false);
       }
     },
-    [clerkUser, updateMe, initial.displayName, initial.username],
+    [clerkUser, updateMe],
   );
 
   return { save, errors, isSaving };

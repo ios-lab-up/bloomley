@@ -1,5 +1,1 @@
-import { DeleteAccountScreen } from '@/screens/settings-delete-account';
-
-export default function DeleteAccount() {
-  return <DeleteAccountScreen />;
-}
+export { DeleteAccountScreen as default } from '@/screens/settings-delete-account';
