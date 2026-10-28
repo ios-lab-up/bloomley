@@ -8,19 +8,31 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.database import get_session
 from app.groups import service
-from app.groups.models import Group, GroupStreak
+from app.groups.models import Group, GroupMembership, GroupStreak
 from app.groups.schemas import (
     GroupCreate,
     GroupDetailRead,
     GroupJoinRequest,
+    GroupMemberAdd,
     GroupMemberRead,
     GroupRead,
     GroupStreakRead,
+    GroupUpdate,
 )
 from app.users.deps import get_current_user
 from app.users.models import User
 
 router = APIRouter(prefix="/groups", tags=["groups"])
+
+
+def _member_read(membership: GroupMembership, member: User) -> GroupMemberRead:
+    return GroupMemberRead(
+        membership_id=membership.id,
+        user_id=member.id,
+        username=member.username,
+        display_name=member.display_name,
+        joined_at=membership.joined_at,
+    )
 
 
 @router.post("", response_model=GroupRead, status_code=status.HTTP_201_CREATED)
@@ -65,6 +77,18 @@ async def get_group(
     )
 
 
+@router.patch("/{group_id}", response_model=GroupRead)
+async def rename_group(
+    group_id: UUID,
+    payload: GroupUpdate,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> Group:
+    return await service.rename_group(
+        session, user_id=user.id, group_id=group_id, name=payload.name
+    )
+
+
 @router.delete("/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_group(
     group_id: UUID,
@@ -83,6 +107,36 @@ async def leave_group(
     await service.leave_group(session, user_id=user.id, group_id=group_id)
 
 
+# Declared after `/members/me` so that path keeps going to leave_group.
+@router.delete("/{group_id}/members/{member_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def remove_member(
+    group_id: UUID,
+    member_id: UUID,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> None:
+    await service.remove_member(
+        session, owner_id=user.id, group_id=group_id, member_id=member_id
+    )
+
+
+@router.post(
+    "/{group_id}/members",
+    response_model=GroupMemberRead,
+    status_code=status.HTTP_201_CREATED,
+)
+async def add_member(
+    group_id: UUID,
+    payload: GroupMemberAdd,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> GroupMemberRead:
+    membership, member = await service.add_member(
+        session, owner_id=user.id, group_id=group_id, username=payload.username
+    )
+    return _member_read(membership, member)
+
+
 @router.get("/{group_id}/members", response_model=list[GroupMemberRead])
 async def list_group_members(
     group_id: UUID,
@@ -91,15 +145,7 @@ async def list_group_members(
 ) -> list[GroupMemberRead]:
     await service.get_member_group_or_404(session, group_id, user.id)
     rows = await service.list_group_members(session, group_id)
-    return [
-        GroupMemberRead(
-            membership_id=membership.id,
-            user_id=member.id,
-            display_name=member.display_name,
-            joined_at=membership.joined_at,
-        )
-        for membership, member in rows
-    ]
+    return [_member_read(membership, member) for membership, member in rows]
 
 
 @router.get("/{group_id}/streak", response_model=GroupStreakRead)
