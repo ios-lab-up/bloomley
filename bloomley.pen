@@ -11788,49 +11788,6 @@
           ]
         },
         {
-          "type": "frame",
-          "id": "RmLl6",
-          "x": 20,
-          "y": 519,
-          "name": "Intención de misión",
-          "width": 353,
-          "height": 78,
-          "fill": "#F8F3FF",
-          "cornerRadius": 20,
-          "layout": "none",
-          "children": [
-            {
-              "type": "text",
-              "id": "BhrZ5",
-              "x": 20,
-              "y": 17,
-              "name": "Intención título",
-              "fill": "$v3-ink",
-              "textGrowth": "fixed-width",
-              "width": 250,
-              "content": "Intención",
-              "fontFamily": "$v3-font",
-              "fontSize": 15,
-              "fontWeight": "900"
-            },
-            {
-              "type": "text",
-              "id": "g8QMaa",
-              "x": 20,
-              "y": 44,
-              "name": "Intención detalle",
-              "fill": "$v3-text-secondary",
-              "textGrowth": "fixed-width",
-              "width": 314,
-              "content": "Mover tu cuerpo puede darte más energía y claridad.",
-              "lineHeight": 1.2,
-              "fontFamily": "$v3-font",
-              "fontSize": 13,
-              "fontWeight": "600"
-            }
-          ]
-        },
-        {
           "type": "group",
           "id": "pOxlD",
           "x": -44,
@@ -12269,28 +12226,6 @@
               "fontFamily": "$v3-font",
               "fontSize": 15,
               "fontWeight": "600"
-            },
-            {
-              "type": "ellipse",
-              "id": "FkBf0",
-              "x": 16,
-              "y": 13,
-              "name": "Fondo ayuda",
-              "fill": "#E6DBFF",
-              "width": 50,
-              "height": 50
-            },
-            {
-              "type": "icon",
-              "id": "v6rlQl",
-              "x": 29,
-              "y": 26,
-              "name": "Ayuda",
-              "width": 24,
-              "height": 24,
-              "icon": "person-standing",
-              "library": "lucide",
-              "fill": "$v3-purple-deep"
             }
           ]
         },
@@ -12468,18 +12403,6 @@
           "width": 353,
           "height": 236,
           "cornerRadius": 28,
-          "stroke": "#ECE6FA",
-          "strokeWidth": 1,
-          "effect": {
-            "type": "shadow",
-            "shadowType": "outer",
-            "color": "#5E42A818",
-            "offset": {
-              "x": 0,
-              "y": 8
-            },
-            "blur": 22
-          },
           "layout": "none",
           "children": [
             {
@@ -12953,19 +12876,9 @@
           "layout": "none",
           "children": [
             {
-              "type": "ellipse",
-              "id": "W8Fqc",
-              "x": 14,
-              "y": 19,
-              "name": "Fondo mensaje amable",
-              "fill": "#EAF8EF",
-              "width": 56,
-              "height": 56
-            },
-            {
               "type": "text",
               "id": "PA90M",
-              "x": 84,
+              "x": 54,
               "y": 31,
               "name": "XP 0",
               "fill": "$v3-ink",
@@ -13119,16 +13032,6 @@
           "cornerRadius": 22,
           "stroke": "#E9DFFF",
           "strokeWidth": 1,
-          "effect": {
-            "type": "shadow",
-            "shadowType": "outer",
-            "color": "#5338A51A",
-            "offset": {
-              "x": 0,
-              "y": 6
-            },
-            "blur": 16
-          },
           "layout": "none",
           "children": [
             {
@@ -13264,16 +13167,6 @@
           "cornerRadius": 22,
           "stroke": "#EEEAF3",
           "strokeWidth": 1,
-          "effect": {
-            "type": "shadow",
-            "shadowType": "outer",
-            "color": "#392E6B0F",
-            "offset": {
-              "x": 0,
-              "y": 5
-            },
-            "blur": 14
-          },
           "layout": "none",
           "children": [
             {
@@ -13421,74 +13314,6 @@
           "fontFamily": "$v3-font",
           "fontSize": 16,
           "fontWeight": "600"
-        },
-        {
-          "type": "frame",
-          "id": "i43ToP",
-          "x": 19,
-          "y": 622,
-          "name": "Estado pendiente",
-          "width": 353,
-          "height": 104,
-          "fill": "#FFFFFF",
-          "cornerRadius": 22,
-          "stroke": "#EEEAF3",
-          "strokeWidth": 1,
-          "layout": "none",
-          "children": [
-            {
-              "type": "ellipse",
-              "id": "hTZeD",
-              "x": 16,
-              "y": 18,
-              "name": "Fondo nube",
-              "fill": "#F0EAFF",
-              "width": 58,
-              "height": 58
-            },
-            {
-              "type": "icon",
-              "id": "rOK26",
-              "x": 30,
-              "y": 32,
-              "name": "Reloj pendiente",
-              "width": 29,
-              "height": 29,
-              "icon": "cloud",
-              "library": "lucide",
-              "fill": "$v3-purple-deep"
-            },
-            {
-              "type": "text",
-              "id": "M59T0",
-              "x": 86,
-              "y": 24,
-              "name": "Pendiente",
-              "fill": "$v3-ink",
-              "textGrowth": "fixed-width",
-              "width": 240,
-              "content": "Pendiente de sincronización",
-              "lineHeight": 1.18,
-              "fontFamily": "$v3-font",
-              "fontSize": 16,
-              "fontWeight": "800"
-            },
-            {
-              "type": "text",
-              "id": "Grd8I",
-              "x": 86,
-              "y": 50,
-              "name": "Detalle sincronización",
-              "fill": "$v3-text-secondary",
-              "textGrowth": "fixed-width",
-              "width": 240,
-              "content": "Tu progreso está seguro. Te avisaremos cuando se sincronice.",
-              "lineHeight": 1.25,
-              "fontFamily": "$v3-font",
-              "fontSize": 13,
-              "fontWeight": "600"
-            }
-          ]
         },
         {
           "type": "text",
@@ -13867,49 +13692,6 @@
           ]
         },
         {
-          "type": "frame",
-          "id": "y3ZPX",
-          "x": 20,
-          "y": 532,
-          "name": "Volver a Hoy",
-          "width": 353,
-          "height": 58,
-          "fill": "#F8F3FF",
-          "cornerRadius": 24,
-          "stroke": "#E9E0FA",
-          "strokeWidth": 1,
-          "layout": "none",
-          "children": [
-            {
-              "type": "text",
-              "id": "YRSdT",
-              "x": 126,
-              "y": 18,
-              "name": "Home label",
-              "fill": "$v3-purple-deep",
-              "textGrowth": "fixed-width",
-              "width": 160,
-              "content": "Volver a Hoy",
-              "lineHeight": 1.18,
-              "fontFamily": "$v3-font",
-              "fontSize": 17,
-              "fontWeight": "800"
-            },
-            {
-              "type": "icon",
-              "id": "Ni1vH",
-              "x": 97,
-              "y": 17,
-              "name": "Inicio",
-              "width": 24,
-              "height": 24,
-              "icon": "house",
-              "library": "lucide",
-              "fill": "$v3-purple-deep"
-            }
-          ]
-        },
-        {
           "type": "rectangle",
           "id": "e4Ns5",
           "x": -131,
@@ -13981,6 +13763,47 @@
           },
           "width": 266,
           "height": 186
+        },
+        {
+          "type": "frame",
+          "id": "MtMLf",
+          "x": 20,
+          "y": 548,
+          "name": "CTA · Entendido",
+          "width": 353,
+          "height": 58,
+          "fill": "#9161e8ff",
+          "cornerRadius": 29,
+          "gap": 10,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "q5br3Y",
+              "name": "Inicio",
+              "width": 24,
+              "height": 24,
+              "icon": "house",
+              "library": "lucide",
+              "fill": "#ffffffff"
+            },
+            {
+              "type": "text",
+              "id": "J9DfEN",
+              "name": "Entendido label",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width-height",
+              "width": "fit_content(125)",
+              "height": "fit_content(24)",
+              "content": "Volver al Home",
+              "textAlign": "center",
+              "textAlignVertical": "bottom",
+              "fontFamily": "$v3-font",
+              "fontSize": 17,
+              "fontWeight": "800"
+            }
+          ]
         }
       ]
     },
