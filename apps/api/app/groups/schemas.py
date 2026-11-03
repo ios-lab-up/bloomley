@@ -7,14 +7,29 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
 
+GroupName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+
+
 class GroupCreate(BaseModel):
-    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+    name: GroupName
+
+
+class GroupUpdate(BaseModel):
+    name: GroupName
 
 
 class GroupJoinRequest(BaseModel):
     # Codes are generated uppercase; normalise so typed-in codes still match.
     invite_code: Annotated[
         str, StringConstraints(strip_whitespace=True, to_upper=True, min_length=1, max_length=32)
+    ]
+
+
+class GroupMemberAdd(BaseModel):
+    # `users.username` is stored lowercase (mirrored from Clerk); normalise so
+    # "DChagoya" finds "dchagoya".
+    username: Annotated[
+        str, StringConstraints(strip_whitespace=True, to_lower=True, min_length=1, max_length=64)
     ]
 
 
@@ -47,5 +62,6 @@ class GroupMemberRead(BaseModel):
     # No `email`: fellow members only see public profile fields, not contact details.
     membership_id: UUID
     user_id: UUID
+    username: str | None
     display_name: str
     joined_at: datetime
