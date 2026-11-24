@@ -17,6 +17,8 @@ from app.groups import models as groups_models  # noqa: F401
 from app.users import models as users_models  # noqa: F401
 from app.wellness import models as wellness_models  # noqa: F401
 from app.missions import models as missions_models  # noqa: F401
+from app.achievements import models as achievements_models  # noqa: F401
+from app.notifications import models as notifications_models  # noqa: F401
 
 config = context.config
 

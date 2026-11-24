@@ -88,6 +88,7 @@ class User(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     clerk_user_id: str = Field(unique=True, index=True)
     username: str | None = Field(default=None, unique=True, index=True)
+    clerk_updated_at: int | None = Field(default=None, sa_type=BigInteger)  # interno de la sync
     email: str
     display_name: str
     xp_total: int = Field(default=0)

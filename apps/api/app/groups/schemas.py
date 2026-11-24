@@ -49,3 +49,30 @@ class GroupMemberRead(BaseModel):
     user_id: UUID
     display_name: str
     joined_at: datetime
+
+
+class GroupTodayMember(BaseModel):
+    user_id: UUID
+    display_name: str
+    username: str | None
+    avatar_url: str | None
+    completed_today: bool
+    # Title of the mission they completed today ("Camina 10 minutos"), if any.
+    activity_title: str | None
+
+
+class GroupWeekDay(BaseModel):
+    date: date
+    active: bool
+
+
+class GroupTodayRead(BaseModel):
+    """Everything the "Tu grupo" screen shows besides the photo moments."""
+
+    group_id: UUID
+    streak_current: int
+    streak_longest: int
+    week: list[GroupWeekDay]  # Monday..Sunday of the viewer's current week
+    member_count: int
+    completed_count: int
+    members: list[GroupTodayMember]

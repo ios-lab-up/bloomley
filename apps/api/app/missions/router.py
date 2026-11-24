@@ -9,6 +9,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.achievements.schemas import AchievementBrief
 from app.core.database import get_session
 from app.missions import service
 from app.missions.models import MissionCompletion
@@ -62,8 +63,8 @@ async def complete_mission(
     )
     if result is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Mission not found")
-    completion, _feedback, mission = result
-    return _completion_read(completion, mission)
+    completion, _feedback, mission, newly = result
+    return _completion_read(completion, mission, newly)
 
 
 @router.get("/me/completions", response_model=list[MissionCompletionRead])
@@ -90,7 +91,9 @@ async def list_my_feedback(
     return await service.list_user_feedback(session, user.id, limit, offset)
 
 
-def _completion_read(completion: MissionCompletion, mission) -> MissionCompletionRead:
+def _completion_read(
+    completion: MissionCompletion, mission, newly=()
+) -> MissionCompletionRead:
     return MissionCompletionRead(
         id=completion.id,
         mission_id=completion.mission_id,
@@ -100,4 +103,5 @@ def _completion_read(completion: MissionCompletion, mission) -> MissionCompletio
         criteria_met=completion.criteria_met,
         completed_at=completion.completed_at,
         mission=MissionRead.model_validate(mission),
+        newly_unlocked=[AchievementBrief.model_validate(a) for a in newly],
     )

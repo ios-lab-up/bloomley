@@ -9,8 +9,9 @@ into their own transaction (e.g. a mission completion). It shares the same
 atomic UPDATE as `add_xp`, so concurrent awards never lose updates.
 """
 
-from datetime import datetime
+from datetime import date, datetime, time
 from uuid import UUID
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import httpx
 from sqlalchemy import func, update
@@ -25,6 +26,33 @@ XP_PER_LEVEL = 100
 
 def calculate_level(xp_total: int) -> int:
     return max(1, xp_total // XP_PER_LEVEL + 1)
+
+
+def user_zone(user: User) -> ZoneInfo:
+    try:
+        return ZoneInfo(user.timezone or "UTC")
+    except (ZoneInfoNotFoundError, ValueError):
+        return ZoneInfo("UTC")
+
+
+def local_today(user: User) -> date:
+    """The user's calendar day. Streaks, "once per day" mission rewards and the
+    home screen all use this, so an evening mission in Mexico doesn't land on
+    tomorrow's UTC date."""
+    return datetime.now(user_zone(user)).date()
+
+
+def local_day_bounds_utc(user: User, day: date) -> tuple[datetime, datetime]:
+    """[start, end) of the user's local `day` as naive UTC datetimes, the form
+    `created_at` columns are stored in."""
+    zone = user_zone(user)
+    next_day = date.fromordinal(day.toordinal() + 1)
+
+    def to_utc(d: date) -> datetime:
+        local_midnight = datetime(d.year, d.month, d.day, tzinfo=zone)
+        return local_midnight.astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
+
+    return to_utc(day), to_utc(next_day)
 
 
 async def get_user_by_clerk_id(session: AsyncSession, clerk_user_id: str) -> User | None:
@@ -82,7 +110,19 @@ async def add_xp(session: AsyncSession, user_id: UUID, amount: int) -> User:
 
 
 async def update_display_name(session: AsyncSession, user: User, display_name: str) -> User:
-    user.display_name = display_name
+    return await update_profile(session, user, display_name, None)
+
+
+async def update_profile(
+    session: AsyncSession,
+    user: User,
+    display_name: str | None,
+    timezone: str | None,
+) -> User:
+    if display_name is not None:
+        user.display_name = display_name
+    if timezone is not None:
+        user.timezone = timezone
     session.add(user)
     await session.commit()
     await session.refresh(user)
@@ -109,12 +149,15 @@ async def update_notification_settings(
     user_id: UUID,
     enabled: bool | None,
     frequency: str | None,
+    reminder_time: time | None = None,
 ) -> NotificationSettings:
     settings = await get_or_create_notification_settings(session, user_id)
     if enabled is not None:
         settings.enabled = enabled
     if frequency is not None:
         settings.frequency = frequency
+    if reminder_time is not None:
+        settings.reminder_time = reminder_time
     session.add(settings)
     await session.commit()
     await session.refresh(settings)
@@ -185,6 +228,10 @@ def _display_name(clerk_data: dict) -> str:
     return full or clerk_data.get("username") or _primary_email(clerk_data)
 
 
+def _avatar_url(clerk_data: dict) -> str | None:
+    return clerk_data.get("image_url") or None
+
+
 def _username(clerk_data: dict) -> str | None:
     # Clerk compares usernames case-insensitively; storing them lowercase
     # keeps our unique index and lookups consistent with that.
@@ -192,38 +239,107 @@ def _username(clerk_data: dict) -> str | None:
     return username or None
 
 
+def _clerk_updated_at(clerk_data: dict) -> int | None:
+    value = clerk_data.get("updated_at")
+    return value if isinstance(value, int) else None
+
+
+def _is_older(incoming: int | None, stored: int | None) -> bool:
+    """Whether a profile snapshot taken at `incoming` predates the one at
+    `stored`. Unknown timestamps (rows synced before `clerk_updated_at`
+    existed, or a payload without `updated_at`) never count as newer."""
+    return incoming is not None and stored is not None and incoming < stored
+
+
+# Namespaces for the two-key form of pg_advisory_xact_lock. Postgres keeps
+# that key space apart from the single-bigint one app.groups uses.
+_CLERK_USER_LOCK = 1
+_USERNAME_LOCK = 2
+
+
+async def _advisory_lock(session: AsyncSession, namespace: int, value: str) -> None:
+    """Held until the transaction ends. A hashtext collision between two
+    values only makes them wait for each other, never lets both through."""
+    await session.exec(select(func.pg_advisory_xact_lock(namespace, func.hashtext(value))))
+
+
 async def _upsert_user_from_clerk_data(
     session: AsyncSession, clerk_user_id: str, data: dict
 ) -> User:
     """Only place allowed to write `clerk_user_id`/`email`/`username`/initial
-    `display_name` (afterwards only PATCH /users/me changes it). Shared by
-    both sync paths (see module docstring below)."""
+    `display_name` (afterwards only PATCH /users/me changes it). Shared by both sync paths (see module docstring below).
+
+    Webhooks can arrive late (Clerk retries failed deliveries with the
+    original payload) and concurrently, so arrival order says nothing about
+    which data is current. Clerk's `updated_at` does:
+    - an event older than what the row already has is ignored;
+    - Clerk never lets two users hold a username at the same time, so when
+      another row holds the incoming username, whichever side has the newer
+      snapshot owns it, and the other side's claim is out of date.
+
+    Locks: this user's, then the username's (always in that order, and only
+    one username, so two syncs can't deadlock). The first makes concurrent
+    syncs of one user -- including two first requests JIT-provisioning the
+    same new user -- run one after the other; the second does the same for
+    syncs claiming one username. A sync that waited on a lock then reads the
+    rows the other one committed.
+    """
+    updated_at = _clerk_updated_at(data)
+    username = _username(data)
+    await _advisory_lock(session, _CLERK_USER_LOCK, clerk_user_id)
+    if username is not None:
+        await _advisory_lock(session, _USERNAME_LOCK, username)
+
+    # Read only once both locks are held: a sync that held the username lock
+    # may have just released this row's claim on it.
     user = await get_user_by_clerk_id(session, clerk_user_id)
+    if user is not None and _is_older(updated_at, user.clerk_updated_at):
+        await session.commit()  # releases the locks
+        return user
+
+    if username is not None:
+        result = await session.exec(
+            select(User.id, User.clerk_updated_at).where(
+                User.username == username, User.clerk_user_id != clerk_user_id
+            )
+        )
+        holder = result.first()
+        if holder is not None:
+            holder_id, holder_updated_at = holder
+            if _is_older(updated_at, holder_updated_at):
+                # The holder had it more recently, so this event's claim is
+                # stale; this user's current username comes with a later event.
+                username = None
+            else:
+                # The holder's claim is the stale one (a missed user.deleted,
+                # or a rename whose webhook hasn't arrived). The username
+                # condition keeps this from clobbering a rename of the holder
+                # that committed since the SELECT.
+                await session.exec(
+                    update(User)
+                    .where(User.id == holder_id, User.username == username)
+                    .values(username=None)
+                )
+
     email = _primary_email(data)
     display_name = _display_name(data)
-    username = _username(data)
-    if username is not None:
-        # Clerk only keeps usernames unique among its live users, so another
-        # row here can still hold this one (a missed user.deleted, or webhooks
-        # arriving out of order after a rename). Clerk says it's this user's
-        # now: release it instead of failing on ix_users_username.
-        await session.exec(
-            update(User)
-            .where(User.username == username, User.clerk_user_id != clerk_user_id)
-            .values(username=None)
-        )
     if user is None:
         user = User(
             clerk_user_id=clerk_user_id,
             username=username,
             email=email,
             display_name=display_name,
+            avatar_url=_avatar_url(data),
+            clerk_updated_at=updated_at,
         )
     else:
         # Keep the local display_name: it may have been edited via
         # PATCH /users/me, and a later user.updated must not clobber it.
         user.username = username
         user.email = email
+        user.avatar_url = _avatar_url(data)
+        if updated_at is not None:
+            user.clerk_updated_at = updated_at
     session.add(user)
     await session.commit()
     await session.refresh(user)

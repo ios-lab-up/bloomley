@@ -20,6 +20,7 @@ from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.groups.models import Group, GroupMembership, GroupStreak
+from app.missions.models import Mission, MissionCompletion
 from app.users.models import User
 
 _INVITE_CODE_ALPHABET = string.ascii_uppercase + string.digits
@@ -263,11 +264,37 @@ async def get_group_streak(session: AsyncSession, group_id: UUID) -> GroupStreak
     return streak
 
 
+def effective_group_streak(streak: GroupStreak, today: date) -> int:
+    """Same rule as the personal streak: not continued since yesterday = broken."""
+    if streak.last_active_date in (today, today - timedelta(days=1)):
+        return streak.current_streak
+    return 0
+
+
+async def list_user_group_ids(session: AsyncSession, user_id: UUID) -> list[UUID]:
+    result = await session.exec(
+        select(GroupMembership.group_id).where(GroupMembership.user_id == user_id)
+    )
+    return list(result.all())
+
+
 async def record_group_activity(
-    session: AsyncSession, *, group_id: UUID, activity_date: date | None = None
+    session: AsyncSession,
+    *,
+    group_id: UUID,
+    activity_date: date | None = None,
+    commit: bool = True,
 ) -> GroupStreak:
+    """`commit=False` lets a caller (a mission completion) fold this into its own
+    transaction. The streak row is locked either way: two members completing at
+    the same moment would otherwise both read "not counted today" and bump it twice."""
     activity_date = activity_date or datetime.utcnow().date()
-    streak = await get_group_streak(session, group_id)
+    result = await session.exec(
+        select(GroupStreak).where(GroupStreak.group_id == group_id).with_for_update()
+    )
+    streak = result.first()
+    if streak is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Group streak not found")
 
     if streak.last_active_date == activity_date:
         return streak
@@ -281,6 +308,56 @@ async def record_group_activity(
     streak.last_active_date = activity_date
 
     session.add(streak)
-    await session.commit()
-    await session.refresh(streak)
+    if commit:
+        await session.commit()
+        await session.refresh(streak)
     return streak
+
+
+async def group_today(
+    session: AsyncSession, group_id: UUID, today: date
+) -> dict:
+    """Data for "Hoy en el grupo": who did their small step today (any
+    completed mission of the local day, inside this group or not) and which
+    days of the current Mon-Sun week had activity from at least one member."""
+    members = await list_group_members(session, group_id)
+    member_ids = [m.id for _, m in members]
+    monday = today - timedelta(days=today.weekday())
+    week_days = [monday + timedelta(days=i) for i in range(7)]
+
+    rows = await session.exec(
+        select(MissionCompletion, Mission.title)
+        .join(Mission, Mission.id == MissionCompletion.mission_id)
+        .where(
+            MissionCompletion.user_id.in_(member_ids),
+            MissionCompletion.criteria_met.is_(True),
+            MissionCompletion.completed_on >= monday,
+            MissionCompletion.completed_on <= week_days[-1],
+        )
+        .order_by(MissionCompletion.completed_at)
+    )
+    active_days: set[date] = set()
+    latest_today: dict[UUID, str] = {}
+    for completion, title in rows.all():
+        active_days.add(completion.completed_on)
+        if completion.completed_on == today:
+            latest_today[completion.user_id] = title
+
+    streak = await get_group_streak(session, group_id)
+    return {
+        "members": [
+            {
+                "user_id": user.id,
+                "display_name": user.display_name,
+                "username": user.username,
+                "avatar_url": user.avatar_url,
+                "completed_today": user.id in latest_today,
+                "activity_title": latest_today.get(user.id),
+            }
+            for _, user in members
+        ],
+        "completed_count": len(latest_today),
+        "streak_current": effective_group_streak(streak, today),
+        "streak_longest": streak.longest_streak,
+        "week": [{"date": d, "active": d in active_days} for d in week_days],
+    }

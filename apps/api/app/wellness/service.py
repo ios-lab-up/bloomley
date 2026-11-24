@@ -5,12 +5,14 @@ groups) decide *when* a user performs a streak-worthy action and call
 ``bump_streak_for_activity`` instead of touching the ``streaks`` table.
 """
 
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from uuid import UUID
 
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.users.models import User
+from app.users.service import local_day_bounds_utc, local_today
 from app.wellness.models import Checkin, Streak, UserWellnessArea, WellnessArea
 
 
@@ -105,10 +107,49 @@ async def get_or_create_streak(session: AsyncSession, user_id: UUID) -> Streak:
     return streak
 
 
-async def bump_streak_for_activity(session: AsyncSession, user_id: UUID) -> Streak:
+def effective_current_streak(streak: Streak, today: date) -> int:
+    """The stored counter only moves when an activity is recorded, so a streak
+    that was never continued would keep showing its old value. Past yesterday
+    it is broken: report 0 until the next activity restarts it at 1."""
+    if streak.last_active_date in (today, today - timedelta(days=1)):
+        return streak.current_streak
+    return 0
+
+
+async def get_today_checkin(session: AsyncSession, user: User) -> Checkin | None:
+    """Latest check-in of the user's local day (home screen's energy chips)."""
+    start, end = local_day_bounds_utc(user, local_today(user))
+    result = await session.exec(
+        select(Checkin)
+        .where(
+            Checkin.user_id == user.id,
+            Checkin.created_at >= start,
+            Checkin.created_at < end,
+        )
+        .order_by(Checkin.created_at.desc())
+        .limit(1)
+    )
+    return result.first()
+
+
+async def latest_intention(session: AsyncSession, user_id: UUID) -> str | None:
+    """The weekly intention is stored on check-ins; later energy-only check-ins
+    don't carry one, so look for the latest that does."""
+    result = await session.exec(
+        select(Checkin.intention)
+        .where(Checkin.user_id == user_id, Checkin.intention.is_not(None))
+        .order_by(Checkin.created_at.desc())
+        .limit(1)
+    )
+    return result.first()
+
+
+async def bump_streak_for_activity(
+    session: AsyncSession, user_id: UUID, today: date | None = None
+) -> Streak:
     """Records a streak-worthy action (mission completed with criteria met).
 
-    Calendar day (UTC): the streak advances once per day, resets when the
+    `today` is the user's local calendar day (UTC if omitted): the streak advances once per day, resets when the
     user misses a day, and ``longest_streak`` is kept in lockstep.
 
     Does NOT commit: the caller owns the surrounding transaction (a mission
@@ -121,7 +162,7 @@ async def bump_streak_for_activity(session: AsyncSession, user_id: UUID) -> Stre
         streak = Streak(user_id=user_id)
         session.add(streak)
 
-    today = datetime.utcnow().date()
+    today = today or datetime.utcnow().date()
     if streak.last_active_date == today:
         return streak
 

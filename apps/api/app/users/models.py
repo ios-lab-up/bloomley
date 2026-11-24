@@ -4,9 +4,10 @@ Any other module that needs to reference a user does so via `User.id`
 (the internal uuid), never via `clerk_user_id`.
 """
 
-from datetime import datetime
+from datetime import datetime, time
 from uuid import UUID, uuid4
 
+from sqlalchemy import BigInteger
 from sqlmodel import Field, SQLModel
 
 
@@ -18,8 +19,15 @@ class User(SQLModel, table=True):
     # Mirrors the Clerk username (synced, never edited through our API).
     # NULL for users who haven't set one in Clerk yet.
     username: str | None = Field(default=None, unique=True, index=True)
+    # Clerk's `updated_at` (epoch ms) of the profile last synced into this
+    # row; the sync uses it to ignore late, out-of-order webhook deliveries.
+    clerk_updated_at: int | None = Field(default=None, sa_type=BigInteger)
     email: str
     display_name: str
+    # Mirrors Clerk's image_url.
+    avatar_url: str | None = None
+    # IANA name sent by the client; "today" for streaks/missions is this local day.
+    timezone: str = Field(default="UTC")
     xp_total: int = Field(default=0)
     level: int = Field(default=1)
     created_at: datetime = Field(default_factory=datetime.utcnow)
@@ -31,7 +39,10 @@ class NotificationSettings(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     user_id: UUID = Field(foreign_key="users.id", ondelete="CASCADE", unique=True, index=True)
     enabled: bool = Field(default=True)
+    # daily | weekdays | weekly -- which days the reminder push is sent.
     frequency: str = Field(default="daily")
+    # Local (user timezone) time of day the reminder goes out.
+    reminder_time: time = Field(default=time(9, 0))
 
 
 class PushToken(SQLModel, table=True):

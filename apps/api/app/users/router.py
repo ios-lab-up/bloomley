@@ -38,9 +38,9 @@ async def update_me(
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ) -> User:
-    if payload.display_name is not None:
-        user = await service.update_display_name(session, user, payload.display_name)
-    return user
+    return await service.update_profile(
+        session, user, payload.display_name, payload.timezone
+    )
 
 
 @router.get("/me/notification-settings", response_model=NotificationSettingsRead)
@@ -58,7 +58,7 @@ async def update_notification_settings(
     session: AsyncSession = Depends(get_session),
 ):
     return await service.update_notification_settings(
-        session, user.id, payload.enabled, payload.frequency
+        session, user.id, payload.enabled, payload.frequency, payload.reminder_time
     )
 
 
