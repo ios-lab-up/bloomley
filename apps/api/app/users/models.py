@@ -7,6 +7,7 @@ Any other module that needs to reference a user does so via `User.id`
 from datetime import datetime
 from uuid import UUID, uuid4
 
+from sqlalchemy import BigInteger
 from sqlmodel import Field, SQLModel
 
 
@@ -18,6 +19,9 @@ class User(SQLModel, table=True):
     # Mirrors the Clerk username (synced, never edited through our API).
     # NULL for users who haven't set one in Clerk yet.
     username: str | None = Field(default=None, unique=True, index=True)
+    # Clerk's `updated_at` (epoch ms) of the profile last synced into this
+    # row; the sync uses it to ignore late, out-of-order webhook deliveries.
+    clerk_updated_at: int | None = Field(default=None, sa_type=BigInteger)
     email: str
     display_name: str
     xp_total: int = Field(default=0)
