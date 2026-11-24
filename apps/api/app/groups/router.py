@@ -16,7 +16,9 @@ from app.groups.schemas import (
     GroupMemberRead,
     GroupRead,
     GroupStreakRead,
+    GroupTodayRead,
 )
+from app.users.service import local_today
 from app.users.deps import get_current_user
 from app.users.models import User
 
@@ -57,11 +59,11 @@ async def get_group(
 ) -> GroupDetailRead:
     group = await service.get_member_group_or_404(session, group_id, user.id)
     member_count = await service.get_member_count(session, group_id)
-    streak = await service.get_group_streak(session, group_id)
+    streak = _with_effective_streak(await service.get_group_streak(session, group_id), user)
     return GroupDetailRead(
         **GroupRead.model_validate(group).model_dump(),
         member_count=member_count,
-        streak=GroupStreakRead.model_validate(streak),
+        streak=streak,
     )
 
 
@@ -102,6 +104,19 @@ async def list_group_members(
     ]
 
 
+@router.get("/{group_id}/today", response_model=GroupTodayRead)
+async def get_group_today(
+    group_id: UUID,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> GroupTodayRead:
+    """"Tu grupo" screen: streak, this week's dots and who did their step today.
+    "Today" is the viewer's local day."""
+    await service.get_member_group_or_404(session, group_id, user.id)
+    data = await service.group_today(session, group_id, local_today(user))
+    return GroupTodayRead(group_id=group_id, member_count=len(data["members"]), **data)
+
+
 @router.get("/{group_id}/streak", response_model=GroupStreakRead)
 async def get_group_streak(
     group_id: UUID,
@@ -109,4 +124,10 @@ async def get_group_streak(
     session: AsyncSession = Depends(get_session),
 ) -> GroupStreak:
     await service.get_member_group_or_404(session, group_id, user.id)
-    return await service.get_group_streak(session, group_id)
+    return _with_effective_streak(await service.get_group_streak(session, group_id), user)
+
+
+def _with_effective_streak(streak: GroupStreak, user: User) -> GroupStreakRead:
+    read = GroupStreakRead.model_validate(streak)
+    read.current_streak = service.effective_group_streak(streak, local_today(user))
+    return read

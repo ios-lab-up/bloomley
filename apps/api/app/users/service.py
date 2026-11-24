@@ -9,8 +9,9 @@ into their own transaction (e.g. a mission completion). It shares the same
 atomic UPDATE as `add_xp`, so concurrent awards never lose updates.
 """
 
-from datetime import datetime
+from datetime import date, datetime, time
 from uuid import UUID
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import httpx
 from sqlalchemy import func, update
@@ -25,6 +26,33 @@ XP_PER_LEVEL = 100
 
 def calculate_level(xp_total: int) -> int:
     return max(1, xp_total // XP_PER_LEVEL + 1)
+
+
+def user_zone(user: User) -> ZoneInfo:
+    try:
+        return ZoneInfo(user.timezone or "UTC")
+    except (ZoneInfoNotFoundError, ValueError):
+        return ZoneInfo("UTC")
+
+
+def local_today(user: User) -> date:
+    """The user's calendar day. Streaks, "once per day" mission rewards and the
+    home screen all use this, so an evening mission in Mexico doesn't land on
+    tomorrow's UTC date."""
+    return datetime.now(user_zone(user)).date()
+
+
+def local_day_bounds_utc(user: User, day: date) -> tuple[datetime, datetime]:
+    """[start, end) of the user's local `day` as naive UTC datetimes, the form
+    `created_at` columns are stored in."""
+    zone = user_zone(user)
+    next_day = date.fromordinal(day.toordinal() + 1)
+
+    def to_utc(d: date) -> datetime:
+        local_midnight = datetime(d.year, d.month, d.day, tzinfo=zone)
+        return local_midnight.astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
+
+    return to_utc(day), to_utc(next_day)
 
 
 async def get_user_by_clerk_id(session: AsyncSession, clerk_user_id: str) -> User | None:
@@ -82,7 +110,19 @@ async def add_xp(session: AsyncSession, user_id: UUID, amount: int) -> User:
 
 
 async def update_display_name(session: AsyncSession, user: User, display_name: str) -> User:
-    user.display_name = display_name
+    return await update_profile(session, user, display_name, None)
+
+
+async def update_profile(
+    session: AsyncSession,
+    user: User,
+    display_name: str | None,
+    timezone: str | None,
+) -> User:
+    if display_name is not None:
+        user.display_name = display_name
+    if timezone is not None:
+        user.timezone = timezone
     session.add(user)
     await session.commit()
     await session.refresh(user)
@@ -109,12 +149,15 @@ async def update_notification_settings(
     user_id: UUID,
     enabled: bool | None,
     frequency: str | None,
+    reminder_time: time | None = None,
 ) -> NotificationSettings:
     settings = await get_or_create_notification_settings(session, user_id)
     if enabled is not None:
         settings.enabled = enabled
     if frequency is not None:
         settings.frequency = frequency
+    if reminder_time is not None:
+        settings.reminder_time = reminder_time
     session.add(settings)
     await session.commit()
     await session.refresh(settings)
@@ -183,6 +226,10 @@ def _display_name(clerk_data: dict) -> str:
     last = clerk_data.get("last_name") or ""
     full = f"{first} {last}".strip()
     return full or clerk_data.get("username") or _primary_email(clerk_data)
+
+
+def _avatar_url(clerk_data: dict) -> str | None:
+    return clerk_data.get("image_url") or None
 
 
 def _username(clerk_data: dict) -> str | None:
@@ -282,6 +329,7 @@ async def _upsert_user_from_clerk_data(
             username=username,
             email=email,
             display_name=display_name,
+            avatar_url=_avatar_url(data),
             clerk_updated_at=updated_at,
         )
     else:
@@ -289,6 +337,7 @@ async def _upsert_user_from_clerk_data(
         # PATCH /users/me, and a later user.updated must not clobber it.
         user.username = username
         user.email = email
+        user.avatar_url = _avatar_url(data)
         if updated_at is not None:
             user.clerk_updated_at = updated_at
     session.add(user)

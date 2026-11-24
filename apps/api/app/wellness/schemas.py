@@ -7,16 +7,21 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 
+Pillar = Literal["physical", "mental", "social"]
+EnergyLevel = Literal["low", "medium", "high"]
+
+
 class WellnessAreaRead(BaseModel):
     id: UUID
     name: str
     description: str
+    pillar: Pillar
 
     model_config = {"from_attributes": True}
 
 
 class CheckinCreate(BaseModel):
-    energy_level: Literal["low", "medium", "high"]
+    energy_level: EnergyLevel
     intention: str | None = Field(default=None, max_length=500)
 
 

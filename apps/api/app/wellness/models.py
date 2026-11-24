@@ -22,6 +22,8 @@ class WellnessArea(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     name: str = Field(unique=True, index=True)
     description: str
+    # Onboarding pillar this area rolls up into: physical | mental | social.
+    pillar: str = Field(index=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 

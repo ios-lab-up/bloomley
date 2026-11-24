@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+from app.achievements.schemas import AchievementBrief
+
 
 class MissionRead(BaseModel):
     id: UUID
@@ -14,6 +16,7 @@ class MissionRead(BaseModel):
     description: str
     duration_minutes: int
     xp_reward: int
+    intention: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -32,6 +35,8 @@ class MissionCompletionRead(BaseModel):
     criteria_met: bool
     completed_at: datetime
     mission: MissionRead
+    # Achievements this very request unlocked (empty on repeat taps).
+    newly_unlocked: list[AchievementBrief] = []
 
 
 class BloomFeedbackRead(BaseModel):

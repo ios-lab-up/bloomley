@@ -15,6 +15,7 @@ dependencies = [
     "pyjwt[crypto]>=2.14.0",
     "sqlmodel>=0.0.42",
     "svix>=2.5.0",
+    "tzdata>=2026.6",
     "uvicorn[standard]>=0.53.0",
 ]
 

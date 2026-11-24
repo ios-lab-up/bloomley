@@ -216,7 +216,7 @@ async def test_notification_settings_get_and_patch(client, use_settings, test_us
     h = {"X-Debug-User-Id": str(test_user.id)}
     got = await client.get("/api/v1/users/me/notification-settings", headers=h)
     assert got.status_code == 200
-    assert got.json() == {"enabled": True, "frequency": "daily"}
+    assert got.json() == {"enabled": True, "frequency": "daily", "reminder_time": "09:00:00"}
     patched = await client.patch(
         "/api/v1/users/me/notification-settings", json={"enabled": False}, headers=h
     )

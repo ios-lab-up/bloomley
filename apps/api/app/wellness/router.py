@@ -15,6 +15,7 @@ from app.core.database import get_session
 from app.users.deps import get_current_user
 from app.users.models import User
 from app.wellness import service
+from app.users.service import local_today
 from app.wellness.schemas import (
     CheckinCreate,
     CheckinRead,
@@ -96,6 +97,16 @@ async def create_checkin(
     )
 
 
+# Registered before any "/{id}" route would be, like /wellness-areas/me.
+@checkins_router.get("/me/today", response_model=CheckinRead | None)
+async def get_my_checkin_today(
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> CheckinRead | None:
+    """Latest check-in of the user's local day, or null if none yet."""
+    return await service.get_today_checkin(session, user)
+
+
 @checkins_router.get("/me", response_model=list[CheckinRead])
 async def list_my_checkins(
     user: User = Depends(get_current_user),
@@ -111,4 +122,9 @@ async def get_my_streak(
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ) -> StreakRead:
-    return await service.get_or_create_streak(session, user.id)
+    streak = await service.get_or_create_streak(session, user.id)
+    return StreakRead(
+        current_streak=service.effective_current_streak(streak, local_today(user)),
+        longest_streak=streak.longest_streak,
+        last_active_date=streak.last_active_date,
+    )

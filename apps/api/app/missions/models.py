@@ -32,6 +32,8 @@ class Mission(SQLModel, table=True):
     description: str
     duration_minutes: int
     xp_reward: int
+    # Weekly-intention chip this mission serves (e.g. "move_more"); NULL = generic.
+    intention: str | None = Field(default=None, index=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 

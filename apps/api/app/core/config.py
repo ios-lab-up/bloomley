@@ -18,6 +18,14 @@ class Settings(BaseSettings):
 
     cors_origins: list[str] = ["*"]
 
+    # Notifications
+    expo_push_url: str = "https://exp.host/--/api/v2/push/send"
+    notifications_worker_enabled: bool = True
+    """Background loop that enqueues daily reminders and sends pending pushes.
+    Safe to run on several replicas (rows are claimed with SKIP LOCKED and
+    reminders are deduplicated by a unique key)."""
+    notifications_worker_interval_seconds: int = 60
+
     # Clerk auth
     auth_dev_bypass: bool = True
     """Dev-only escape hatch: when true, `get_current_user` trusts an
